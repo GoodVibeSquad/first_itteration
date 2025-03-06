@@ -1,3 +1,5 @@
+package Lexer;
+
 //define the token class
 public class Token {
     private final TokenType type;
