@@ -11,7 +11,7 @@ public class Token {
     public Token(TokenType type, String value){
         this.type = type;
         this.value = value;
-  
+        
     }
 
     public TokenType getType() {
@@ -33,6 +33,8 @@ public class Token {
         return java.util.Objects.hash(super.hashCode(), type, value);
     }
 }
+
+
 
 
 

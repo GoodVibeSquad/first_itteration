@@ -15,7 +15,7 @@ public enum TokenType{
     MULTIPLY("*"),
     DIVISION("/"),
     MODULUS("%"),
-    COMMENT("//"),
+    SINGLE_LINE_COMMENT("//"),
     MULTI_LINE_COMMENT("/*"),
     LESS_THAN("<"),
     GREATER_THAN(">"),
@@ -64,6 +64,7 @@ public enum TokenType{
     TokenType(String name) {
         this.name = name;
     }
+
 
     public static final Map<String, TokenType> tokenTypeMap = new HashMap<>();
 
