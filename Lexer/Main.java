@@ -9,17 +9,19 @@ public class Main {
 
         String lexed="0"; 
         System.out.println(lexed);
+
         // Create a Lexer instance with the sample code
         Lexer lexer = new Lexer(code);
 
         // Tokenize the input code
         List<Token> tokens = lexer.tokenize();
-
+        System.out.println("heeej");
         // Iterate through the tokens and print their type and value
         for (Token token : tokens) {
             lexed.concat(token.getType() + " -> " + token.getValue());
         }
-        System.out.println(lexed);
+
+        System.out.println(tokens.toString());
         
     } 
 }

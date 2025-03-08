@@ -7,6 +7,7 @@ public enum TokenType{
     STRING(null),
     BOOL(null),
     DOUBLE(null),
+    IDENTIFIER(null),
     FOR("for"),
     WHILE("while"),
     ARRAY("["),
@@ -70,10 +71,14 @@ public enum TokenType{
 
     static {
         for(final TokenType tokenType : TokenType.values()) {
+            if ( tokenType.name != null){
             tokenTypeMap.put(tokenType.name, tokenType);
+            }
         }
     }
 
-
+    public String getName() {
+        return name;
+    }
 }
 

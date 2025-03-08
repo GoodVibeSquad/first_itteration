@@ -1,172 +1,172 @@
 import java.util.ArrayList;
-import java.util.List; 
- 
+import java.util.List;
+
 public class Lexer {
     private String input;
-    private int position = 0; 
+    private int position = 0;
+    private int lastTokenLength = 1; // Default to 1 to ensure progress
     private final List<Token> tokens = new ArrayList<>();
-    
 
-    public Lexer(String input){
+    public Lexer(String input) {
         this.input = input;
     }
 
-    public List<Token> tokenize() {  
+    public List<Token> tokenize() {
         while (position < input.length()) {
             char currentChar = input.charAt(position);
 
-            //tjekker keyword
+            // Check if token exists (operators, keywords, etc.)
             Token token = checkIfTokenExists();
             if (token != null) {
                 tokens.add(token);
+                advance(token.getValue().length()); // Store correct length
                 continue;
             }
 
-            //Whitespace
+            // Whitespace
             if (Character.isWhitespace(currentChar)) {
-                position++;
+                advance(1);
                 continue;
             }
 
-            //Single line multi line comment 
-            if (currentChar == '/' && peekChar() == '/' ) {
+            // Single-line comment
+            if (currentChar == '/' && peekChar() == '/') {
                 skipSingleLineComment();
                 continue;
             }
 
-            if(currentChar == '/' && peekChar() == '*') {
+            // Multi-line comment
+            if (currentChar == '/' && peekChar() == '*') {
                 skipMultiLineComment();
                 continue;
             }
 
-
-            //MAtch identifiers
-            if(Character.isLetterOrDigit(currentChar) || currentChar == '_'){
+            // Identifiers (variable names, function names, etc.)
+            if (Character.isLetterOrDigit(currentChar) || currentChar == '_') {
                 tokens.add(scanIdentifier());
                 continue;
             }
 
-            //Match numbers 
-            if(Character.isDigit(currentChar)){
+            // Numbers (integers and decimals)
+            if (Character.isDigit(currentChar)) {
                 tokens.add(scanNumber());
                 continue;
             }
 
-            //Match string literals
-            if(currentChar == '"'){
+            // String literals
+            if (currentChar == '"') {
                 tokens.add(scanString());
                 continue;
             }
-            
+
+            // If no match, move forward to avoid infinite loops
+            advance(1);
         }
-        
-        //EOF anvendes som en token for at indikere at der ikke er mere i inputstringen.
+
+        // Add EOF token at the end
         tokens.add(new Token(TokenType.EOF, "EOF"));
-        return tokens; 
+        return tokens;
     }
 
+    /** Advances by last token length */
+    private void advance() {
+        position += lastTokenLength;
+    }
 
-    private Token checkIfTokenExists(){
-        //Tjekker gennem enum af tokens
+    /** Advances by a specific number of steps */
+    private void advance(int steps) {
+        lastTokenLength = steps; // Store last token length
+        position += steps;
+    }
+
+    /** Check if the current token exists in TokenType */
+    private Token checkIfTokenExists() {
         for (TokenType type : TokenType.values()) {
-            //Tjekker om input er inde i enum listen og returner en token hvis den er
-            String symbol = type.name();
+            String symbol = type.getName(); // Use actual token string
             if (symbol != null && input.startsWith(symbol, position)) {
-                position += symbol.length();
+                advance(symbol.length()); // Move position correctly
                 return new Token(type, symbol);
             }
         }
         return null;
-
     }
 
-    private Token scanIdentifier(){
-        //Vi definerer hvor vores nuværende position er i vores input string
-        int start = position; 
-
-        //Tjek om den char vi læser er en identifier
-        while (position < input.length() && (Character.isLetterOrDigit(input.charAt(position)) || input.charAt(position) == '_')) {
+    /** Scans identifiers (variable names, function names, etc.) */
+    private Token scanIdentifier() {
+        int start = position;
+        while (position < input.length() &&
+               (Character.isLetterOrDigit(input.charAt(position)) || input.charAt(position) == '_')) {
             position++;
         }
-
-        //Definer value som den del af input der blev læst som en identifier
         String value = input.substring(start, position);
-
-        TokenType type; 
-        //tjekker om vores læste string er et keyword i vores enum
-            if (TokenType.tokenTypeMap.containsKey(value)) {
-                type = TokenType.tokenTypeMap.get(value); // Hvis ja, brug den matchende TokenType
-            } else {
-                type = TokenType.STRING; // Gør standard til STRING, hvis ikke fundet
-            }
-
+        TokenType type = TokenType.tokenTypeMap.getOrDefault(value, TokenType.IDENTIFIER);
+        lastTokenLength = value.length(); // Store the correct length
         return new Token(type, value);
     }
 
-    private Token scanNumber(){
+    /** Scans numbers (integers and decimals) */
+    private Token scanNumber() {
         int start = position;
-        boolean isDecimal = false; //Boolean til at tjekke om vi spotter et dot i vores læste input
+        boolean isDecimal = false;
 
-        //Tjekker om den læste string er et tal eller har en dot
-        while (position < input.length() && Character.isDigit(input.charAt(position)) || (input.charAt(position) == '.')) {
-
-            if((input.charAt(position) == '.')) {
+        while (position < input.length() &&
+               (Character.isDigit(input.charAt(position)) || input.charAt(position) == '.')) {
+            if (input.charAt(position) == '.') {
                 isDecimal = true;
-            } 
+            }
             position++;
-        } 
-
-        if(isDecimal) {
-            return new Token(TokenType.DOUBLE, input.substring(start, position));
-        } else { 
-            return new Token(TokenType.INT, input.substring(start, position));
-        }     
-    }
-
-    private Token scanString() {
-    int start = position + 1; //for at skippe opening quote.
-   
-        while (position < input.length() && input.charAt(position) != '"') {
-            position ++;
         }
-        
+
         String value = input.substring(start, position);
-
-        if (position < input.length() && input.charAt(position) == '"') { 
-            position++; //For at skippe lukke quotes
-        }
-
-     return new Token(TokenType.STRING, value);
+        lastTokenLength = value.length(); // Store the correct length
+        return new Token(isDecimal ? TokenType.DOUBLE : TokenType.INT, value);
     }
 
-    private void skipSingleLineComment(){
-        while(position < input.length() && input.charAt(position) != '\n') {
+    /** Scans string literals */
+    private Token scanString() {
+        position++; // Skip opening quote
+        int start = position;
+
+        while (position < input.length() && input.charAt(position) != '"') {
             position++;
         }
-        position++; //Skipper \n så den kan læse stringen til næste function
 
+        String value = input.substring(start, position);
+        if (position < input.length() && input.charAt(position) == '"') {
+            position++; // Skip closing quote
+        }
+
+        lastTokenLength = value.length() + 2; // Include opening & closing quotes
+        return new Token(TokenType.STRING, value);
     }
 
-    private void skipMultiLineComment(){
-        position += 2;
-        //-1 sikre vi ikke går forbi slutningen af stringen fordi vi læser to chars på én gang.
-        while (position < input.length() - 1 && !(input.charAt(position) == '*' && input.charAt(position+1)== '/')) {
+    /** Skips single-line comments */
+    private void skipSingleLineComment() {
+        int start = position;
+        while (position < input.length() && input.charAt(position) != '\n') {
             position++;
         }
-        position += 2;
-
+        lastTokenLength = position - start; // Store steps moved
+        advance();
     }
 
+    /** Skips multi-line comments */
+    private void skipMultiLineComment() {
+        int start = position;
+        position += 2; // Skip `/*`
+
+        while (position < input.length() - 1 &&
+               !(input.charAt(position) == '*' && input.charAt(position + 1) == '/')) {
+            position++;
+        }
+
+        position += 2; // Skip closing `*/`
+        lastTokenLength = position - start; // Store steps moved
+        advance();
+    }
+
+    /** Peeks at the next character without moving position */
     private char peekChar() {
-        if(position + 1 < input.length()){
-            return input.charAt(position + 1);
-        } else {
-        return '\0';
-        }
+        return (position + 1 < input.length()) ? input.charAt(position + 1) : '\0';
     }
-
-
-    
-    
 }
-
