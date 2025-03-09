@@ -15,34 +15,27 @@ public class Lexer {
         while (position < input.length()) {
             char currentChar = input.charAt(position);
 
-            // Check if token exists (operators, keywords, etc.)
-            Token token = checkIfTokenExists();
-            if (token != null) {
-                tokens.add(token);
-                advance(token.getValue().length()); // Store correct length
-                continue;
-            }
 
             // Whitespace
             if (Character.isWhitespace(currentChar)) {
-                advance(1);
+                position++;
                 continue;
             }
 
             // Single-line comment
             if (currentChar == '/' && peekChar() == '/') {
-                skipSingleLineComment();
+                tokens.add(skipSingleLineComment());
                 continue;
             }
 
             // Multi-line comment
             if (currentChar == '/' && peekChar() == '*') {
-                skipMultiLineComment();
+                tokens.add(skipMultiLineComment());
                 continue;
             }
 
             // Identifiers (variable names, function names, etc.)
-            if (Character.isLetterOrDigit(currentChar) || currentChar == '_') {
+            if (Character.isLetter(currentChar) || currentChar == '_') {
                 tokens.add(scanIdentifier());
                 continue;
             }
@@ -59,8 +52,16 @@ public class Lexer {
                 continue;
             }
 
+
+            // Check if token exists (operators, keywords, etc.)
+            Token token = checkIfTokenExists();
+            if (token != null) {
+                tokens.add(token);
+                continue;
+            }
+
             // If no match, move forward to avoid infinite loops
-            advance(1);
+            position++;
         }
 
         // Add EOF token at the end
@@ -68,23 +69,15 @@ public class Lexer {
         return tokens;
     }
 
-    /** Advances by last token length */
-    private void advance() {
-        position += lastTokenLength;
-    }
 
-    /** Advances by a specific number of steps */
-    private void advance(int steps) {
-        lastTokenLength = steps; // Store last token length
-        position += steps;
-    }
+
 
     /** Check if the current token exists in TokenType */
     private Token checkIfTokenExists() {
         for (TokenType type : TokenType.values()) {
             String symbol = type.getName(); // Use actual token string
             if (symbol != null && input.startsWith(symbol, position)) {
-                advance(symbol.length()); // Move position correctly
+                position++; // Move position correctly
                 return new Token(type, symbol);
             }
         }
@@ -136,22 +129,22 @@ public class Lexer {
             position++; // Skip closing quote
         }
 
-        lastTokenLength = value.length() + 2; // Include opening & closing quotes
         return new Token(TokenType.STRING, value);
     }
 
     /** Skips single-line comments */
-    private void skipSingleLineComment() {
+    private Token skipSingleLineComment() {
         int start = position;
         while (position < input.length() && input.charAt(position) != '\n') {
             position++;
         }
-        lastTokenLength = position - start; // Store steps moved
-        advance();
+        position++;
+        return new Token(TokenType.SINGLE_LINE_COMMENT);
+
     }
 
     /** Skips multi-line comments */
-    private void skipMultiLineComment() {
+    private Token skipMultiLineComment() {
         int start = position;
         position += 2; // Skip `/*`
 
@@ -161,8 +154,9 @@ public class Lexer {
         }
 
         position += 2; // Skip closing `*/`
-        lastTokenLength = position - start; // Store steps moved
-        advance();
+        position++;
+        return new Token(TokenType.MULTI_LINE_COMMENT);
+
     }
 
     /** Peeks at the next character without moving position */
