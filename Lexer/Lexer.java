@@ -1,11 +1,7 @@
 package Lexer;
 
-import java.util.regex.Pattern;
-
 public class Lexer {
     private static final String BLANK = " \t\n\r";
-    private static final Pattern identifierPattern = Pattern.compile("[a-zæøå_]+[a-zæøå_0-9]*", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
-    private static final Pattern nonSymbolPattern = Pattern.compile("[a-zæøå_0-9]", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
 
     private final String input;
     private int position = 0;
@@ -13,11 +9,10 @@ public class Lexer {
 
     public Lexer(String input) {
         this.input = input;
-        this.currentChar = input.charAt(position);
+        this.position = 0;
+        this.currentChar = input.length() > 0 ? input.charAt(position) : '\0';
     }
 
-
-    // Main function to scan the next token
     public Token tokenize() {
         while (currentChar != '\0') {
             if (BLANK.indexOf(currentChar) != -1) {
@@ -26,8 +21,7 @@ public class Lexer {
             }
 
             if (currentChar == '/' && (peek() == '/' || peek() == '*')) {
-                skipComment();
-                continue;
+                return scanComment();
             }
 
             if (Character.isLetter(currentChar) || currentChar == '_') {
@@ -75,20 +69,29 @@ public class Lexer {
         }
     }
 
-    private void skipComment() {
-        if (currentChar == '/' && peek() == '/') {
+    private Token scanComment() {
+        StringBuilder comment = new StringBuilder();
+
+        if (currentChar == '/' && peek() == '/') { // Single-line comment
+            advance(); // Skip '/'
+            advance(); // Skip '/'
             while (currentChar != '\n' && currentChar != '\0') {
+                comment.append(currentChar);
                 advance();
             }
-        } else if (currentChar == '/' && peek() == '*') {
-            advance();
-            advance();
+            return new Token(TokenType.COMMENT, comment.toString().trim());
+        } else if (currentChar == '/' && peek() == '*') { // Multi-line comment
+            advance(); // Skip '/'
+            advance(); // Skip '*'
             while (!(currentChar == '*' && peek() == '/') && currentChar != '\0') {
+                comment.append(currentChar);
                 advance();
             }
-            advance();
-            advance();
+            advance(); // Skip '*'
+            advance(); // Skip '/'
+            return new Token(TokenType.MULTI_LINE_COMMENT, comment.toString().trim());
         }
+        return null;
     }
 
     private Token scanIdentifier() {

@@ -6,7 +6,7 @@ import Lexer.TokenType;
 
 public class Main {
     public static void main(String[] args) {
-        String input = "x = 10;\nprint(x);\n// This is a comment\n/* Multi-line \n comment */";
+        String input = "x = 10;\nprint(x);\n// Det her er en kedelig kommentar\n/* Jeg kan godt lide \n KAGE  */";
 
         Lexer lexer = new Lexer(input);
         List<Token> tokens = new ArrayList<>();
