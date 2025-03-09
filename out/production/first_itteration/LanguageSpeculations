@@ -1,0 +1,34 @@
+
+//Layer er en overloadet Contstructor
+ som skal have antal rækker, kan tage søjler 
+ og kan tage en aktiverings function
+ 
+Layer input = new Layer(6)
+Layer hidden = new Layer(5,2, relu)
+Layer output = new Layer(10,softmax)
+
+NeuralNetwork er en klasse som skal have tre parametre:
+ input, hidden og output, 
+ til at starte med er bias predefineret, men kan ændres senere
+
+NeuralNetwork nn = new NeuralNetwork(input, hidden, output,resultArray)
+
+data = "filepath"
+dataType = "img"
+epochs = int // hvor mange gange den træner på dataen 
+learningRate = double
+
+nn.train(data, dataType, epochs, learningRate)
+nn.saveModel("filepath")
+
+NeuralNetwork nn = new NeuralNetwork().loadModel("filepath")
+
+data = "filepath"
+dataType = "img"
+nnn.predict(data, dataType)
+    
+
+
+
+
+ 

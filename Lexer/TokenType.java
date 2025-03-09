@@ -7,6 +7,7 @@ public enum TokenType{
     STRING(null),
     BOOL(null),
     DOUBLE(null),
+    ID(null),
     FOR("for"),
     WHILE("while"),
     ARRAY("["),
@@ -73,6 +74,8 @@ public enum TokenType{
         }
     }
 
-
+    public String getName() {
+        return name;
+    }
 }
 
