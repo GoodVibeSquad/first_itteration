@@ -1,4 +1,4 @@
-//Define the token types
+package Lexer;//Define the token types
 import java.util.HashMap;
 import java.util.Map;
 

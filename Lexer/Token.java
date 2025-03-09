@@ -1,3 +1,5 @@
+package Lexer;
+
 //define the token class
 public class Token {
     private final TokenType type;
@@ -31,6 +33,14 @@ public class Token {
 
     public int hashCode() {
         return java.util.Objects.hash(super.hashCode(), type, value);
+    }
+
+    @Override
+    public String toString() {
+        return "Token{" +
+                "type=" + type +
+                ", value='" + value + '\'' +
+                '}';
     }
 }
 
