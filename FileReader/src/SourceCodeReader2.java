@@ -1,0 +1,37 @@
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+public class SourceCodeReader2 {
+    private boolean EOF;
+    private String filepath;
+    private char nextChar;
+    private String sourceCode;
+    private int index;
+
+    SourceCodeReader2(String filepath) throws IOException {
+        this.filepath = filepath;
+        this.index = 0;
+        this.sourceCode = Files.readString(Path.of(filepath));
+        this.EOF = sourceCode.isEmpty();
+        this.nextChar = 0;
+    }
+
+    public char peek() {
+        return this.nextChar;
+    }
+
+    public void advance() {
+        if (index < sourceCode.length()) {
+            this.nextChar = sourceCode.charAt(index);
+        } else {
+            this.EOF = true;
+            this.nextChar = (char) -1;
+        }
+        index++;
+    }
+
+    public boolean isEOF() {
+        return this.EOF;
+    }
+}
