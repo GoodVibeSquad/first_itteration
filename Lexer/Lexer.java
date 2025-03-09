@@ -32,7 +32,7 @@ public class Lexer {
                 return scanNumber();
             }
 
-            if (currentChar == '"' || currentChar == '\'') {
+            if (currentChar == '"') {
                 return scanString();
             }
 
@@ -102,9 +102,6 @@ public class Lexer {
         }
         String word = result.toString().toLowerCase();
 
-        if (TokenType.tokenTypeMap.containsKey(word)) {
-            return new Token(TokenType.tokenTypeMap.get(word), word);
-        }
         return new Token(TokenType.ID, word);
     }
 
@@ -131,11 +128,11 @@ public class Lexer {
     }
 
     private Token scanString() {
-        char quoteType = currentChar;
+        char quoteChar = currentChar;
         advance();
         StringBuilder value = new StringBuilder();
 
-        while (currentChar != quoteType && currentChar != '\0') {
+        while (currentChar != quoteChar && currentChar != '\0') {
             value.append(currentChar);
             advance();
         }
