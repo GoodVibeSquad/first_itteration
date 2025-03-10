@@ -1,3 +1,5 @@
+package Lexer;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,7 +11,7 @@ public class SourceCodeReader2 {
     private String sourceCode;
     private int index;
 
-    SourceCodeReader2(String filepath) throws IOException {
+    public SourceCodeReader2(String filepath) throws IOException {
         this.filepath = filepath;
         this.index = 0;
         this.sourceCode = Files.readString(Path.of(filepath));
@@ -20,9 +22,14 @@ public class SourceCodeReader2 {
         this.advance();
     }
 
+
     public char currentChar() {
         if(this.EOF) return '\0';
         return this.nextChar;
+    }
+
+    public int getIndex() {
+        return index;
     }
 
     public char peek() {

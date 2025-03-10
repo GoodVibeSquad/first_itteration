@@ -3,92 +3,99 @@ package Lexer;
 public class Lexer {
     private static final String BLANK = " \t\n\r";
 
-    private final String input;
-    private int position = 0;
-    private char currentChar;
+    private final SourceCodeReader2 reader;
+    
 
-    public Lexer(String input) {
-        this.input = input;
-        this.position = 0;
-        this.currentChar = input.length() > 0 ? input.charAt(position) : '\0';
+    public Lexer(SourceCodeReader2 reader) {
+        this.reader = reader;
+        
     }
 
     public Token tokenize() {
-        while (currentChar != '\0') {
-            if (BLANK.indexOf(currentChar) != -1) {
+
+        while (!reader.isEOF()) {
+
+
+            if(reader.isEOF()) {
+                return new Token(TokenType.EOF);
+            }
+
+            if (BLANK.indexOf(reader.currentChar()) != -1) {
                 skipWhitespace();
                 continue;
             }
 
-            if (currentChar == '/' && (peek() == '/' || peek() == '*')) {
+            if (reader.currentChar() == '/' && (reader.peek() == '/' || reader.peek() == '*')) {
                 return scanComment();
             }
 
-            if (Character.isLetter(currentChar) || currentChar == '_') {
+            if (Character.isLetter(reader.currentChar()) || reader.currentChar() == '_') {
                 return scanIdentifier();
             }
 
-            if (Character.isDigit(currentChar)) {
+            if (Character.isDigit(reader.currentChar())) {
                 return scanNumber();
             }
 
-            if (currentChar == '"') {
+            if (reader.currentChar() == '"') {
                 return scanString();
             }
 
             for (TokenType type : TokenType.values()) {
-                if (type.getName() != null && input.startsWith(type.getName(), position)) {
-                    String matchedSymbol = type.getName();
-                    for (int i = 0; i < matchedSymbol.length(); i++) advance();
-                    return new Token(type, matchedSymbol);
+                String symbol = type.getName();
+
+                if (symbol != null && matchSymbol(symbol)) {
+                    return new Token(type, symbol);
                 }
             }
 
-            throw new RuntimeException("Unexpected character: " + currentChar);
+            throw new RuntimeException("Unexpected character: " + reader.currentChar());
         }
 
         return new Token(TokenType.EOF);
     }
 
-    private void advance() {
-        position++;
-        if (position < input.length()) {
-            currentChar = input.charAt(position);
-        } else {
-            currentChar = '\0';
+    private boolean matchSymbol(String symbol) {
+        int length = symbol.length();
+
+        for (int i = 0; i < length; i++) {
+            if (reader.isEOF() || reader.currentChar() != symbol.charAt(i)) {
+                return false; // If any character does not match, return false
+            }
+            reader.advance(); // Move to the next character
         }
+
+        return true; // If all characters match, return true
     }
 
-    private char peek() {
-        return (position + 1 < input.length()) ? input.charAt(position + 1) : '\0';
-    }
+
 
     private void skipWhitespace() {
-        while (BLANK.indexOf(currentChar) != -1) {
-            advance();
+        while (BLANK.indexOf(reader.currentChar()) != -1) {
+            reader.advance();
         }
     }
 
     private Token scanComment() {
         StringBuilder comment = new StringBuilder();
 
-        if (currentChar == '/' && peek() == '/') { // Single-line comment
-            advance(); // Skip '/'
-            advance(); // Skip '/'
-            while (currentChar != '\n' && currentChar != '\0') {
-                comment.append(currentChar);
-                advance();
+        if (reader.currentChar() == '/' && reader.peek() == '/') { // Single-line comment
+            reader.advance(); // Skip '/'
+            reader.advance(); // Skip '/'
+            while (reader.currentChar() != '\n' && reader.currentChar() != '\0') {
+                comment.append(reader.currentChar());
+                reader.advance();
             }
             return new Token(TokenType.COMMENT, comment.toString().trim());
-        } else if (currentChar == '/' && peek() == '*') { // Multi-line comment
-            advance(); // Skip '/'
-            advance(); // Skip '*'
-            while (!(currentChar == '*' && peek() == '/') && currentChar != '\0') {
-                comment.append(currentChar);
-                advance();
+        } else if (reader.currentChar() == '/' && reader.peek() == '*') { // Multi-line comment
+            reader.advance(); // Skip '/'
+            reader.advance(); // Skip '*'
+            while (!(reader.currentChar() == '*' && reader.peek() == '/') && reader.currentChar() != '\0') {
+                comment.append(reader.currentChar());
+                reader.advance();
             }
-            advance(); // Skip '*'
-            advance(); // Skip '/'
+            reader.advance(); // Skip '*'
+            reader.advance(); // Skip '/'
             return new Token(TokenType.MULTI_LINE_COMMENT, comment.toString().trim());
         }
         return null;
@@ -96,31 +103,37 @@ public class Lexer {
 
     private Token scanIdentifier() {
         StringBuilder result = new StringBuilder();
-        while (Character.isLetterOrDigit(currentChar) || currentChar == '_') {
-            result.append(currentChar);
-            advance();
+        while (Character.isLetterOrDigit(reader.currentChar()) || reader.currentChar() == '_') {
+            result.append(reader.currentChar());
+            reader.advance();
         }
         String word = result.toString().toLowerCase();
 
+        // Check if it's a keyword instead of returning an identifier
+        if (TokenType.tokenTypeMap.containsKey(word)) {
+            return new Token(TokenType.tokenTypeMap.get(word), word);
+        }
+
         return new Token(TokenType.ID, word);
     }
+
 
     private Token scanNumber() {
         StringBuilder num = new StringBuilder();
         TokenType type = TokenType.INT;
 
-        while (Character.isDigit(currentChar)) {
-            num.append(currentChar);
-            advance();
+        while (Character.isDigit(reader.currentChar())) {
+            num.append(reader.currentChar());
+            reader.advance();
         }
 
-        if (currentChar == '.') {
+        if (reader.currentChar() == '.') {
             type = TokenType.DOUBLE;
-            num.append(currentChar);
-            advance();
-            while (Character.isDigit(currentChar)) {
-                num.append(currentChar);
-                advance();
+            num.append(reader.currentChar());
+            reader.advance();
+            while (Character.isDigit(reader.currentChar())) {
+                num.append(reader.currentChar());
+                reader.advance();
             }
         }
 
@@ -128,15 +141,15 @@ public class Lexer {
     }
 
     private Token scanString() {
-        char quoteChar = currentChar;
-        advance();
+        char quoteChar = reader.currentChar();
+        reader.advance();
         StringBuilder value = new StringBuilder();
 
-        while (currentChar != quoteChar && currentChar != '\0') {
-            value.append(currentChar);
-            advance();
+        while (reader.currentChar() != quoteChar && reader.currentChar() != '\0') {
+            value.append(reader.currentChar());
+            reader.advance();
         }
-        advance();
+        reader.advance();
         return new Token(TokenType.STRING, value.toString());
     }
 

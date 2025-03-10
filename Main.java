@@ -1,14 +1,31 @@
 import Lexer.Token;
 import Lexer.Lexer;
+import Lexer.SourceCodeReader2;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Scanner;
+
 import Lexer.TokenType;
 
 public class Main {
-    public static void main(String[] args) {
-        String input = "x = 10;\nprint(x);\n// Det her er en kedelig kommentar\n/* Jeg kan godt lide \n KAGE  */";
+    public static void main(String[] args) throws IOException {
+        File currentDir = new File ("./CodeFiles");
+        String basePath = currentDir.getCanonicalPath();
+        System.out.println(basePath);
 
-        Lexer lexer = new Lexer(input);
+        Scanner scanner = new Scanner(System.in);
+
+        // Ask the user for the file name
+        System.out.print("Enter the file name: ");
+        String filePathName = scanner.nextLine();  // Get the file name from the user
+
+        SourceCodeReader2 reader = new SourceCodeReader2(basePath + "/" + filePathName);
+
+
+        Lexer lexer = new Lexer(reader);
+        System.out.println("hej");
         List<Token> tokens = new ArrayList<>();
 
         Token token;
@@ -16,6 +33,7 @@ public class Main {
             tokens.add(token);
             System.out.println(token);
         }
+
 
 
     }
