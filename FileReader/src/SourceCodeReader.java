@@ -29,21 +29,24 @@ public class SourceCodeReader {
 
 
     public char advance() {
+        if (EOF) return '\0';
+
         try {
-            int nextChar = reader.read();
-            if (nextChar == -1) {
-                this.EOF = true;
-                return '\0'; // Null character indicates EOF
+            int nextCharInt = reader.read();
+            if (nextCharInt == -1) {
+                EOF = true;
+                return '\0';
+            } else {
+                this.nextChar = (char) nextCharInt;
+                return this.nextChar;
             }
-            this.nextChar = (char) nextChar;
-            return (char) nextChar;
         } catch (IOException e) {
-            this.EOF = true; // Mark as EOF to prevent further reads
+            EOF = true;
             return '\0';
         }
     }
 
-    public boolean isEOF(){
+    public boolean isEOF() {
         return this.EOF;
     }
 }
