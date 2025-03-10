@@ -17,6 +17,9 @@ public class SourceCodeReader {
         // Buffereadreader reads multiple(but we use Filereader inside to only read 1)
         this.reader = new BufferedReader(new FileReader(filepath));
         this.nextChar = 0;
+
+        // Advances reader to first char
+        this.advance();
     }
 
 

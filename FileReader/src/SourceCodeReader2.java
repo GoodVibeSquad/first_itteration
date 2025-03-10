@@ -15,6 +15,9 @@ public class SourceCodeReader2 {
         this.sourceCode = Files.readString(Path.of(filepath));
         this.EOF = sourceCode.isEmpty();
         this.nextChar = 0;
+
+        // Advances reader to first char
+        this.advance();
     }
 
     public char peek() {
@@ -26,7 +29,7 @@ public class SourceCodeReader2 {
             this.nextChar = sourceCode.charAt(index);
         } else {
             this.EOF = true;
-            this.nextChar = (char) -1;
+            this.nextChar = '\0';
         }
         index++;
     }

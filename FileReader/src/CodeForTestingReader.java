@@ -7,7 +7,7 @@ public class CodeForTestingReader {
     public CodeForTestingReader() throws FileNotFoundException {
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Throwable {
         //SourceCodeReader reader = new SourceCodeReader("C:\\Users\\peter\\Desktop\\4. semester\\Project\\FileReader\\src\\myFile.txt");
 
         File currentDir = new File ("src/CodeFiles");
@@ -22,11 +22,12 @@ public class CodeForTestingReader {
 
 
 
-        SourceCodeReader2 reader = new SourceCodeReader2(basePath + "/" + filePathName);
+        SourceCodeReader reader = new SourceCodeReader(basePath + "/" + filePathName);
         while(!reader.isEOF()) {
-            reader.advance();
             System.out.println(reader.peek());
+            reader.advance();
         }
+
     }
 
 
