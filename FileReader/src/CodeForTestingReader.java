@@ -22,10 +22,13 @@ public class CodeForTestingReader {
 
 
 
-        SourceCodeReader reader = new SourceCodeReader(basePath + "/" + filePathName);
+        SourceCodeReader2 reader = new SourceCodeReader2(basePath + "/" + filePathName);
         while(!reader.isEOF()) {
-            System.out.println(reader.peek());
+            System.out.println("Current char: " + reader.currentChar());
+            System.out.println("Peak value: " + reader.peek());
+            reader.peek();
             reader.advance();
+            System.out.println("\n");
         }
 
     }

@@ -20,18 +20,25 @@ public class SourceCodeReader2 {
         this.advance();
     }
 
-    public char peek() {
+    public char currentChar() {
+        if(this.EOF) return '\0';
         return this.nextChar;
     }
 
-    public void advance() {
+    public char peek() {
+        if (this.EOF || this.index >= sourceCode.length()) return '\0'; // Check if index is out of bounds
+        return sourceCode.charAt(this.index);
+    }
+    public char advance() {
         if (index < sourceCode.length()) {
             this.nextChar = sourceCode.charAt(index);
         } else {
             this.EOF = true;
             this.nextChar = '\0';
+            return this.nextChar;
         }
         index++;
+        return nextChar;
     }
 
     public boolean isEOF() {

@@ -30,7 +30,6 @@ public class SourceCodeReader {
 
     public char advance() {
         if (EOF) return '\0';
-
         try {
             int nextCharInt = reader.read();
             if (nextCharInt == -1) {
