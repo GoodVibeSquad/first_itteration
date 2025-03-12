@@ -2,13 +2,11 @@ package ast;
 import java.util.List;
 import Lexer.*;
 
-
-
 public class Ast {
-
 }
 
 
+// Each part of the actual source code split into columns and lines
 class Location {
     int line, column;
     public Location(int line, int column) {
@@ -18,11 +16,11 @@ class Location {
 }
 
 
-class Ident {
+class Identifier {
     Location loc;
     String id;
 
-    public Ident(Location loc, String id) {
+    public Identifier(Location loc, String id) {
         this.loc = loc;
         this.id = id;
     }
@@ -58,30 +56,29 @@ record CInt(long value) implements Constant {}
 record CDouble(double value) implements Constant {}
 
 // Expressions
-sealed interface Expr permits Econstant, Eident, Ebinaryoperators, Eunaryoperators, Ecall, Elist, Eget {}
+sealed interface Expression permits Econstant, Eident, Ebinaryoperators, Eunaryoperators, Ecall, Elist, Eget {}
 
-record Econstant(Constant value) implements Expr {}
-record Eident(Ident ident) implements Expr {}
-record Ebinaryoperators(BinaryOperators op, Expr left, Expr right) implements Expr {}
-record Eunaryoperators(UnaryOperators op, Expr expr) implements Expr {}
-record Ecall(Ident func, List<Expr> args) implements Expr {}
-record Elist(List<Expr> elements) implements Expr {}
-record Eget(Expr list, Expr index) implements Expr {}
+record Econstant(Constant value) implements Expression {}
+record Eident(Identifier ident) implements Expression {}
+record Ebinaryoperators(BinaryOperators op, Expression left, Expression right) implements Expression {}
+record Eunaryoperators(UnaryOperators op, Expression expr) implements Expression {}
+record Ecall(Identifier func, List<Expression> args) implements Expression {}
+record Elist(List<Expression> elements) implements Expression {}
+record Eget(Expression list, Expression index) implements Expression {}
 
 // Statements
-sealed interface Stmt permits Sif, Sreturn, Sassign, Sprint, Sblock, Sfor, Seval, Sset {}
+sealed interface Statement permits Sif, Sreturn, Sassign, Sprint, Sblock, Sfor, Seval, Sset {}
 
-record Sif(Expr condition, Stmt thenBranch, Stmt elseBranch) implements Stmt {}
-record Sreturn(Expr expr) implements Stmt {}
-record Sassign(Ident var, Expr expr) implements Stmt {}
-record Sprint(Expr expr) implements Stmt {}
-record Sblock(List<Stmt> stmts) implements Stmt {}
-record Sfor(Ident var, Expr iterable, Stmt body) implements Stmt {}
-record Seval(Expr expr) implements Stmt {}
-record Sset(Expr list, Expr index, Expr value) implements Stmt {}
+record Sif(Expression condition, Statement thenBranch, Statement elseBranch) implements Statement {}
+record Sreturn(Expression expr) implements Statement {}
+record Sassign(Identifier var, Expression expr) implements Statement {}
+record Sprint(Expression expr) implements Statement {}
+record Sblock(List<Statement> stmts) implements Statement {}
+record Sfor(Identifier var, Expression iterable, Statement body) implements Statement {}
+record Seval(Expression expr) implements Statement {}
+record Sset(Expression list, Expression index, Expression value) implements Statement {}
 
 // Function definition
-record Def(Ident name, List<Ident> params, Stmt body) {}
+record Def(Identifier name, List<Identifier> params, Statement body) {}
 
-// Represents a Mini-Python file (list of function definitions and a main block)
-record File(List<Def> functions, Stmt mainBlock) {}
+record File(List<Def> functions, Statement mainBlock) {}
