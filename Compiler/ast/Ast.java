@@ -5,6 +5,23 @@ import Lexer.*;
 public class Ast {
 }
 
+/*
+
+HOLA SOZ
+TODO:
+- Lav alt
+- Tilføj alle binære operatorer
+- Alt der giver en værdi er en expression (F.eks. PLUS, MINUS, BINÆROPERATIONER)
+- Her er et eksempel på en af funktioner
+record Econstant(Constant value) implements Expression {}
+
+F.eks. hvis du vil lave en ny en til ternary operator
+
+record ETernary(Expression e, Expression e, Expression e) implements Expression {}
+
+
+
+*/
 
 // Each part of the actual source code split into columns and lines
 class Location {
