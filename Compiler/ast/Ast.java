@@ -19,6 +19,13 @@ F.eks. hvis du vil lave en ny en til ternary operator
 
 record ETernary(Expression e, Expression e, Expression e) implements Expression {}
 
+-Lav noget en Visitor klasse
+
+-Lav en accept funktion i alle records
+
+-
+
+
 
 
 */
