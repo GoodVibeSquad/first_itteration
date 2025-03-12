@@ -25,7 +25,7 @@ public class Main {
 
 
         Lexer lexer = new Lexer(reader);
-        System.out.println("hej");
+
         List<Token> tokens = new ArrayList<>();
 
         Token token;

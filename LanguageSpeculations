@@ -1,3 +1,4 @@
+//we do the split under the hood, use scikitlearn
 
 //Layer er en overloadet Contstructor
  som skal have antal rækker, kan tage søjler 
@@ -18,15 +19,16 @@ dataType = "img"
 epochs = int // hvor mange gange den træner på dataen 
 learningRate = double
 
-nn.train(data, dataType, epochs, learningRate)
+nn.train(data, dataType, epochs, learningRate, lossFunction,batchSize)
 nn.saveModel("filepath")
 
 NeuralNetwork nn = new NeuralNetwork().loadModel("filepath")
 
 data = "filepath"
 dataType = "img"
-nnn.predict(data, dataType)
-    
+nn.predict(data, dataType)
+//Print accuracy for the user.
+//Accuracy in % = (correctly predicted datapoints in the testSet/total datapoints in testSet)*100
 
 
 
