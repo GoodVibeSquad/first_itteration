@@ -1,19 +1,13 @@
-package ast;
-import java.util.List;
-import Lexer.*;
-
-public class Ast {
-}
-
 /*
 
 HOLA SOZ
 TODO:
 - Lav alt
+- Lav alle klasser(enums og records også) til egne filer
 - Tilføj alle binære operatorer
 - Alt der giver en værdi er en expression (F.eks. PLUS, MINUS, BINÆROPERATIONER)
 - Her er et eksempel på en af funktioner
-record Econstant(Constant value) implements Expression {}
+record Econstant(Literals  value) implements Expression {}
 
 F.eks. hvis du vil lave en ny en til ternary operator
 
@@ -23,12 +17,34 @@ record ETernary(Expression e, Expression e, Expression e) implements Expression 
 
 -Lav en accept funktion i alle records
 
--
+-Eksempel af visitor interface
+
+package ast;
+
+public interface AstVisitor<R> {
+    // Constants
+    R visitCNone(CNone c);
+
+}
+
+Eksempel af implementation af en AstVisitor
+
+record CNone() implements Constant {
+    public <R> R accept(AstVisitor<R> visitor) { return visitor.visitCNone(this); }
+}
 
 
 
 
 */
+package Compiler.ast;
+import java.util.List;
+import Compiler.Lexer.*;
+
+public class Ast {
+}
+
+
 
 // Each part of the actual source code split into columns and lines
 class Location {
@@ -71,18 +87,18 @@ enum BinaryOperators {
 }
 
 // Constants
-sealed interface Constant permits CNone, CBool, CString, CInt, CDouble {}
+sealed interface Literals  permits CNone, CBool, CString, CInt, CDouble {}
 
-record CNone() implements Constant {}
-record CBool(boolean value) implements Constant {}
-record CString(String value) implements Constant {}
-record CInt(long value) implements Constant {}
-record CDouble(double value) implements Constant {}
+record CNone() implements Literals  {}
+record CBool(boolean value) implements Literals  {}
+record CString(String value) implements Literals  {}
+record CInt(long value) implements Literals  {}
+record CDouble(double value) implements Literals  {}
 
 // Expressions
 sealed interface Expression permits Econstant, Eident, Ebinaryoperators, Eunaryoperators, Ecall, Elist, Eget {}
 
-record Econstant(Constant value) implements Expression {}
+record Econstant(Literals  value) implements Expression {}
 record Eident(Identifier ident) implements Expression {}
 record Ebinaryoperators(BinaryOperators op, Expression left, Expression right) implements Expression {}
 record Eunaryoperators(UnaryOperators op, Expression expr) implements Expression {}

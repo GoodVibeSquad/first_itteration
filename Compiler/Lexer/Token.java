@@ -1,4 +1,4 @@
-package Lexer;
+package Compiler.Lexer;
 
 //define the token class
 public class Token {
