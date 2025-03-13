@@ -11,7 +11,7 @@ import Lexer.TokenType;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        File currentDir = new File ("./CodeFiles");
+        File currentDir = new File ("CodeFiles");
         String basePath = currentDir.getCanonicalPath();
         System.out.println(basePath);
 
