@@ -1,10 +1,12 @@
 package Lexer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Lexer {
     private static final String BLANK = " \t\n\r";
-
+    //List of operators like Blank
     private final SourceCodeReader2 reader;
-    
 
     public Lexer(SourceCodeReader2 reader) {
         this.reader = reader;
@@ -41,6 +43,11 @@ public class Lexer {
                 return scanString();
             }
 
+            //if statement med condition ligesom whitespace
+            // lav en scan operator, der tjekker om næste char er en del af operator listen
+            
+
+            //måske lav om så den faktisk bruger vores hash
             for (TokenType type : TokenType.values()) {
                 String symbol = type.getName();
 
