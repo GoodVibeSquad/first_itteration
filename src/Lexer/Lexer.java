@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class Lexer {
     private static final String BLANK = " \t\n\r";
-    //List of operators like Blank
+    private static final String OPERATORS = "+=-!";
     private final SourceCodeReader2 reader;
 
     public Lexer(SourceCodeReader2 reader) {
@@ -43,9 +43,9 @@ public class Lexer {
                 return scanString();
             }
 
-            //if statement med condition ligesom whitespace
-            // lav en scan operator, der tjekker om næste char er en del af operator listen
-            
+            if (OPERATORS.indexOf(reader.currentChar()) != -1){
+                return scanOperators();
+            }
 
             //måske lav om så den faktisk bruger vores hash
             for (TokenType type : TokenType.values()) {
@@ -62,18 +62,6 @@ public class Lexer {
         return new Token(TokenType.EOF);
     }
 
-    private boolean matchSymbol(String symbol) {
-        int length = symbol.length();
-
-        for (int i = 0; i < length; i++) {
-            if (reader.isEOF() || reader.currentChar() != symbol.charAt(i)) {
-                return false; // If any character does not match, return false
-            }
-            reader.advance(); // Move to the next character
-        }
-
-        return true; // If all characters match, return true
-    }
 
 
 
@@ -160,5 +148,34 @@ public class Lexer {
         return new Token(TokenType.STRING, value.toString());
     }
 
+    private Token scanOperators() {
+        StringBuilder op = new StringBuilder();
+
+        while (OPERATORS.indexOf(reader.currentChar()) != -1) {
+            op.append(reader.currentChar());
+            reader.advance();
+        }
+        reader.advance();
+
+        String opString = op.toString();
+        if (TokenType.tokenTypeMap.containsKey(opString)) {
+            return new Token(TokenType.tokenTypeMap.get(opString), opString);
+        }
+
+        throw new RuntimeException("Unexpected operator: " + opString);
+    }
+
+    private boolean matchSymbol(String symbol) {
+        int length = symbol.length();
+
+        for (int i = 0; i < length; i++) {
+            if (reader.isEOF() || reader.currentChar() != symbol.charAt(i)) {
+                return false; // If any character does not match, return false
+            }
+            reader.advance(); // Move to the next character
+        }
+
+        return true; // If all characters match, return true
+    }
 
 }
