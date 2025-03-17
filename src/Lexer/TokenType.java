@@ -15,6 +15,7 @@ public enum TokenType{
     ARRAY("["),
     PLUS("+"),
     MINUS("-"),
+    DOT("."),
     MULTIPLY("*"),
     DIVISION("/"),
     MODULUS("%"),
@@ -36,9 +37,8 @@ public enum TokenType{
     PRINT("print"),
     IF("if"),
     ELSE("else"),
-    ELSE_IF("else if"),
-    OR("|"),
-    AND("&"),
+    OR("||"),
+    AND("&&"),
     RETURN("return"),
     BREAK("break"),
     CONTINUE("continue"),
@@ -54,9 +54,11 @@ public enum TokenType{
     EULER("E"),
     PI("Pi"),
     EXPONENT("^"),
-    MAX("max"),
-    LAYER("layer"),
+    MAX("Max"),
+    LAYER("Layer"),
     NEURALNETWORK("NeuralNetwork"),
+    ACTIVATIONFUNCTION("ActivationFunction"),
+    RELU("Relu"),
     EOF("EOF");
 
 

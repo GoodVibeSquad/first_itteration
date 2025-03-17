@@ -32,7 +32,7 @@ public class Main {
             tokens.add(token);
             System.out.println(token);
         }
-
+        System.out.println("Total number of tokens: " + tokens.size());
 
 
     }
