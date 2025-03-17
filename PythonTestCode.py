@@ -238,7 +238,7 @@ else:
     print("No")
 
 # OUR CODE VERSION (MAXIMUM VALUE)
-# int maxVal = max(0,1);
+# int maxVal = Max(0,1);
 
 # PYTHON VERSION
 maxVal = max(0, 1)
@@ -249,11 +249,11 @@ maxVal = max(0, 1)
 # int sum = Sum(i,n,Expression);
 
 # RUNS n TIMES FROM i(including i) expression is interchangeable for value k
-# FIRST K IS WHERE YOU INSERT THE EXPRESSION IN THE SUM VALUE
+# FIRST K IS WHERE YOU INSERT THE EXPRESSION IN THE SUM VALUE (THe function for the sum)
 # PYTHON VERSION
 i = 1
-n = 5  # Adjust n for a proper range
-sum_value = sum(k for k in range(i, i+n))  # Summing squares of numbers from i to n-1
+n = 2  # Adjust n for a proper range
+sum_value = sum(k**2 for k in range(i, n+1))  # Summing squares of numbers from i to n-1
 print("SUM")
 print(sum_value)
 
@@ -283,11 +283,21 @@ pi = math.pi
 
 
 # OUR CODE VERSION (Activation Functions)
-# activationFunc Relu = new activationFunc(Max(0,this.x));
+# activationFunction Relu = new activationFunction.Relu;
+# activationFunction SigmaFunc = new activationFunction("other activationFunction");
 
 # PYTHON VERSION (Creating RELU activationFunc example)
-def Relu(x):
-    return max(0,x)
+class activationFunction:
+    def run(x):
+        return x
+
+    def amazingMethod(x):
+        return x
+
+# Relu can use the amazingMethod!
+class Relu(activationFunction):
+    def run(x):
+        return max(0,x)
 
 
 # REMEMBER TO MAKE PARENTHESES AND TUBORG KLAMMER (TABULATION IN PYTHON)
