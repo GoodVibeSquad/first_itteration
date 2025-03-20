@@ -1,4 +1,4 @@
-ø = 10.5;
+double ø = 10.5;
 Pi
 &&
 ||
@@ -6,7 +6,7 @@ print(x);
 // Det her er en kedelig kommentar
 /* Jeg kan godt lide
  KAGE  */
- for(i = 0; i < 10; i++){
+ for(int i = 0; i < 10; i++){
      print(i==5);
  }
 
@@ -18,3 +18,5 @@ print(x);
  else{
      print("x er ikke 10.5");
  }
+ string a = "hej";
+ bool s = true;

@@ -9,6 +9,7 @@ public enum TokenType{
     DOUBLE(null),
     ID(null),
     COMMENT(null),
+    TYPE(null),
     MULTI_LINE_COMMENT(null),
     FOR("for"),
     WHILE("while"),
@@ -72,7 +73,9 @@ public enum TokenType{
 
     static {
         for(final TokenType tokenType : TokenType.values()) {
-            tokenTypeMap.put(tokenType.name, tokenType);
+            if(tokenType.name != null){
+                tokenTypeMap.put(tokenType.name, tokenType);
+            }
         }
     }
 
