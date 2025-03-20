@@ -1,5 +1,7 @@
 package Lexer;
 
+import javax.swing.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +32,7 @@ public class Lexer {
             if (reader.currentChar() == '/' && (reader.peek() == '/' || reader.peek() == '*')) {
                 return scanComment();
             }
+
 
             if (Character.isLetter(reader.currentChar()) || reader.currentChar() == '_') {
                 return scanIdentifier();
@@ -107,6 +110,15 @@ public class Lexer {
         // Check if it's a keyword instead of returning an identifier
         if (TokenType.tokenTypeMap.containsKey(word)) {
             return new Token(TokenType.tokenTypeMap.get(word), word);
+        }
+
+        ArrayList<String> types = new ArrayList<>();
+        types.add("int");
+        types.add("string");
+        types.add("double");
+        types.add("bool");
+        if(types.contains(word)){
+            return new Token(TokenType.TYPE, word);
         }
 
         return new Token(TokenType.ID, word);

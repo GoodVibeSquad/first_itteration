@@ -7,6 +7,7 @@ public enum TokenType{
     STRING(null),
     BOOL(null),
     DOUBLE(null),
+    TYPE(null),
     FOR("for"),
     WHILE("while"),
     ARRAY("["),
