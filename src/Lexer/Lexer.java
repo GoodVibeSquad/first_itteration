@@ -102,7 +102,7 @@ public class Lexer {
             result.append(reader.currentChar());
             reader.advance();
         }
-        String word = result.toString().toLowerCase();
+        String word = result.toString();
 
         // Check if it's a keyword instead of returning an identifier
         if (TokenType.tokenTypeMap.containsKey(word)) {
