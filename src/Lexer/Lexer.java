@@ -121,6 +121,10 @@ public class Lexer {
             return new Token(TokenType.TYPE, word);
         }
 
+        if(word.equals("true") || word.equals("false")){
+            return new Token(TokenType.BOOL, word);
+        }
+
         return new Token(TokenType.ID, word);
     }
 
