@@ -1,9 +1,10 @@
 package Lexer;
 
-import javax.swing.*;
+import CodeReader.SourceCodeReader2;
+import Tokens.Token;
+import Tokens.TokenType;
+
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Lexer {
     private static final String BLANK = " \t\n\r";
