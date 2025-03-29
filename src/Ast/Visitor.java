@@ -50,7 +50,7 @@ class Visitor implements AstVisitor<String> {
     }
 
     @Override
-    public String visitEcall(Ecall e) {
+    public String visitEcall(EFuncCall e) {
         return "";
     }
 
