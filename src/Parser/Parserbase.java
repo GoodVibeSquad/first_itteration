@@ -1,6 +1,5 @@
 import java.util.*;
 import Compiler.ast.*;
-import Lexer.TokenType;
 
 public class BottomUpParser {
 
