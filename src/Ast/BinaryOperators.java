@@ -1,6 +1,6 @@
 package Ast;
 
-import Lexer.TokenType;
+import Tokens.TokenType;
 
 // Binary operators (from TokenType)
 enum BinaryOperators {

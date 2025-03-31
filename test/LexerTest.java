@@ -1,4 +1,7 @@
+import CodeReader.SourceCodeReader2;
 import Lexer.*;
+import Tokens.Token;
+import Tokens.TokenType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -7,6 +10,7 @@ import org.mockito.Mockito;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.List;
 
 
 public class LexerTest {
@@ -30,7 +34,10 @@ public class LexerTest {
     void testSkipWhitespace() {
         Deque<Character> charQueue = new LinkedList<>(Arrays.asList(' ', ' ', '\n', 'a'));
         Mockito.when(reader.currentChar()).thenAnswer(invocation -> charQueue.peek());
-        Mockito.doAnswer(invocation -> {charQueue.poll();return null;}).when(reader).advance();
+        Mockito.doAnswer(invocation -> {
+            charQueue.poll();
+            return null;
+        }).when(reader).advance();
         lexer.tokenize();
         Mockito.verify(reader, Mockito.atLeast(3)).advance();
     }
@@ -82,7 +89,7 @@ public class LexerTest {
 
     @Test
     void testScanNumberWithUnExpectedInput() {
-        Deque<Character> charQueue = new LinkedList<>(Arrays.asList('1','.','0'));
+        Deque<Character> charQueue = new LinkedList<>(Arrays.asList('1', '.', '0'));
 
         Mockito.when(reader.currentChar()).thenAnswer(invocation -> charQueue.peek());
 
@@ -98,7 +105,7 @@ public class LexerTest {
 
     @Test
     void testScanDoubleWithExpectedInput() {
-        Deque<Character> charQueue = new LinkedList<>(Arrays.asList('1','.','0'));
+        Deque<Character> charQueue = new LinkedList<>(Arrays.asList('1', '.', '0'));
         Mockito.when(reader.currentChar()).thenAnswer(invocation -> charQueue.peek());
 
         Mockito.doAnswer(invocation -> {
@@ -112,7 +119,7 @@ public class LexerTest {
 
     @Test
     void testScanDoubleWithUnExpectedInput() {
-        Deque<Character> charQueue = new LinkedList<>(Arrays.asList('1','0','3'));
+        Deque<Character> charQueue = new LinkedList<>(Arrays.asList('1', '0', '3'));
 
         Mockito.when(reader.currentChar()).thenAnswer(invocation -> charQueue.peek());
 
@@ -127,7 +134,7 @@ public class LexerTest {
 
     @Test
     void testScanStringWithExpectedInput() {
-        Deque<Character> charQueue = new LinkedList<>(Arrays.asList('"','h','e','y','"'));
+        Deque<Character> charQueue = new LinkedList<>(Arrays.asList('"', 'h', 'e', 'y', '"'));
 
         Mockito.when(reader.currentChar()).thenAnswer(invocation -> charQueue.peek());
 
@@ -137,12 +144,12 @@ public class LexerTest {
         }).when(reader).advance();
         Token token = lexer.tokenize();
         Assertions.assertEquals(TokenType.STRING, token.getType(), "Token type should not be DOUBLE");
-        Assertions.assertEquals("hey",token.getValue());
+        Assertions.assertEquals("hey", token.getValue());
     }
 
     @Test
     void testScanStringWithUnExpectedInput() {
-        Deque<Character> charQueue = new LinkedList<>(Arrays.asList('h','e','y'));
+        Deque<Character> charQueue = new LinkedList<>(Arrays.asList('h', 'e', 'y'));
 
         Mockito.when(reader.currentChar()).thenAnswer(invocation -> charQueue.peek());
 
@@ -210,4 +217,172 @@ public class LexerTest {
 
         Assertions.assertThrows(RuntimeException.class, () -> lexer.tokenize());
     }
+
+    @Test
+    void testScanOperatorTokens() {
+        List<String> operators = Arrays.asList("+", "-", "=", "!", "||", "&&");
+
+        for (String op : operators) {
+            Deque<Character> charQueue = new LinkedList<>();
+            for (char c : op.toCharArray()) {
+                charQueue.add(c);
+            }
+            charQueue.add('\0');
+
+            Mockito.when(reader.currentChar()).thenAnswer(invocation -> charQueue.peek());
+            Mockito.when(reader.peek()).thenAnswer(invocation -> {
+                if (charQueue.size() > 1) {
+                    return (Character) charQueue.toArray()[1];
+                }
+                return '\0';
+            });
+
+            Mockito.doAnswer(invocation -> {
+                charQueue.poll();
+                return null;
+            }).when(reader).advance();
+
+            Token token = lexer.tokenize();
+
+            Assertions.assertEquals(TokenType.tokenTypeMap.get(op), token.getType(),
+                    "Token type should match operator: " + op);
+            Assertions.assertEquals(op, token.getValue(), "Token value should match operator: " + op);
+        }
+    }
+
+
+    @Test
+    void testScanKeywordTokens() {
+        List<String> keywords = Arrays.asList("if", "else", "while", "return");
+
+        for (String keyword : keywords) {
+            Deque<Character> charQueue = new LinkedList<>();
+            for (char c : keyword.toCharArray()) {
+                charQueue.add(c);
+            }
+            charQueue.add('\0');
+
+            Mockito.when(reader.currentChar()).thenAnswer(invocation -> charQueue.peek());
+            Mockito.doAnswer(invocation -> {
+                charQueue.poll();
+                return null;
+            }).when(reader).advance();
+
+            Token token = lexer.tokenize();
+            Assertions.assertEquals(TokenType.tokenTypeMap.get(keyword), token.getType(),
+                    "Token type should match keyword: " + keyword);
+            Assertions.assertEquals(keyword, token.getValue());
+        }
+    }
+
+    @Test
+    void testScanBooleanTokens() {
+        List<String> bools = Arrays.asList("true", "false");
+
+        for (String boolVal : bools) {
+            Deque<Character> charQueue = new LinkedList<>();
+            for (char c : boolVal.toCharArray()) {
+                charQueue.add(c);
+            }
+            charQueue.add('\0');
+
+            Mockito.when(reader.currentChar()).thenAnswer(invocation -> charQueue.peek());
+            Mockito.doAnswer(invocation -> {
+                charQueue.poll();
+                return null;
+            }).when(reader).advance();
+
+            Token token = lexer.tokenize();
+            Assertions.assertEquals(TokenType.BOOL, token.getType(), "Token type should be BOOL");
+            Assertions.assertEquals(boolVal, token.getValue());
+        }
+    }
+
+    @Test
+    void testScanTypeTokens() {
+        List<String> types = Arrays.asList("int", "string", "double", "bool");
+
+        for (String type : types) {
+            Deque<Character> charQueue = new LinkedList<>();
+            for (char c : type.toCharArray()) {
+                charQueue.add(c);
+            }
+            charQueue.add('\0');
+
+            Mockito.when(reader.currentChar()).thenAnswer(invocation -> charQueue.peek());
+            Mockito.doAnswer(invocation -> {
+                charQueue.poll();
+                return null;
+            }).when(reader).advance();
+
+            Token token = lexer.tokenize();
+            Assertions.assertEquals(TokenType.TYPE, token.getType(), "Token type should be TYPE");
+            Assertions.assertEquals(type, token.getValue());
+        }
+    }
+
+
+    @Test
+    void testScanSymbolTokens() {
+        List<String> symbols = Arrays.asList("(", ")", "{", "}", "[", "]", ";", ",");
+
+        for (String symbol : symbols) {
+            Deque<Character> charQueue = new LinkedList<>();
+            for (char c : symbol.toCharArray()) {
+                charQueue.add(c);
+            }
+            charQueue.add('\0');
+
+            Mockito.when(reader.currentChar()).thenAnswer(invocation -> charQueue.peek());
+            Mockito.doAnswer(invocation -> {
+                charQueue.poll();
+                return null;
+            }).when(reader).advance();
+
+            Token token = lexer.tokenize();
+            Assertions.assertEquals(TokenType.tokenTypeMap.get(symbol), token.getType(),
+                    "Token type should match symbol: " + symbol);
+            Assertions.assertEquals(symbol, token.getValue());
+        }
+    }
+
+
+    @Test
+    void testTokenOrderMatchesSourceCode() {
+        // Simulating: if (1) { print(1); }
+        Deque<Character> charQueue = new LinkedList<>(Arrays.asList(
+                'i', 'f', ' ', '(', '1', ')', ' ', '{', ' ',
+                'p', 'r', 'i', 'n', 't', '(', '1', ')', ';', ' ', '}', '\0'
+        ));
+
+        // Mock reader behavior
+        Mockito.when(reader.currentChar()).thenAnswer(invocation -> charQueue.peek());
+        Mockito.doAnswer(invocation -> {
+            charQueue.poll();
+            return null;
+        }).when(reader).advance();
+
+        // Expected tokens in correct order
+        List<TokenType> expectedTypes = Arrays.asList(
+                TokenType.IF,                     // "if"
+                TokenType.OPEN_PARENTHESIS,       // "("
+                TokenType.INT,                    // "1"
+                TokenType.CLOSED_PARENTHESIS,     // ")"
+                TokenType.OPEN_CURLY_BRACKET,     // "{"
+                TokenType.PRINT,                  // "print"
+                TokenType.OPEN_PARENTHESIS,       // "("
+                TokenType.INT,                    // "1"
+                TokenType.CLOSED_PARENTHESIS,     // ")"
+                TokenType.SEMICOLON,              // ";"
+                TokenType.CLOSED_CURLY_BRACKET    // "}"
+        );
+
+        // Tokenize and assert order
+        for (TokenType expectedType : expectedTypes) {
+            Token token = lexer.tokenize();
+            Assertions.assertEquals(expectedType, token.getType(),
+                    "Unexpected token type: " + token.getType());
+        }
+    }
 }
+

@@ -1,6 +1,6 @@
 package Ast;
 
-import Compiler.Lexer.TokenType;
+import Tokens.TokenType;
 
 // Unary operators (from TokenType)
 enum UnaryOperators {
