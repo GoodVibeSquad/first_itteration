@@ -1,7 +1,7 @@
 import Lexer.Lexer;
-import Lexer.SourceCodeReader2;
-import Lexer.Token;
-import Lexer.TokenType;
+import CodeReader.SourceCodeReader2;
+import Tokens.Token;
+import Tokens.TokenType;
 
 import java.io.File;
 import java.io.IOException;

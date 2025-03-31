@@ -1,4 +1,7 @@
+import CodeReader.SourceCodeReader2;
 import Lexer.*;
+import Tokens.Token;
+import Tokens.TokenType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
