@@ -1,5 +1,6 @@
+/*
 import java.util.*;
-import Compiler.ast.*;
+import Ast.*;
 
 public class BottomUpParser {
 
@@ -194,3 +195,4 @@ public class BottomUpParser {
         System.out.println("AST: " + ast);
     }
 }
+*/
