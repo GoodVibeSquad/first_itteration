@@ -24,7 +24,7 @@ package Ast;
     R visitESqrt(ESqrt e);
     R visitETypeconversion(ETypeconversion e);
     R visitENewFunc(ENewFunc e);
-    R visitEExpression(EExpression e);
+    R visitEContainsExpression(EContainsExpression e);
     R visitEMethodCall(EMethodCall e);
 
     // Statements
