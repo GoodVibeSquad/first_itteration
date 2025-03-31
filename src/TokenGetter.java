@@ -17,7 +17,6 @@ public class TokenGetter {
 
     TokenGetter(String filePathName){
         this.tokens = new ArrayList<Token>();
-        this.reader = reader;
         this.sourceCodeDir = new File ("src/CodeFiles");
         try {
             this.basePath = sourceCodeDir.getCanonicalPath();
