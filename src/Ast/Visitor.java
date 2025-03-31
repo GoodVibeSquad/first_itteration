@@ -28,6 +28,16 @@ class Visitor implements AstVisitor<String> {
         return "";
     }
 
+    @Override
+    public String visitCEuler(CEuler c) {
+        return "";
+    }
+
+    @Override
+    public String visitCPi(CPi c) {
+        return "";
+    }
+
     // Expressions
     @Override
     public String visitEconstant(Econstant e) {
@@ -60,23 +70,48 @@ class Visitor implements AstVisitor<String> {
     }
 
     @Override
-    public String visitEget(Eget e) {
+    public String visitEternary(Eternary e) {
         return "";
     }
 
     @Override
-    public String visitEternary(Eternary e) {
+    public String visitESum(ESum e) {
+        return "";
+    }
+
+    @Override
+    public String visitEMax(EMax e) {
+        return "";
+    }
+
+    @Override
+    public String visitESqrt(ESqrt e) {
+        return "";
+    }
+
+    @Override
+    public String visitETypeconversion(ETypeconversion e) {
+        return "";
+    }
+
+    @Override
+    public String visitENewFunc(ENewFunc e) {
+        return "";
+    }
+
+    @Override
+    public String visitEContainsExpression(EContainsExpression e) {
+        return "";
+    }
+
+    @Override
+    public String visitEMethodCall(EMethodCall e) {
         return "";
     }
 
     // Statements
     @Override
     public String visitSif(Sif s) {
-        return "";
-    }
-
-    @Override
-    public String visitSreturn(Sreturn s) {
         return "";
     }
 
@@ -101,12 +136,22 @@ class Visitor implements AstVisitor<String> {
     }
 
     @Override
-    public String visitSeval(Seval s) {
+    public String visitSExpression(SExpression s) {
         return "";
     }
 
     @Override
-    public String visitSset(Sset s) {
+    public String visitSWhile(SWhile s) {
+        return "";
+    }
+
+    @Override
+    public String visitSBreak(SBreak s) {
+        return "";
+    }
+
+    @Override
+    public String visitSContinue(SContinue s) {
         return "";
     }
 
