@@ -16,7 +16,8 @@ public class ASTBuilder {
             case "constant" -> {
                 String constantValue = children.getFirst().getValue();
                 if ("true".equals(production.getRhs()) || "false".equals(production.getRhs())) {
-                    return new CBool(Boolean.parseBoolean(constantValue));
+                    CBool cBool = new CBool(Boolean.parseBoolean(constantValue));
+                    return new EConstant(cBool);
                 } else if (isDoubleLit(constantValue)) {
                     return new CDouble(Double.parseDouble(constantValue));
                 } else if (isIntegerLit(constantValue)) {
