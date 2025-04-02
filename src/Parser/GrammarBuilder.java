@@ -41,7 +41,7 @@ public class GrammarBuilder {
         grammar.add("expression", "unaryoperator", "expression");
         grammar.add("expression", "identifier");
         grammar.add("expression", "identifier", "(", "exlist", ")");
-        grammar.add("expression", "Sum", "(", "expression", "expression", "ActivationFunction");
+        grammar.add("expression", "Sum", "(", "expression", "expression", "ActivationFunction", ")");
         grammar.add("expression", "Sqrt","(","expression",")");
         grammar.add("expression", "Max","(","exlist",")");
         grammar.add("expression", "expression","?","expression",":","expression");
