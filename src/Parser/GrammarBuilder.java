@@ -61,13 +61,17 @@ public class GrammarBuilder {
 
         //Statements
         grammar.add("statement", "expression");
-        grammar.add("statement", "if", "expression", "then", "statement", "else", "statement");
+        grammar.add("statement", "if", "expression", "statement", "stmtTail");
         grammar.add("statement", "identifier", "eqop", "expression", ";");
         grammar.add("statement", "{", "statementlist", "}");
         grammar.add("statement", "for",  "(", "statement", "expression", ";", "statement", ")", "statement");
         grammar.add("statement", "while", "expression", "statement");
         grammar.add("statement", "break", ";");
         grammar.add("statement", "continue", ";");
+
+        //stmtTail
+        grammar.add("stmtTail", "else", "statement");
+        grammar.add("stmtTail", " ");
 
         //StatementList
         grammar.add("statementlist", "statement");
