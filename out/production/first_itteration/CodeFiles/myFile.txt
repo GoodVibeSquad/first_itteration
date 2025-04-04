@@ -1,8 +1,0 @@
-x = 10.5;
-print(x);
-// Det her er en kedelig kommentar
-/* Jeg kan godt lide
- KAGE  */
- for(i = 0; i < 10; i++){
-     print(i==5);
- }
