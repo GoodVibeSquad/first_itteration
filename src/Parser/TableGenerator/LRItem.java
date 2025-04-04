@@ -18,9 +18,7 @@ public class LRItem {
     }
 
     public String nextSymbol() {
-
         return isComplete() ? null : production.getRhs().get(dotPosition);
-
     }
 
     public LRItem advance(){

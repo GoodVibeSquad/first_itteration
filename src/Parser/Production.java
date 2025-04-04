@@ -6,9 +6,13 @@ public class Production {
     String lhs;
     List<String> rhs;
 
-    Production(String lhs, List<String> rhs) {
+    public Production(String lhs, List<String> rhs) {
         this.lhs = lhs;
         this.rhs = rhs;
+    }
+
+    public String getLhs() {
+        return lhs;
     }
 
     public List<String> getRhs() {

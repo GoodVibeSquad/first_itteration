@@ -30,38 +30,7 @@ public class BottomUpParser {
 
     }
 
-    // --- Token and lexer hookup ---
-    static class Token {
-        String type;
-        String value;
 
-        Token(String type, String value) {
-            this.type = type;
-            this.value = value;
-        }
-
-        public String toString() {
-            return type;
-        }
-    }
-
-    static class TokenStream {
-        List<Token> tokens;
-        int pos = 0;
-
-        TokenStream(List<Token> tokens) {
-            this.tokens = tokens;
-        }
-
-        Token peek() {
-            if (pos < tokens.size()) return tokens.get(pos);
-            return new Token("EOF", "");
-        }
-
-        Token advance() {
-            return tokens.get(pos++);
-        }
-    }
 
     // --- Action enum ---
     enum ActionType { SHIFT, REDUCE, ACCEPT, ERROR }

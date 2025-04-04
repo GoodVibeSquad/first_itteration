@@ -99,6 +99,18 @@ public class GrammarBuilder {
 
         return grammar;
     }
+    public static Grammar createSimpleGrammar(){
+        Grammar grammar = new Grammar();
+        grammar.setStartSymbol("S");
+
+        grammar.add("S", "E");
+        grammar.add("E", "E", "+", "T");
+        grammar.add("E", "T");
+        grammar.add("T", "int");
+
+        return grammar;
+
+    }
 
 
 
