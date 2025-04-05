@@ -1,6 +1,6 @@
 package Ast;
 
-class Identifier {
+public class Identifier {
     Location loc;
     String id;
     Type type;

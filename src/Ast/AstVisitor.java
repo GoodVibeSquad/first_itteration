@@ -37,9 +37,10 @@ package Ast;
     R visitSWhile(SWhile s);
     R visitSBreak(SBreak s);
     R visitSContinue(SContinue s);
+    R visitSlist(Slist slist);
 
 
     //Other
     R visitDef(Def d);
     R visitFile(File f);
-}
+ }

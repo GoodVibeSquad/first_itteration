@@ -1,6 +1,6 @@
 package Ast;
 
-record CNone() implements Literals {
+public record CNone() implements Literals {
     //accept metode (visitor)
     @Override
     public <R> R accept(AstVisitor<R> visitor) {

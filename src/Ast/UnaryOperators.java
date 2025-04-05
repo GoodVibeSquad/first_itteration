@@ -3,7 +3,7 @@ package Ast;
 import Tokens.TokenType;
 
 // Unary operators (from TokenType)
-enum UnaryOperators {
+public enum UnaryOperators {
     NEG(TokenType.MINUS),  // -e
     NOT(TokenType.NEGATION); // not e
 
@@ -12,4 +12,5 @@ enum UnaryOperators {
     UnaryOperators(TokenType token) {
         this.token = token;
     }
+
 }
