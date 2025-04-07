@@ -1,7 +1,7 @@
+package Tokens;
+
 import Lexer.Lexer;
 import CodeReader.SourceCodeReader2;
-import Tokens.Token;
-import Tokens.TokenType;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +15,7 @@ public class TokenGetter {
     private File sourceCodeDir;
     private String basePath;
 
-    TokenGetter(String filePathName){
+    public TokenGetter(String filePathName){
         this.tokens = new ArrayList<Token>();
         this.sourceCodeDir = new File ("src/CodeFiles");
         try {
@@ -32,6 +32,7 @@ public class TokenGetter {
         while ((token = this.lexer.tokenize()).getType() != TokenType.EOF) {
             tokens.add(token);
         }
+        tokens.add(new Token(TokenType.EOF, "EOF"));
     }
 
     public List<Token> getTokens(){

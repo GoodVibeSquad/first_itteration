@@ -10,6 +10,10 @@ public class TableGenerator {
     public static Map<Integer, Map<String, String>> actionTable = new HashMap<>();
     public static Map<Integer, Map<String, Integer>> gotoTable = new HashMap<>();
 
+    public TableGenerator(Grammar grammar) {
+        buildSLRParser(grammar);
+    }
+
     //closure metode
     public static Set<LRItem> closure(Set<LRItem> items, Grammar grammar) {
         Set<LRItem> closureSet = new HashSet<>(items);
@@ -182,21 +186,21 @@ public class TableGenerator {
                         actionTable.computeIfAbsent(i, k -> new HashMap<>()).put("EOF", "ACC");
                     } else {
                         for (String terminal : followSets.get(item.production.getLhs())) {
-                            actionTable.computeIfAbsent(i, k -> new HashMap<>()).put(terminal, "R: " + item.production);
+                            actionTable.computeIfAbsent(i, k -> new HashMap<>()).put(terminal, "R" + item.production);
                         }
                     }
                 }
             }
         }
 
-        System.out.println("\n=== ACTION TABLE ===");
-        for (var entry : actionTable.entrySet()) {
-            System.out.println("State " + entry.getKey() + ": " + entry.getValue());
-        }
-
-        System.out.println("\n=== GOTO TABLE ===");
-        for (var entry : gotoTable.entrySet()) {
-            System.out.println("State " + entry.getKey() + ": " + entry.getValue());
-        }
+//        System.out.println("\n=== ACTION TABLE ===");
+//        for (var entry : actionTable.entrySet()) {
+//            System.out.println("State " + entry.getKey() + ": " + entry.getValue());
+//        }
+//
+//        System.out.println("\n=== GOTO TABLE ===");
+//        for (var entry : gotoTable.entrySet()) {
+//            System.out.println("State " + entry.getKey() + ": " + entry.getValue());
+//        }
     }
 }
