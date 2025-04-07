@@ -155,6 +155,11 @@ class Visitor implements AstVisitor<String> {
         return "";
     }
 
+    @Override
+    public String visitSlist(Slist slist) {
+        return "";
+    }
+
     // Other
     @Override
     public String visitDef(Def d) {

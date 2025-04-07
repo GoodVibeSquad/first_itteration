@@ -10,7 +10,7 @@ public class GrammarBuilder {
         grammar.setStartSymbol("statementlist");
 
         //Binary operators
-        grammar.add("binaryoperator","+");
+        grammar.add("binaryoperator","plus");
         grammar.add("binaryoperator","-");
         grammar.add("binaryoperator","*");
         grammar.add("binaryoperator","/");
