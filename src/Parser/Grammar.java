@@ -17,4 +17,11 @@ public class Grammar {
         this.startSymbol = startSymbol;
     }
 
+    public String getStartSymbol() {
+        return startSymbol;
+    }
+
+    public List<Production> getProductions() {
+        return productions;
+    }
 }

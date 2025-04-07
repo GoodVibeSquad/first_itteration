@@ -11,6 +11,7 @@ public class SourceCodeReader2 {
     private char nextChar;
     private String sourceCode;
     private int index;
+    private char currentChar;
 
     public SourceCodeReader2(String filepath) throws IOException {
         this.filepath = filepath;
@@ -18,7 +19,7 @@ public class SourceCodeReader2 {
         this.sourceCode = Files.readString(Path.of(filepath));
         this.EOF = sourceCode.isEmpty();
         this.nextChar = 0;
-
+        this.currentChar = currentChar();
         // Advances reader to first char
         this.advance();
     }
