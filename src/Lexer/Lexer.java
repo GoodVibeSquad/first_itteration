@@ -13,7 +13,7 @@ public class Lexer {
 
     public Lexer(SourceCodeReader2 reader) {
         this.reader = reader;
-        
+
     }
 
     public Token tokenize() {
@@ -21,7 +21,7 @@ public class Lexer {
         while (!reader.isEOF()) {
 
 
-            if(reader.isEOF()) {
+            if (reader.isEOF()) {
                 return new Token(TokenType.EOF);
             }
 
@@ -47,7 +47,7 @@ public class Lexer {
                 return scanString();
             }
 
-            if (OPERATORS.indexOf(reader.currentChar()) != -1){
+            if (OPERATORS.indexOf(reader.currentChar()) != -1) {
                 return scanOperators();
             }
 
@@ -65,8 +65,6 @@ public class Lexer {
 
         return new Token(TokenType.EOF);
     }
-
-
 
 
     private void skipWhitespace() {
@@ -118,11 +116,11 @@ public class Lexer {
         types.add("string");
         types.add("double");
         types.add("bool");
-        if(types.contains(word)){
+        if (types.contains(word)) {
             return new Token(TokenType.TYPE, word);
         }
 
-        if(word.equals("true") || word.equals("false")){
+        if (word.equals("true") || word.equals("false")) {
             return new Token(TokenType.BOOL, word);
         }
 
@@ -172,7 +170,6 @@ public class Lexer {
             op.append(reader.currentChar());
             reader.advance();
         }
-        reader.advance();
 
         String opString = op.toString();
         if (TokenType.tokenTypeMap.containsKey(opString)) {
