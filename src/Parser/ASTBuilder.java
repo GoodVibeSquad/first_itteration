@@ -90,6 +90,12 @@ public class ASTBuilder {
                         return new Ebinaryoperators(binOp,leftExpr,rightExpr);
                     }
                 }
+                else if (children.size() == 1){
+                    Object object = children.get(0);
+                    if (object instanceof Literals){
+                        return new Econstant((Literals)object);
+                    }
+                }
                 /*
                 if (prodSize == 3 && "(".equals(production.getRhs().getFirst())) {
                     //wtf skal den lave???
