@@ -52,8 +52,12 @@ public class Parser {
                     stateStack.pop();
                     children.add((Token) symbolStack.pop());
                 }
-
+                System.out.println("Minor list " + children);
                 Object node = astBuilder.buildAst(reductionProduction, children);
+                symbolStack.push(node);
+
+                int newState = gotoTable.get(stateStack.peek()).get(reductionProduction.getLhs());
+                stateStack.push(newState);
 
                 System.out.println("AST NODE MAYBE?" + node);
                 // Making the AST Node one at a time
@@ -62,8 +66,8 @@ public class Parser {
                 // Pop the first value on the stack
 
                 System.out.println("Reduction used for production: " + reductionProduction);
-                System.out.println("LHS THING" + reductionProduction.getLhs());
-                System.out.println("RHS THING" + reductionProduction.getRhs());
+//                System.out.println("LHS THING" + reductionProduction.getLhs());
+//                System.out.println("RHS THING" + reductionProduction.getRhs());
 
 
             }

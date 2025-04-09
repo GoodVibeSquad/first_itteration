@@ -15,39 +15,44 @@ public class ASTBuilder {
 
         switch (production.lhs) {
 
+            case "binaryoperator" -> {
+                Object constantValue = children.getFirst();
+                Token constant = (Token)constantValue;
+
+                switch (constant.getType().toString()) {
+                    case "+":
+                        return new BinaryOperators[Integer.parseInt(children.getFirst().getValue())];
+
+                }
+            }
+
             case "constant" -> {
-                String constantValue = children.getFirst().getValue();
-                if ("true".equals(production.getRhs()) || "false".equals(production.getRhs())) {
-                    CBool cBool = new CBool(Boolean.parseBoolean(constantValue));
-                    return new Econstant(cBool);
+                Object constantValue = children.getFirst();
 
-                } else if (isDoubleLit(constantValue)) {
-                    CDouble cDouble = new CDouble(Double.parseDouble(constantValue));
-                    return new Econstant(cDouble);
+                    Token constant = (Token)constantValue;
+                    switch (constant.getType().toString()) {
+                        case "INT":
+                            CInt cInt = new CInt(Integer.parseInt(constant.getValue()));
+                            return new Econstant(cInt);
+                        case "STRING":
+                            CString cString = new CString(constant.getValue());
+                            return cString;
+                        case "BOOL":
+                            CBool cBool = new CBool(Boolean.parseBoolean(constant.getValue()));
+                            return cBool;
+                        case "PI":
+                            CPi cPi = new CPi();
+                            return cPi;
+                        case "EULER":
+                            CEuler cEuler = new CEuler();
+                            return cEuler;
+                        case "NONE":
+                            CNone cNone = new CNone();
+                            return cNone;
 
-                } else if (isIntegerLit(constantValue)) {
-                    CInt cInt = new CInt(Integer.parseInt(constantValue));
-                    return new Econstant(cInt);
-
-                } else if (isStringLit(children.getFirst())) {
-                    CString cString = new CString(constantValue);
-                    return new Econstant(cString);
-
-                } else if (isPi(children.getFirst())) {
-                    CPi cPi = new CPi(Double.parseDouble(constantValue));
-                    return new Econstant(cPi);
-
-                } else if (isEuler(children.getFirst())) {
-                    CEuler cEuler = new CEuler();
-                    return new Econstant(cEuler);
-
-                } else {
-                    CNone cNone = new CNone();
-                    return new Econstant(cNone);
                 }
 
             }
-
             case "expression" -> {
 
                 if (prodSize == 3 && "(".equals(production.getRhs().getFirst())) {
