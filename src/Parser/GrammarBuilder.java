@@ -24,7 +24,7 @@ public class GrammarBuilder {
         grammar.add("binaryoperator","AND");
         grammar.add("binaryoperator","OR");
         grammar.add("binaryoperator","EXPONENT");
-
+        
         //Constants
         grammar.add("constant"," ");
         grammar.add("constant","BOOL");

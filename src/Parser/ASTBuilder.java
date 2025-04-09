@@ -76,17 +76,21 @@ public class ASTBuilder {
 
             case "expression" -> {
 
-                Object constantValue = children.getFirst();
+                if (children.size() == 3) {
+                    Object left = children.get(0);
+                    Object operator = children.get(1);
+                    Object right = children.get(2);
 
-                if()
+                    if (left instanceof Expression && operator instanceof BinaryOperators && right instanceof Expression) {
+                        // All checks passed - now you can safely cast and use
+                        Expression leftExpr = (Expression) left;
+                        BinaryOperators binOp = (BinaryOperators) operator;
+                        Expression rightExpr = (Expression) right;
+
+                        // Proceed with whatever logic you want here
+                    }
+                }
                 /*
-                * for (string symbol : production.getRhs()) {
-                   if(Token.valueOf(symbol) {
-                       switch case herinde?
-                   }
-                 }
-                * */
-
                 if (prodSize == 3 && "(".equals(production.getRhs().getFirst())) {
                     //wtf skal den lave???
                     return children.getFirst().getValue();
@@ -150,6 +154,7 @@ public class ASTBuilder {
                     Object constant = children.getFirst();
                     return new Econstant((Literals) constant);
                 }
+                */
 
             }
 
