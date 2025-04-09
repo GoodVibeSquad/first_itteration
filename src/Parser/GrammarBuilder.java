@@ -10,67 +10,67 @@ public class GrammarBuilder {
         grammar.setStartSymbol("statementlist");
 
         //Binary operators
-        grammar.add("binaryoperator","plus");
-        grammar.add("binaryoperator","-");
-        grammar.add("binaryoperator","*");
-        grammar.add("binaryoperator","/");
-        grammar.add("binaryoperator","%");
-        grammar.add("binaryoperator","==");
-        grammar.add("binaryoperator","!=");
-        grammar.add("binaryoperator",">");
-        grammar.add("binaryoperator","<");
-        grammar.add("binaryoperator",">=");
-        grammar.add("binaryoperator","<=");
-        grammar.add("binaryoperator","&&");
-        grammar.add("binaryoperator","||");
-        grammar.add("binaryoperator","^");
+        grammar.add("binaryoperator","PLUS");
+        grammar.add("binaryoperator","MINUS");
+        grammar.add("binaryoperator","MULTIPLY");
+        grammar.add("binaryoperator","DIVISION");
+        grammar.add("binaryoperator","MODULUS");
+        grammar.add("binaryoperator","COMPARISON");
+        grammar.add("binaryoperator","NOT_EQUALS");
+        grammar.add("binaryoperator","GREATER_THAN");
+        grammar.add("binaryoperator","LESS_THAN");
+        grammar.add("binaryoperator","GREATER_OR_EQUALS");
+        grammar.add("binaryoperator","LESS_OR_EQUALS");
+        grammar.add("binaryoperator","AND");
+        grammar.add("binaryoperator","OR");
+        grammar.add("binaryoperator","EXPONENT");
 
         //Constants
         grammar.add("constant"," ");
-        grammar.add("constant","bool");
-        grammar.add("constant","int");
-        grammar.add("constant","double");
-        grammar.add("constant","string");
-        grammar.add("constant","Euler");
-        grammar.add("constant","Pi");
+        grammar.add("constant","BOOL");
+        grammar.add("constant","INT");
+        grammar.add("constant","DOUBLE");
+        grammar.add("constant","STRING");
+        grammar.add("constant","EULER");
+        grammar.add("constant","PI");
 
         //expression
         grammar.add("expression", "constant");
-        grammar.add("expression", "(", "expression" , ")");
+        grammar.add("expression", "OPEN_PARENTHESIS", "expression" , "CLOSED_PARENTHESIS");
         grammar.add("expression", "expression", "binaryoperator", "expression");
         grammar.add("expression", "unaryOperator", "expression");
         grammar.add("expression", "identifier");
-        grammar.add("expression", "identifier", "(", "exlist", ")");
-        grammar.add("expression", "Sum", "(", "expression", "expression", "ActivationFunction", ")");
-        grammar.add("expression", "Sqrt","(","expression",")");
-        grammar.add("expression", "Max","(","exlist",")");
-        grammar.add("expression", "expression","?","expression",":","expression");
+        grammar.add("expression", "identifier", "OPEN_PARENTHESIS", "exlist", "CLOSED_PARENTHESIS");
+        grammar.add("expression", "SUM", "OPEN_PARENTHESIS", "expression", "expression", "ACTIVATIONFUNCTION", "CLOSED_PARENTHESIS");
+        grammar.add("expression", "SQRT","OPEN_PARENTHESIS","expression","CLOSED_PARENTHESIS");
+        grammar.add("expression", "MAX","OPEN_PARENTHESIS","exlist","CLOSED_PARENTHESIS");
+        grammar.add("expression", "expression","TERNARY","expression","COLON","expression");
         grammar.add("expression", "type","expression");
-        grammar.add("expression", "new","funcClass");
-        grammar.add("expression", "identifier",".","identifier");
+        grammar.add("expression", "NEW","funcClass");
+        grammar.add("expression", "identifier","DOT","identifier");
 
         //Exlist
         grammar.add("exlist","expression");
-        grammar.add("exlist","exlist",",","expression");
+        grammar.add("exlist","exlist","COMMA","expression");
 
         //funcClass
-        grammar.add("funcClass", "NeuralNetwork");
-        grammar.add("funcClass", "Layer");
-        grammar.add("funcClass", "ActivationFunction");
-        grammar.add("funcClass", "Array");
+        grammar.add("funcClass", "NEURALNETWORK");
+        grammar.add("funcClass", "LAYER");
+        grammar.add("funcClass", "ACTIVATIONFUNCTION");
+        grammar.add("funcClass", "ARRAY");
 
         //Statements
         grammar.add("statement", "expression");
-        grammar.add("statement", "if", "expression", "statement", "stmtTail");
-        grammar.add("statement", "identifier", "eqop", "expression", ";");
-        grammar.add("statement", "{", "statementlist", "}");
-        grammar.add("statement", "for",  "(", "statement", "expression", ";", "statement", ")", "statement");
-        grammar.add("statement", "while", "expression", "statement");
-        grammar.add("statement", "break", ";");
-        grammar.add("statement", "continue", ";");
+        grammar.add("statement", "IF", "expression", "statement", "stmtTail");
+        grammar.add("statement", "identifier", "eqop", "expression", "SEMICOLON");
+        grammar.add("statement", "OPEN_CURLY_BRACKET", "statementlist", "CLOSED_CURLY_BRACKET");
+        grammar.add("statement", "FOR", "OPEN_PARENTHESIS", "statement", "expression", "SEMICOLON", "statement", "CLOSED_PARENTHESIS", "statement");
+        grammar.add("statement", "WHILE", "expression", "statement");
+        grammar.add("statement", "BREAK", "SEMICOLON");
+        grammar.add("statement", "CONTINUE", "SEMICOLON");
 
         //stmtTail
-        grammar.add("stmtTail", "else", "statement");
+        grammar.add("stmtTail", "ELSE", "statement");
         grammar.add("stmtTail", " ");
 
         //StatementList
@@ -79,22 +79,22 @@ public class GrammarBuilder {
 
         //type
         grammar.add("type", "funcClass");
-        grammar.add("type", "int");
-        grammar.add("type", "string");
-        grammar.add("type", "double");
-        grammar.add("type", "bool");
+        grammar.add("type", "INT");
+        grammar.add("type", "STRING");
+        grammar.add("type", "DOUBLE");
+        grammar.add("type", "BOOL");
 
         //equals operator
-        grammar.add("eqop","=");
-        grammar.add("eqop","+=");
-        grammar.add("eqop","-=");
+        grammar.add("eqop","EQUALS");
+        grammar.add("eqop","ADDITION_ASSIGNMENT");
+        grammar.add("eqop","SUBTRACTION_ASSIGNMENT");
 
         //identifier
         grammar.add("identifier", "type", "identifier");
 
         //Unaryoperator
-        grammar.add("unaryOperator", "-");
-        grammar.add("unaryOperator", "!");
+        grammar.add("unaryOperator", "MINUS");
+        grammar.add("unaryOperator", "NEGATION");
 
         return grammar;
     }

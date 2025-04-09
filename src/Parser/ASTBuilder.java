@@ -4,6 +4,7 @@ package Parser;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 
 import Ast.*;
@@ -49,9 +50,42 @@ public class ASTBuilder {
 
             }
 
+            case "binaryoperator" -> {
+                Object constantValue = children.getFirst();
+                if (constantValue instanceof Token token) {
+                    TokenType tokenType = token.getType();
+                    BinaryOperators binaryOperator = null;
+
+                    for (BinaryOperators op : BinaryOperators.values()) {
+                        if (op.getToken() == tokenType) {
+                            binaryOperator = op;
+                            break;
+                        }
+                    }
+
+                    if (binaryOperator == null) {
+                        throw new RuntimeException("Invalid binary operator: " + tokenType);
+                    }
+
+                    return binaryOperator;
+
+                } else {
+                    throw new RuntimeException("Syntax error at: " + constantValue);
+                }
+            }
+
             case "expression" -> {
 
-            
+                Object constantValue = children.getFirst();
+
+                if()
+                /*
+                * for (string symbol : production.getRhs()) {
+                   if(Token.valueOf(symbol) {
+                       switch case herinde?
+                   }
+                 }
+                * */
 
                 if (prodSize == 3 && "(".equals(production.getRhs().getFirst())) {
                     //wtf skal den lave???

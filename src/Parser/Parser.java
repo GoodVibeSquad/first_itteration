@@ -30,7 +30,7 @@ public class Parser {
         Token currentToken = tokens.getFirst();
 
         while (currentToken.getType() != TokenType.EOF){
-            String tokenType = currentToken.getType().toString().toLowerCase();
+            String tokenType = currentToken.getType().toString();
             String action = actionTable.get(stateStack.peek()).get(tokenType);
 
             if (action.charAt(0) == 'S') {
