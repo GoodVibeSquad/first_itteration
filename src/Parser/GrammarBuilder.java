@@ -10,7 +10,7 @@ public class GrammarBuilder {
         grammar.setStartSymbol("statementlist");
 
         //Binary operators
-        grammar.add("binaryoperator","plus");
+        grammar.add("binaryoperator","PLUS");
         grammar.add("binaryoperator","-");
         grammar.add("binaryoperator","*");
         grammar.add("binaryoperator","/");
@@ -26,9 +26,9 @@ public class GrammarBuilder {
         grammar.add("binaryoperator","^");
 
         //Constants
-        grammar.add("constant"," ");
+
         grammar.add("constant","bool");
-        grammar.add("constant","int");
+        grammar.add("constant","INT");
         grammar.add("constant","double");
         grammar.add("constant","string");
         grammar.add("constant","Euler");
@@ -60,7 +60,7 @@ public class GrammarBuilder {
         grammar.add("funcClass", "Array");
 
         //Statements
-        grammar.add("statement", "expression");
+        grammar.add("statement", "expression",";");
         grammar.add("statement", "if", "expression", "statement", "stmtTail");
         grammar.add("statement", "identifier", "eqop", "expression", ";");
         grammar.add("statement", "{", "statementlist", "}");
@@ -90,8 +90,12 @@ public class GrammarBuilder {
         grammar.add("eqop","-=");
 
         //identifier
-        grammar.add("identifier", "identifier");
-        grammar.add("identifier", "type", "identifier");
+
+        grammar.add("identifier", "typed_identifier");
+        grammar.add("identifier", "simple_identifier");
+
+        grammar.add("typed_identifier", "typed", "simple_identifier");
+
 
         //Unaryoperator
         grammar.add("unaryOperator", "-");

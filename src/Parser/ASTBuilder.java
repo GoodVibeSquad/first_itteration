@@ -16,11 +16,38 @@ import javax.swing.plaf.nimbus.State;
 
 public class ASTBuilder {
 
-    public Object buildAst(Production production, List<Token> children) {
+    public Object buildAst(Production production, List<Object> children) {
         int prodSize = production.getRhs().size();
 
         switch (production.lhs) {
 
+<<<<<<< Updated upstream
+=======
+            case "binaryoperator" -> {
+                Object constantValue = children.getFirst();
+                if (constantValue instanceof Token token) {
+                    TokenType tokenType = token.getType();
+                    BinaryOperators binaryOperator = null;
+
+                    for (BinaryOperators op : BinaryOperators.values()) {
+                        if (op.getToken() == tokenType) {
+                            binaryOperator = op;
+                            break;
+                        }
+                    }
+
+                    if (binaryOperator == null) {
+                        throw new RuntimeException("Invalid binary operator: " + tokenType);
+                    }
+
+                    return binaryOperator;
+
+                } else {
+                    throw new RuntimeException("Syntax error at: " + constantValue);
+                }
+            }
+
+>>>>>>> Stashed changes
             case "constant" -> {
                 String constantValue = children.getFirst().getValue();
                 if ("true".equals(production.getRhs()) || "false".equals(production.getRhs())) {
@@ -56,6 +83,29 @@ public class ASTBuilder {
 
             case "expression" -> {
 
+                if (production.toString().equals("expression -> constant")) {
+                    Econstant constant = (Econstant) children.get(0);
+                    return constant;
+                }
+
+
+                if (children.size() == 3) {
+                    Object left = children.get(0);
+                    Object operator = children.get(1);
+                    Object right = children.get(2);
+
+                    if (left instanceof Expression && operator instanceof BinaryOperators && right instanceof Expression) {
+                        Expression leftExpr = (Expression) left;
+                        BinaryOperators binOp = (BinaryOperators) operator;
+                        Expression rightExpr = (Expression) right;
+
+                        return new Ebinaryoperators(binOp, leftExpr, rightExpr);
+                    } else {
+                        throw new RuntimeException("Expected binary expression format.");
+                    }
+                }
+
+                /*
                 if (prodSize == 3 && "(".equals(production.getRhs().getFirst())) {
                     //wtf skal den lave???
                     return children.getFirst().getValue();
@@ -120,9 +170,14 @@ public class ASTBuilder {
                     return new Econstant((Literals) constant);
                 }
 
+                 */
+
             }
 
+
+
             case "exlist" -> {
+                /*
                 if ("exlist".equals(production.getRhs().getFirst())) {
                     Object expression = children.getFirst().getValue();
                     List<Expression> expressions = new ArrayList<>();
@@ -139,8 +194,13 @@ public class ASTBuilder {
 
                     return list;
                 }
+
+                 */
             }
+
+
             case "funcClass" -> {
+                /*
                 if ("NeuralNetwork".equals(production.getRhs().getFirst())) {
                     return new funcClass[Integer.parseInt(children.getFirst().getValue())];
                 } else if ("Layer".equals(production.getRhs().getFirst())) {
@@ -151,8 +211,13 @@ public class ASTBuilder {
                     return new funcClass[Integer.parseInt(children.getFirst().getValue())];
                 }
 
+                 */
+
             }
+
+
             case "statement" -> {
+                /*
                 if (prodSize == 6 && "if".equals(production.getRhs().getFirst())) {
                     Object statement = children.getFirst();
                     Object expression = children.get(1);
@@ -191,8 +256,13 @@ public class ASTBuilder {
                     Object expression = children.getFirst();
                     return new SExpression((Expression) expression);
                 }
+
+                 */
             }
+
+
             case "statementlist" -> {
+               /*
                 if ("statementlist".equals(production.getRhs().getFirst())) {
                     Object statement = children.getFirst().getValue();
                     List<Statement> statements = new ArrayList<>();
@@ -208,9 +278,14 @@ public class ASTBuilder {
 
                     return list;
                 }
+
+                */
             }
 
+
+
             case "type" -> {
+                /*
                 if ("funcClass".equals(production.getRhs().getFirst())) {
                     return new Type[Integer.parseInt(children.getFirst().getValue())];
 
@@ -227,8 +302,13 @@ public class ASTBuilder {
                     return new Type[Integer.parseInt(children.getFirst().getValue())];
                 }
 
+                 */
+
             }
+
+
             case "assop" -> {
+                /*
                 if ("+".equals(production.getRhs().getFirst())) {
                     return new AssignmentOperator[Integer.parseInt(children.getFirst().getValue())];
 
@@ -240,9 +320,15 @@ public class ASTBuilder {
                 } else {
                     return new AssignmentOperator[Integer.parseInt(children.getFirst().getValue())];
                 }
+
+                 */
             }
 
+
+
             case "identifier" -> {
+                /*
+            }
                 if (prodSize == 1) {
                     Object id = children.getFirst();
                     
@@ -253,15 +339,26 @@ public class ASTBuilder {
                     Object id = children.get(1);
                     return new Eidentifier((Identifier) id);
                 }
+
+                 */
             }
-            case "unaryOperator" -> {
+
+
+                case "unaryOperator" -> {
+                /*
                 if ("!".equals(production.getRhs().getFirst())) {
+
                     return new UnaryOperators[Integer.parseInt(children.getFirst().getValue())];
                 } else if ("-".equals(production.getRhs().getFirst())) {
                     return new UnaryOperators[Integer.parseInt(children.getFirst().getValue())];
                 }
+
+                 */
             }
-            default -> throw new RuntimeException("No AST rule for production: " + production);
+
+
+
+                default -> throw new RuntimeException("No AST rule for production: " + production);
 
         }
 

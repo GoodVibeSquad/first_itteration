@@ -14,4 +14,8 @@ public enum BinaryOperators {
     BinaryOperators(TokenType token) {
         this.token = token;
     }
+    public TokenType getToken(){
+        return token;
+    }
+
 }
