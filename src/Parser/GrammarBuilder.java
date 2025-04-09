@@ -24,7 +24,7 @@ public class GrammarBuilder {
         grammar.add("binaryoperator","AND");
         grammar.add("binaryoperator","OR");
         grammar.add("binaryoperator","EXPONENT");
-        
+
         //Constants
         grammar.add("constant"," ");
         grammar.add("constant","BOOL");
@@ -60,7 +60,7 @@ public class GrammarBuilder {
         grammar.add("funcClass", "ARRAY");
 
         //Statements
-        grammar.add("statement", "expression");
+        grammar.add("statement", "expression", "SEMICOLON" );
         grammar.add("statement", "IF", "expression", "statement", "stmtTail");
         grammar.add("statement", "identifier", "eqop", "expression", "SEMICOLON");
         grammar.add("statement", "OPEN_CURLY_BRACKET", "statementlist", "CLOSED_CURLY_BRACKET");
@@ -90,7 +90,10 @@ public class GrammarBuilder {
         grammar.add("eqop","SUBTRACTION_ASSIGNMENT");
 
         //identifier
-        grammar.add("identifier", "type", "identifier");
+        grammar.add("identifier", "typed_identifier");
+        grammar.add("identifier", "simple_identifier");
+
+        grammar.add("typed_identifier", "typed", "simple_identifier");
 
         //Unaryoperator
         grammar.add("unaryOperator", "MINUS");

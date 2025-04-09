@@ -3,6 +3,7 @@ package Parser;
 import Parser.TableGenerator.TableGenerator;
 import Tokens.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -26,6 +27,7 @@ public class Parser {
     public void run() {
         Stack<Integer> stateStack = new Stack<>();
         Stack<Object> symbolStack = new Stack<>();
+        ASTBuilder astBuilder = new ASTBuilder();
         stateStack.push(0);
         Token currentToken = tokens.getFirst();
 
@@ -33,27 +35,44 @@ public class Parser {
             String tokenType = currentToken.getType().toString();
             String action = actionTable.get(stateStack.peek()).get(tokenType);
 
+            if(action == null){
+                System.out.println("Error: No action found for token " + currentToken.getType() + " in state " + stateStack.peek());
+                break;
+            }
             if (action.charAt(0) == 'S') {
                 int trimmed = Integer.parseInt(action.substring(1));
                 stateStack.push(trimmed);
                 symbolStack.push(tokens.removeFirst());
 
             } else if (action.charAt(0) == 'R') {
-                System.out.println(action);
-                // Get groduction
-                // List<Object> children = new ArrayList<>();
-                //for(i=0;i<prod.rhs.size();i++){
-                // statestack.pop;
-                // children.add(symbolstack.pop)
-                //}
-                // astbuild(prod,children)
-                // Reduce
-                // goto
-                //symbolStack.push( buildast (prod, children);
-                //Object node = astBuilder.buildAst(prod, children);
-                //symbolstack.push(node);
-                int newState = gotoTable.get(stateStack.peek()).get(prod.getLhs());
+                String productionIndexStr = action.substring(1);
+                System.out.println(productionIndexStr);
+
+                Production reductionProduction = getProductionFromAction(productionIndexStr);
+                System.out.println("LHS: " + reductionProduction.getLhs());
+                System.out.println("RHS: " + reductionProduction.getRhs());
+
+                List<Object> children = new ArrayList<>();
+                for(int i=0; i<reductionProduction.rhs.size();i++){
+                    stateStack.pop();
+                    children.add(symbolStack.pop());
+                }
+                System.out.println("Minor list " + children);
+                Object node = astBuilder.buildAst(reductionProduction, children);
+                symbolStack.push(node);
+
+                int newState = gotoTable.get(stateStack.peek()).get(reductionProduction.getLhs());
                 stateStack.push(newState);
+
+                System.out.println("AST NODE: " + node);
+                // Making the AST Node one at a time
+                // Build AST based on production and RHS of production (List of strings)
+                // POP
+                // Pop the first value on the stack
+
+//                System.out.println("LHS THING" + reductionProduction.getLhs());
+//                System.out.println("RHS THING" + reductionProduction.getRhs());
+
 
             }
 
@@ -61,7 +80,7 @@ public class Parser {
             currentToken = tokens.getFirst();
             System.out.println("SymbolStack: " + symbolStack);
             System.out.println("StateStack: " + stateStack);
-            System.out.printf("CurrentToken: " + currentToken);
+            System.out.printf("Next Token: " + currentToken);
 
         }
 
@@ -74,4 +93,12 @@ public class Parser {
 
     }
 
+    private Production getProductionFromAction(String action) {
+        String productionString = action.substring(0);
+        String[] parts = productionString.split(" -> ");
+        String lhs = parts[0];
+        List<String> rhs = List.of(parts[1].split(" "));
+
+        return new Production(lhs, rhs);
+    }
 }

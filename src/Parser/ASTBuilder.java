@@ -27,7 +27,7 @@ public class ASTBuilder {
                     switch (constant.getType().toString()) {
                         case "INT":
                             CInt cInt = new CInt(Integer.parseInt(constant.getValue()));
-                            return new Econstant(cInt);
+                            return cInt;
                         case "STRING":
                             CString cString = new CString(constant.getValue());
                             return cString;
@@ -87,7 +87,7 @@ public class ASTBuilder {
                         BinaryOperators binOp = (BinaryOperators) operator;
                         Expression rightExpr = (Expression) right;
 
-                        // Proceed with whatever logic you want here
+                        return new Ebinaryoperators(binOp,leftExpr,rightExpr);
                     }
                 }
                 /*
@@ -157,7 +157,7 @@ public class ASTBuilder {
                 */
 
             }
-
+            /*
             case "exlist" -> {
                 if ("exlist".equals(production.getRhs().getFirst())) {
                     Object expression = children.getFirst().getValue();
@@ -298,11 +298,13 @@ public class ASTBuilder {
                 }
             }
             default -> throw new RuntimeException("No AST rule for production: " + production);
-
+            */
         }
 
 
         return null;
+
+
     }
 
     private boolean isIntegerLit(String value) {
