@@ -1,64 +1,70 @@
 package Parser;
 
 import Parser.TableGenerator.TableGenerator;
-import Tokens.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 public class Parser {
-    TokenGetter tokenGetter;
-    TableGenerator tableGenerator;
-    Map<Integer, Map<String, String>> actionTable;
-    Map<Integer, Map<String, Integer>> gotoTable;
-    List<Token> tokens;
 
-    public Parser(String filePathName, Grammar grammar) {
-        this.tokenGetter = new TokenGetter(filePathName);
-        tokenGetter.initialize();
-        this.tokens = tokenGetter.getTokens();
-        this.tableGenerator = new TableGenerator(grammar);
-        this.actionTable = TableGenerator.actionTable;
-        this.gotoTable = TableGenerator.gotoTable;
-    }
-
-    public void run() {
+    public static void parse(List<String> input) {
         Stack<Integer> stateStack = new Stack<>();
-        Stack<Object> symbolStack = new Stack<>();
-        stateStack.push(0);
-        Token currentToken = tokens.getFirst();
+        stateStack.push(0); // Start state
 
-        while (currentToken.getType() != TokenType.EOF){
-            String tokenType = currentToken.getType().toString().toLowerCase();
-            String action = actionTable.get(stateStack.peek()).get(tokenType);
+        Queue<String> tokenStream = new LinkedList<>(input);
+        tokenStream.add("EOF"); // End marker
 
-            if (action.charAt(0) == 'S') {
-                int trimmed = Integer.parseInt(action.substring(1));
-                stateStack.push(trimmed);
-                symbolStack.push(tokens.removeFirst());
+        String nextSymbol = tokenStream.poll();
 
-            } else if (action.charAt(0) == 'R') {
-                System.out.println(action);
+        while (true) {
+            int currentState = stateStack.peek();
+            String action = TableGenerator.actionTable
+                    .getOrDefault(currentState, Map.of())
+                    .getOrDefault(nextSymbol, null);
 
-
+            if (action == null) {
+                System.err.println("Syntax error at symbol: " + nextSymbol);
+                System.err.println("In state: " + currentState);
+                System.err.println("Available actions: " + TableGenerator.actionTable.getOrDefault(currentState, Map.of()));
+                return;
             }
 
 
-            currentToken = tokens.getFirst();
-            System.out.println("SymbolStack: " + symbolStack);
-            System.out.println("StateStack: " + stateStack);
-            System.out.printf("CurrentToken: " + currentToken);
+            if (action.startsWith("S")) {
+                int state = Integer.parseInt(action.substring(1));
 
+                stateStack.push(state);
+                System.out.println("Shifted " + stateStack.peek());
+                nextSymbol = tokenStream.poll(); // move to next input symbol
+            } else if (action.startsWith("R")) {
+                String prodStr = action.substring(1); // format: "A -> β"
+                String[] parts = prodStr.split("->");
+                String lhs = parts[0].trim();
+                String[] rhs = parts[1].trim().split("\\s+");
+
+                int popCount = rhs[0].equals("") ? 0 : rhs.length;
+                for (int i = 0; i < popCount; i++) {
+                    stateStack.pop();
+                }
+
+                currentState = stateStack.peek();
+                Integer nextState = TableGenerator.gotoTable
+                        .getOrDefault(currentState, Map.of())
+                        .get(lhs);
+
+                if (nextState == null) {
+                    System.err.println("Goto error for non-terminal: " + lhs);
+                    return;
+                }
+
+                stateStack.push(nextState);
+                System.out.println("Reduced using: " + lhs + " -> " + String.join(" ", rhs));
+            } else if (action.equals("ACC")) {
+                System.out.println("Input successfully parsed!");
+                break;
+            } else {
+                System.err.println("Invalid action: " + action);
+                return;
+            }
         }
-
-        //debug loop
-
-
-//        System.out.println("Tokens: " + tokenGetter.getTokens());
-//        System.out.println("Action Table: " + actionTable);
-//        System.out.println("Goto Table: " + gotoTable);
-
     }
-
 }

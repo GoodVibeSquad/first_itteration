@@ -48,7 +48,7 @@ public class TableGenerator {
     }
 
     //Goto metode
-    public static Set<LRItem> gotoSet(Set<LRItem> items, String Symbol, Grammar grammar) {
+    public static Set<LRItem> gotoState(Set<LRItem> items, String Symbol, Grammar grammar) {
         Set<LRItem> nextSet = new HashSet<>();
         for (LRItem item : items) {
             if (Symbol.equals(item.nextSymbol())) {
@@ -150,7 +150,7 @@ public class TableGenerator {
             }
 
             for (String symbol : symbols) {
-                Set<LRItem> target = gotoSet(state, symbol, grammar);
+                Set<LRItem> target = gotoState(state, symbol, grammar);
 
                 if (!stateNumbers.containsKey(target)) {
                     int newStateNum = states.size();
@@ -193,14 +193,15 @@ public class TableGenerator {
             }
         }
 
-//        System.out.println("\n=== ACTION TABLE ===");
-//        for (var entry : actionTable.entrySet()) {
-//            System.out.println("State " + entry.getKey() + ": " + entry.getValue());
-//        }
-//
-//        System.out.println("\n=== GOTO TABLE ===");
-//        for (var entry : gotoTable.entrySet()) {
-//            System.out.println("State " + entry.getKey() + ": " + entry.getValue());
-//        }
+        System.out.println("\n=== ACTION TABLE ===");
+        for (var entry : actionTable.entrySet()) {
+            System.out.println("State " + entry.getKey() + ": " + entry.getValue());
+        }
+
+        System.out.println("\n=== GOTO TABLE ===");
+        for (var entry : gotoTable.entrySet()) {
+            System.out.println("State " + entry.getKey() + ": " + entry.getValue());
+        }
     }
 }
+
