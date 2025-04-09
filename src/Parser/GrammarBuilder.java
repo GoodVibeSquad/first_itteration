@@ -38,7 +38,7 @@ public class GrammarBuilder {
         grammar.add("expression", "constant");
         grammar.add("expression", "(", "expression" , ")");
         grammar.add("expression", "expression", "binaryoperator", "expression");
-        grammar.add("expression", "unaryoperator", "expression");
+        grammar.add("expression", "unaryOperator", "expression");
         grammar.add("expression", "identifier");
         grammar.add("expression", "identifier", "(", "exlist", ")");
         grammar.add("expression", "Sum", "(", "expression", "expression", "ActivationFunction", ")");
@@ -90,7 +90,6 @@ public class GrammarBuilder {
         grammar.add("eqop","-=");
 
         //identifier
-        grammar.add("identifier", "identifier");
         grammar.add("identifier", "type", "identifier");
 
         //Unaryoperator

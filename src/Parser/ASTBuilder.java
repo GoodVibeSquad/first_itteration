@@ -1,60 +1,57 @@
 package Parser;
-/*
+
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 import java.util.function.UnaryOperator;
 
 import Ast.*;
-import Lexer.*;
 import Tokens.Token;
 import Tokens.TokenType;
-import jdk.incubator.vector.VectorOperators;
 
-import javax.swing.*;
-import javax.swing.plaf.nimbus.State;
+
 
 public class ASTBuilder {
 
-    public Object buildAst(Production production, List<Token> children) {
+    public Object buildAst(Production production, List<Object> children) {
         int prodSize = production.getRhs().size();
 
         switch (production.lhs) {
 
             case "constant" -> {
-                String constantValue = children.getFirst().getValue();
-                if ("true".equals(production.getRhs()) || "false".equals(production.getRhs())) {
-                    CBool cBool = new CBool(Boolean.parseBoolean(constantValue));
-                    return new Econstant(cBool);
-
-                } else if (isDoubleLit(constantValue)) {
-                    CDouble cDouble = new CDouble(Double.parseDouble(constantValue));
-                    return new Econstant(cDouble);
-
-                } else if (isIntegerLit(constantValue)) {
-                    CInt cInt = new CInt(Integer.parseInt(constantValue));
-                    return new Econstant(cInt);
-
-                } else if (isStringLit(children.getFirst())) {
-                    CString cString = new CString(constantValue);
-                    return new Econstant(cString);
-
-                } else if (isPi(children.getFirst())) {
-                    CPi cPi = new CPi(Double.parseDouble(constantValue));
-                    return new Econstant(cPi);
-
-                } else if (isEuler(children.getFirst())) {
-                    CEuler cEuler = new CEuler();
-                    return new Econstant(cEuler);
-
-                } else {
-                    CNone cNone = new CNone();
-                    return new Econstant(cNone);
+                Object constantValue = children.getFirst();
+                if(constantValue instanceof Token){
+                    Token constant = (Token)constantValue;
+                    switch (constant.getType().toString()) {
+                        case "INT":
+                            CInt cInt = new CInt(Integer.parseInt(constant.getValue()));
+                            return new Econstant(cInt);
+                        case "STRING":
+                            CString cString = new CString(constant.getValue());
+                            return cString;
+                        case "BOOL":
+                            CBool cBool = new CBool(Boolean.parseBoolean(constant.getValue()));
+                            return cBool;
+                        case "PI":
+                            CPi cPi = new CPi();
+                            return cPi;
+                        case "EULER":
+                            CEuler cEuler = new CEuler();
+                            return cEuler;
+                        case "NONE":
+                            CNone cNone = new CNone();
+                            return cNone;
+                    }
+                }else{
+                    throw new RuntimeException("Syntax error at: " + constantValue);
                 }
 
             }
 
             case "expression" -> {
+
+            
 
                 if (prodSize == 3 && "(".equals(production.getRhs().getFirst())) {
                     //wtf skal den lave???
@@ -301,6 +298,6 @@ public class ASTBuilder {
 
 
 }
-*/
+
 
  

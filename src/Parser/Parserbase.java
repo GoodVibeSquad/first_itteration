@@ -103,7 +103,7 @@ public class BottomUpParser {
                     children.add(0, symbolStack.pop());
                 }
                 Object node = buildAST(action.production, children);
-                int nextState = gotoTable.get(stateStack.peek()).get(action.production.lhs);
+
                 stateStack.push(nextState);
                 symbolStack.push(node);
                 System.out.println("Reduced: " + action.production);

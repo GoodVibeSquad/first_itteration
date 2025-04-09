@@ -40,7 +40,20 @@ public class Parser {
 
             } else if (action.charAt(0) == 'R') {
                 System.out.println(action);
-
+                // Get groduction
+                // List<Object> children = new ArrayList<>();
+                //for(i=0;i<prod.rhs.size();i++){
+                // statestack.pop;
+                // children.add(symbolstack.pop)
+                //}
+                // astbuild(prod,children)
+                // Reduce
+                // goto
+                //symbolStack.push( buildast (prod, children);
+                //Object node = astBuilder.buildAst(prod, children);
+                //symbolstack.push(node);
+                int newState = gotoTable.get(stateStack.peek()).get(prod.getLhs());
+                stateStack.push(newState);
 
             }
 
