@@ -3,6 +3,7 @@ package Parser;
 import Parser.TableGenerator.TableGenerator;
 import Tokens.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -26,6 +27,7 @@ public class Parser {
     public void run() {
         Stack<Integer> stateStack = new Stack<>();
         Stack<Object> symbolStack = new Stack<>();
+        ASTBuilder astBuilder = new ASTBuilder();
         stateStack.push(0);
         Token currentToken = tokens.getFirst();
 
@@ -43,9 +45,6 @@ public class Parser {
                 symbolStack.push(tokens.removeFirst());
 
             } else if (action.charAt(0) == 'R') {
-<<<<<<< Updated upstream
-                System.out.println(action);
-=======
                 String productionIndexStr = action.substring(1);
                 System.out.println(productionIndexStr);
 
@@ -73,7 +72,6 @@ public class Parser {
 
 //                System.out.println("LHS THING" + reductionProduction.getLhs());
 //                System.out.println("RHS THING" + reductionProduction.getRhs());
->>>>>>> Stashed changes
 
 
             }
@@ -95,4 +93,12 @@ public class Parser {
 
     }
 
+    private Production getProductionFromAction(String action) {
+        String productionString = action.substring(0);
+        String[] parts = productionString.split(" -> ");
+        String lhs = parts[0];
+        List<String> rhs = List.of(parts[1].split(" "));
+
+        return new Production(lhs, rhs);
+    }
 }
