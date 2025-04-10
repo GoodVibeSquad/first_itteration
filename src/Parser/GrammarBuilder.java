@@ -58,7 +58,9 @@ public class GrammarBuilder {
 
         //Statements
         grammar.add("statement", "expression", "SEMICOLON" );
-        grammar.add("statement", "IF", "expression", "statement", "stmtTail");
+        grammar.add("statement", "IF", "expression", "statement");
+        grammar.add("statement", "IF", "expression", "statement","ELSE","statement");
+
         grammar.add("statement", "identifier", "eqop", "expression", "SEMICOLON");
         grammar.add("statement", "OPEN_CURLY_BRACKET", "statementlist", "CLOSED_CURLY_BRACKET", "SEMICOLON"); // Added SEMICOLON
         grammar.add("statement", "FOR", "OPEN_PARENTHESIS", "statement", "expression", "SEMICOLON", "statement", "CLOSED_PARENTHESIS", "statement");
@@ -67,8 +69,8 @@ public class GrammarBuilder {
         grammar.add("statement", "CONTINUE", "SEMICOLON");
 
         //stmtTail
-        grammar.add("stmtTail", "ELSE", "statement");
-        grammar.add("stmtTail", " ");
+//        grammar.add("stmtTail", "ELSE", "statement");
+//        grammar.add("stmtTail", " ");
 
         //StatementList
         grammar.add("statementlist", "statement");
@@ -88,9 +90,9 @@ public class GrammarBuilder {
 
         //identifier
         grammar.add("identifier", "typed_identifier");
-        grammar.add("identifier", "simple_identifier");
+        grammar.add("identifier", "ID");
 
-        grammar.add("typed_identifier", "typed", "simple_identifier");
+        grammar.add("typed_identifier", "type", "ID");
 
         //Unaryoperator
         grammar.add("unaryOperator", "MINUS");

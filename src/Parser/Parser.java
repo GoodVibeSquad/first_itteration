@@ -65,6 +65,8 @@ public class Parser {
                 System.err.println("Invalid action: " + action);
                 return;
             }
+
         }
+        System.out.println("\n");
     }
 }
