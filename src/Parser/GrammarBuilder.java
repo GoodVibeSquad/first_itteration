@@ -26,16 +26,16 @@ public class GrammarBuilder {
         grammar.add("binaryoperator","EXPONENT");
 
         //Constants
-        grammar.add("constant"," ");
-        grammar.add("constant","BOOL");
-        grammar.add("constant","INT");
-        grammar.add("constant","DOUBLE");
-        grammar.add("constant","STRING");
-        grammar.add("constant","EULER");
-        grammar.add("constant","PI");
+        grammar.add("expression"," ");
+        grammar.add("expression","BOOL");
+        grammar.add("expression","INT");
+        grammar.add("expression","DOUBLE");
+        grammar.add("expression","STRING");
+        grammar.add("expression","EULER");
+        grammar.add("expression","PI");
 
         //expression
-        grammar.add("expression", "constant");
+        //grammar.add("expression", "constant");
         grammar.add("expression", "OPEN_PARENTHESIS", "expression" , "CLOSED_PARENTHESIS");
         grammar.add("expression", "expression", "binaryoperator", "expression");
         grammar.add("expression", "unaryOperator", "expression");

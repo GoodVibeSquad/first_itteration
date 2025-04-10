@@ -94,6 +94,30 @@ public class ASTBuilder {
                     Object object = children.get(0);
                     if (object instanceof Literals){
                         return new Econstant((Literals)object);
+                    }else   if(object instanceof Token){
+                        Token constant = (Token)object;
+                        switch (constant.getType().toString()) {
+                            case "INT":
+                                CInt cInt = new CInt(Integer.parseInt(constant.getValue()));
+                                return new Econstant(cInt);
+                            case "STRING":
+                                CString cString = new CString(constant.getValue());
+                                return new Econstant(cString);
+                            case "BOOL":
+                                CBool cBool = new CBool(Boolean.parseBoolean(constant.getValue()));
+                                return new Econstant(cBool);
+                            case "PI":
+                                CPi cPi = new CPi();
+                                return new Econstant(cPi);
+                            case "EULER":
+                                CEuler cEuler = new CEuler();
+                                return cEuler;
+                            case "NONE":
+                                CNone cNone = new CNone();
+                                return new Econstant(cNone);
+                        }
+                    }else{
+                        throw new RuntimeException("Syntax error at: " + object);
                     }
                 }
                 /*
