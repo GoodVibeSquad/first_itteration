@@ -61,16 +61,24 @@ public class GrammarBuilder {
         grammar.add("funcClass", "ARRAY");
 
         //Statements
-        grammar.add("statement", "expression", "SEMICOLON" );
-        grammar.add("statement", "IF", "expression", "statement");
-        grammar.add("statement", "IF", "expression", "statement","ELSE","statement");
+        // Top-level dispatch
+        grammar.add("statement", "matched_stmt");
+        grammar.add("statement", "unmatched_stmt");
 
-        grammar.add("statement", "identifier", "eqop", "expression", "SEMICOLON");
-        grammar.add("statement", "OPEN_CURLY_BRACKET", "statementlist", "CLOSED_CURLY_BRACKET");
-        grammar.add("statement", "FOR", "OPEN_PARENTHESIS", "statement", "expression", "SEMICOLON", "statement", "CLOSED_PARENTHESIS", "statement");
-        grammar.add("statement", "WHILE", "expression", "statement");
-        grammar.add("statement", "BREAK", "SEMICOLON");
-        grammar.add("statement", "CONTINUE", "SEMICOLON");
+        // Matched if-else and other complete statements
+        grammar.add("matched_stmt", "IF", "expression", "matched_stmt", "ELSE", "matched_stmt");
+        grammar.add("matched_stmt", "expression", "SEMICOLON");
+        grammar.add("matched_stmt", "identifier", "eqop", "expression", "SEMICOLON");
+        grammar.add("matched_stmt", "OPEN_CURLY_BRACKET", "statementlist", "CLOSED_CURLY_BRACKET");
+        grammar.add("matched_stmt", "FOR", "OPEN_PARENTHESIS", "statement", "expression", "SEMICOLON", "statement", "CLOSED_PARENTHESIS", "statement");
+        grammar.add("matched_stmt", "WHILE", "expression", "statement");
+        grammar.add("matched_stmt", "BREAK", "SEMICOLON");
+        grammar.add("matched_stmt", "CONTINUE", "SEMICOLON");
+
+        // Unmatched: possible dangling else
+        grammar.add("unmatched_stmt", "IF", "expression", "statement");
+        grammar.add("unmatched_stmt", "IF", "expression", "matched_stmt", "ELSE", "unmatched_stmt");
+
 
         //stmtTail
 //        grammar.add("stmtTail", "ELSE", "statement");
@@ -78,7 +86,7 @@ public class GrammarBuilder {
 
         //StatementList
         grammar.add("statementlist", "statement");
-        grammar.add("statementlist", "statementlist", "statement");
+        grammar.add("statementlist", "statement", "statementlist");
 
         //type
         grammar.add("type", "funcClass");

@@ -175,6 +175,7 @@ public class TableGenerator {
             for (LRItem item : state) {
                 if (!item.isComplete()) {
                     String symbol = item.nextSymbol();
+
                     int target = transitions.get(i).get(symbol);
                     if (!isNonTerminal(symbol, grammar)) {
                         actionTable.computeIfAbsent(i, k -> new HashMap<>()).put(symbol, "S" + target);
@@ -193,15 +194,15 @@ public class TableGenerator {
             }
         }
 
-        System.out.println("\n=== ACTION TABLE ===");
-        for (var entry : actionTable.entrySet()) {
-            System.out.println("State " + entry.getKey() + ": " + entry.getValue());
-        }
-
-        System.out.println("\n=== GOTO TABLE ===");
-        for (var entry : gotoTable.entrySet()) {
-            System.out.println("State " + entry.getKey() + ": " + entry.getValue());
-        }
+//        System.out.println("\n=== ACTION TABLE ===");
+//        for (var entry : actionTable.entrySet()) {
+//            System.out.println("State " + entry.getKey() + ": " + entry.getValue());
+//        }
+//
+//        System.out.println("\n=== GOTO TABLE ===");
+//        for (var entry : gotoTable.entrySet()) {
+//            System.out.println("State " + entry.getKey() + ": " + entry.getValue());
+//        }
     }
 }
 
