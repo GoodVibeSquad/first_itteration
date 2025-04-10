@@ -31,7 +31,7 @@ public class Parser {
         stateStack.push(0);
         Token currentToken = tokens.getFirst();
 
-        while (currentToken.getType() != TokenType.EOF){
+        while (currentToken.getType() != TokenType.EOF){//problem med sidste parse throughs
             String tokenType = currentToken.getType().toString();
             String action = actionTable.get(stateStack.peek()).get(tokenType);
 
