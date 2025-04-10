@@ -88,12 +88,8 @@ public class GrammarBuilder {
         grammar.add("statementlist", "statement");
         grammar.add("statementlist", "statement", "statementlist");
 
-        //type
-        grammar.add("TYPE", "funcClass");
-        grammar.add("TYPE", "INT");
-        grammar.add("TYPE", "STRING");
-        grammar.add("TYPE", "DOUBLE");
-        grammar.add("TYPE", "BOOL");
+
+
 
         //equals operator
         grammar.add("eqop","EQUALS");
@@ -105,6 +101,8 @@ public class GrammarBuilder {
         grammar.add("identifier", "ID");
 
         grammar.add("typed_identifier", "TYPE", "ID");
+        grammar.add("typed_identifier", "funcClass", "ID");
+
 
         //Unaryoperator
         grammar.add("unaryOperator", "MINUS");

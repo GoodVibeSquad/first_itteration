@@ -1,1 +1,2 @@
 Layer input = new Layer(6);
+int i;
