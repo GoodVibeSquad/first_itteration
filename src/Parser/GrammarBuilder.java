@@ -9,37 +9,41 @@ public class GrammarBuilder {
 
         grammar.setStartSymbol("statementlist");
 
+
+        //Binary operators
+        grammar.add("binaryoperator","PLUS");
+        grammar.add("binaryoperator","MINUS");
+        grammar.add("binaryoperator","MULTIPLY");
+        grammar.add("binaryoperator","DIVISION");
+        grammar.add("binaryoperator","MODULUS");
+        grammar.add("binaryoperator","COMPARISON");
+        grammar.add("binaryoperator","NOT_EQUALS");
+        grammar.add("binaryoperator","GREATER_THAN");
+        grammar.add("binaryoperator","LESS_THAN");
+        grammar.add("binaryoperator","GREATER_OR_EQUALS");
+        grammar.add("binaryoperator","LESS_OR_EQUALS");
+        grammar.add("binaryoperator","AND");
+        grammar.add("binaryoperator","OR");
+        grammar.add("binaryoperator","EXPONENT");
+
         //Constants
-        //grammar.add("constant"," ");
-        grammar.add("constant","BOOL");
-        grammar.add("constant","INT");
-        grammar.add("constant","DOUBLE");
-        grammar.add("constant","STRING");
-        grammar.add("constant","EULER");
-        grammar.add("constant","PI");
+        grammar.add("expression"," ");
+        grammar.add("expression","BOOL");
+        grammar.add("expression","INT");
+        grammar.add("expression","DOUBLE");
+        grammar.add("expression","STRING");
+        grammar.add("expression","EULER");
+        grammar.add("expression","PI");
 
         //expression
-        grammar.add("expression", "constant");
+        //grammar.add("expression", "constant");
         grammar.add("expression", "OPEN_PARENTHESIS", "expression" , "CLOSED_PARENTHESIS");
-        grammar.add("expression", "expression", "PLUS", "expression");
-        grammar.add("expression", "expression", "MINUS", "expression");
-        grammar.add("expression", "expression", "MULTIPLY", "expression");
-        grammar.add("expression", "expression", "DIVISION", "expression");
-        grammar.add("expression", "expression", "MODULUS", "expression");
-        grammar.add("expression", "expression", "COMPARISON", "expression");
-        grammar.add("expression", "expression", "NOT_EQUALS", "expression");
-        grammar.add("expression", "expression", "GREATER_THAN", "expression");
-        grammar.add("expression", "expression", "LESSER_THAN", "expression");
-        grammar.add("expression", "expression", "GREATER_OR_EQUALS", "expression");
-        grammar.add("expression", "expression", "LESS_OR_EQUALS", "expression");
-        grammar.add("expression", "expression", "AND", "expression");
-        grammar.add("expression", "expression", "OR", "expression");
-        grammar.add("expression", "expression", "EXPONENT", "expression");
+        grammar.add("expression", "expression", "binaryoperator", "expression");
         grammar.add("expression", "unaryOperator", "expression");
         grammar.add("expression", "identifier");
         grammar.add("expression", "identifier", "OPEN_PARENTHESIS", "exlist", "CLOSED_PARENTHESIS");
         grammar.add("expression", "SUM", "OPEN_PARENTHESIS", "expression", "expression", "ACTIVATIONFUNCTION", "CLOSED_PARENTHESIS");
-        grammar.add("expression", "SQRT","OPEN_PARENTHESIS","expression","CLOSED_PARENTHESIS");
+        grammar.add("expression", "SQUARE_ROOT","OPEN_PARENTHESIS","expression","CLOSED_PARENTHESIS");
         grammar.add("expression", "MAX","OPEN_PARENTHESIS","exlist","CLOSED_PARENTHESIS");
         grammar.add("expression", "expression","TERNARY","expression","COLON","expression");
         grammar.add("expression", "type","expression");
