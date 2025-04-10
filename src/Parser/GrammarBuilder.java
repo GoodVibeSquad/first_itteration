@@ -46,8 +46,8 @@ public class GrammarBuilder {
         grammar.add("expression", "SQUARE_ROOT","OPEN_PARENTHESIS","expression","CLOSED_PARENTHESIS");
         grammar.add("expression", "MAX","OPEN_PARENTHESIS","exlist","CLOSED_PARENTHESIS");
         grammar.add("expression", "expression","TERNARY","expression","COLON","expression");
-        grammar.add("expression", "type","expression");
-        grammar.add("expression", "NEW","funcClass");
+        grammar.add("expression", "TYPE","expression");
+        grammar.add("expression", "NEW","funcClass","OPEN_PARENTHESIS","exlist","CLOSED_PARENTHESIS");
         grammar.add("expression", "identifier","DOT","identifier");
 
         //Exlist
@@ -89,11 +89,11 @@ public class GrammarBuilder {
         grammar.add("statementlist", "statement", "statementlist");
 
         //type
-        grammar.add("type", "funcClass");
-        grammar.add("type", "INT");
-        grammar.add("type", "STRING");
-        grammar.add("type", "DOUBLE");
-        grammar.add("type", "BOOL");
+        grammar.add("TYPE", "funcClass");
+        grammar.add("TYPE", "INT");
+        grammar.add("TYPE", "STRING");
+        grammar.add("TYPE", "DOUBLE");
+        grammar.add("TYPE", "BOOL");
 
         //equals operator
         grammar.add("eqop","EQUALS");
@@ -124,7 +124,4 @@ public class GrammarBuilder {
         return grammar;
 
     }
-
-
-
 }
