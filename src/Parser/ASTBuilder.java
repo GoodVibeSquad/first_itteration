@@ -50,6 +50,10 @@ public class ASTBuilder {
 
             }
 
+            case "typed_identifier" ->{
+
+            }
+
             case "binaryoperator" -> {
                 Object constantValue = children.getFirst();
                 if (constantValue instanceof Token token) {

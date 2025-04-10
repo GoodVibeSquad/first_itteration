@@ -90,10 +90,10 @@ public class GrammarBuilder {
         grammar.add("eqop","SUBTRACTION_ASSIGNMENT");
 
         //identifier
+        grammar.add("identifier", "ID");
         grammar.add("identifier", "typed_identifier");
-        grammar.add("identifier", "simple_identifier");
 
-        grammar.add("typed_identifier", "typed", "simple_identifier");
+        grammar.add("typed_identifier", "TYPE", "ID");
 
         //Unaryoperator
         grammar.add("unaryOperator", "MINUS");
