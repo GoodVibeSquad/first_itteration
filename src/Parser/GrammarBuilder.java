@@ -104,7 +104,7 @@ public class GrammarBuilder {
         grammar.add("identifier", "typed_identifier");
         grammar.add("identifier", "ID");
 
-        grammar.add("typed_identifier", "type", "ID");
+        grammar.add("typed_identifier", "TYPE", "ID");
 
         //Unaryoperator
         grammar.add("unaryOperator", "MINUS");
