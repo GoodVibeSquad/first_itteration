@@ -10,7 +10,7 @@ public class GrammarBuilder {
         grammar.setStartSymbol("statementlist");
 
         //Constants
-        grammar.add("constant"," ");
+        //grammar.add("constant"," ");
         grammar.add("constant","BOOL");
         grammar.add("constant","INT");
         grammar.add("constant","DOUBLE");
@@ -62,7 +62,7 @@ public class GrammarBuilder {
         grammar.add("statement", "IF", "expression", "statement","ELSE","statement");
 
         grammar.add("statement", "identifier", "eqop", "expression", "SEMICOLON");
-        grammar.add("statement", "OPEN_CURLY_BRACKET", "statementlist", "CLOSED_CURLY_BRACKET", "SEMICOLON"); // Added SEMICOLON
+        grammar.add("statement", "OPEN_CURLY_BRACKET", "statementlist", "CLOSED_CURLY_BRACKET");
         grammar.add("statement", "FOR", "OPEN_PARENTHESIS", "statement", "expression", "SEMICOLON", "statement", "CLOSED_PARENTHESIS", "statement");
         grammar.add("statement", "WHILE", "expression", "statement");
         grammar.add("statement", "BREAK", "SEMICOLON");
@@ -74,7 +74,7 @@ public class GrammarBuilder {
 
         //StatementList
         grammar.add("statementlist", "statement");
-        grammar.add("statementlist", "statementlist", "statement", "SEMICOLON"); //Har added SEMICOLON
+        grammar.add("statementlist", "statementlist", "statement");
 
         //type
         grammar.add("type", "funcClass");
