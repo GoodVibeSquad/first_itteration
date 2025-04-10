@@ -85,6 +85,7 @@ public class TableGenerator {
         }
     }
 
+
     static Map<String, Set<String>> computeFollowSets(Grammar grammar) {
         Map<String, Set<String>> follow = new HashMap<>();
 
@@ -175,11 +176,18 @@ public class TableGenerator {
             for (LRItem item : state) {
                 if (!item.isComplete()) {
                     String symbol = item.nextSymbol();
-                    int target = transitions.get(i).get(symbol);
-                    if (!isNonTerminal(symbol, grammar)) {
-                        actionTable.computeIfAbsent(i, k -> new HashMap<>()).put(symbol, "S" + target);
-                    } else {
-                        gotoTable.computeIfAbsent(i, k -> new HashMap<>()).put(symbol, target);
+                    Map<String, Integer> trans = transitions.get(i);
+                    if (trans != null && trans.containsKey(symbol)) {
+                        int target = trans.get(symbol);
+                        if (!isNonTerminal(symbol, grammar)) {
+                            Map<String, String> row = actionTable.computeIfAbsent(i, k -> new HashMap<>());
+                            if (row.containsKey(symbol)) {
+                                System.err.println("Conflict at state " + i + " on symbol " + symbol);
+                            }
+                            row.put(symbol, "S" + target);
+                        } else {
+                            gotoTable.computeIfAbsent(i, k -> new HashMap<>()).put(symbol, target);
+                        }
                     }
                 } else {
                     if (item.production.getLhs().equals("S'")) {
@@ -193,14 +201,14 @@ public class TableGenerator {
             }
         }
 
-//        System.out.println("\n=== ACTION TABLE ===");
-//        for (var entry : actionTable.entrySet()) {
-//            System.out.println("State " + entry.getKey() + ": " + entry.getValue());
-//        }
-//
-//        System.out.println("\n=== GOTO TABLE ===");
-//        for (var entry : gotoTable.entrySet()) {
-//            System.out.println("State " + entry.getKey() + ": " + entry.getValue());
-//        }
+        System.out.println("\n=== ACTION TABLE ===");
+        for (var entry : actionTable.entrySet()) {
+            System.out.println("State " + entry.getKey() + ": " + entry.getValue());
+        }
+
+        System.out.println("\n=== GOTO TABLE ===");
+        for (var entry : gotoTable.entrySet()) {
+            System.out.println("State " + entry.getKey() + ": " + entry.getValue());
+        }
     }
 }

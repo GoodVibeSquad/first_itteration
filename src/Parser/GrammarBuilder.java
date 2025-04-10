@@ -7,7 +7,53 @@ public class GrammarBuilder {
     public static Grammar createGrammar(){
         Grammar grammar = new Grammar();
 
-        grammar.setStartSymbol("statementlist");
+        grammar.setStartSymbol("expression");
+
+        grammar.add("expression", "primary", "expression_tail");
+
+        grammar.add("expression_tail");
+        grammar.add("expression_tail", "binaryoperator", "primary", "expression_tail");
+
+        grammar.add("binaryoperator", "PLUS");
+        grammar.add("binaryoperator", "MULTIPLY");
+
+        grammar.add("primary", "constant");
+        grammar.add("constant", "INT");
+
+        return grammar;
+    }
+    public static Grammar createSimpleGrammar(){
+        Grammar grammar = new Grammar();
+        grammar.setStartSymbol("S");
+
+        grammar.add("S", "E");
+        grammar.add("E", "E", "+", "T");
+        grammar.add("E", "T");
+        grammar.add("T", "int");
+
+        return grammar;
+
+    }
+    /*
+    * rammar grammar = new Grammar();
+
+        grammar.setStartSymbol("expression");
+
+        grammar.add("expression", "primary", "expression_tail");
+
+        grammar.add("expression_tail");
+        grammar.add("expression_tail", "binaryoperator", "primary", "expression_tail");
+
+        grammar.add("binaryoperator", "PLUS");
+        grammar.add("binaryoperator", "MULTIPLY");
+
+        grammar.add("primary", "constant");
+        grammar.add("constant", "INT");
+
+        return grammar;
+        * */
+        /*
+        *grammar.setStartSymbol("statementlist");
 
         //Binary operators
         grammar.add("binaryoperator","PLUS");
@@ -34,10 +80,16 @@ public class GrammarBuilder {
         grammar.add("constant","EULER");
         grammar.add("constant","PI");
 
+        //Primary
+        grammar.add("primary", "constant");
+        grammar.add("primary", "identifier");
+        grammar.add("primary", "OPEN_PARENTHESIS", "expression", "CLOSED_PARENTHESIS");
+
+        grammar.add("expression_tail", " ");
+        grammar.add("expression_tail", "binaryoperator", "primary", "expression_tail");
+
         //expression
-        grammar.add("expression", "constant");
-        grammar.add("expression", "OPEN_PARENTHESIS", "expression" , "CLOSED_PARENTHESIS");
-        grammar.add("expression", "expression", "binaryoperator", "expression");
+        grammar.add("expression", "primary", "expression_tail");
         grammar.add("expression", "unaryOperator", "expression");
         grammar.add("expression", "identifier");
         grammar.add("expression", "identifier", "OPEN_PARENTHESIS", "exlist", "CLOSED_PARENTHESIS");
@@ -48,6 +100,9 @@ public class GrammarBuilder {
         grammar.add("expression", "type","expression");
         grammar.add("expression", "NEW","funcClass");
         grammar.add("expression", "identifier","DOT","identifier");
+
+
+
 
         //Exlist
         grammar.add("exlist","expression");
@@ -79,10 +134,6 @@ public class GrammarBuilder {
 
         //type
         grammar.add("type", "funcClass");
-        grammar.add("type", "INT");
-        grammar.add("type", "STRING");
-        grammar.add("type", "DOUBLE");
-        grammar.add("type", "BOOL");
 
         //equals operator
         grammar.add("eqop","EQUALS");
@@ -98,22 +149,8 @@ public class GrammarBuilder {
         //Unaryoperator
         grammar.add("unaryOperator", "MINUS");
         grammar.add("unaryOperator", "NEGATION");
-
-        return grammar;
-    }
-    public static Grammar createSimpleGrammar(){
-        Grammar grammar = new Grammar();
-        grammar.setStartSymbol("S");
-
-        grammar.add("S", "E");
-        grammar.add("E", "E", "+", "T");
-        grammar.add("E", "T");
-        grammar.add("T", "int");
-
-        return grammar;
-
-    }
-
+        *
+        * */
 
 
 }

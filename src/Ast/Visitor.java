@@ -44,10 +44,7 @@ class Visitor implements AstVisitor<String> {
         return "";
     }
 
-    @Override
-    public String visitEidentifier(Eidentifier e) {
-        return "";
-    }
+
 
     @Override
     public String visitEbinaryoperators(Ebinaryoperators e) {
@@ -100,14 +97,26 @@ class Visitor implements AstVisitor<String> {
     }
 
     @Override
-    public String visitEContainsExpression(EContainsExpression e) {
-        return "";
-    }
-
-    @Override
     public String visitEMethodCall(EMethodCall e) {
         return "";
     }
+
+    // Etail
+    @Override
+    public String visitETailNone(ETailNone e){return "";}
+
+    @Override
+    public String visitEtailBPEtail(EtailBPEtail e){return "";}
+
+    // primaries
+    @Override
+    public String visitPConst(PConst e){return "";}
+
+    @Override
+    public String visitPIdentifier(PIdentifier pIdentifier){return "";}
+
+    @Override
+    public String visitPParenthesis(PParenthesis pParenthesis){return "";}
 
     // Statements
     @Override

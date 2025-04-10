@@ -13,7 +13,6 @@ package Ast;
 
     // Expressions
     R visitEconstant(Econstant e);
-    R visitEidentifier(Eidentifier e);
     R visitEbinaryoperators(Ebinaryoperators e);
     R visitEunaryoperators(Eunaryoperators e);
     R visitEcall(EFuncCall e);
@@ -24,8 +23,16 @@ package Ast;
     R visitESqrt(ESqrt e);
     R visitETypeconversion(ETypeconversion e);
     R visitENewFunc(ENewFunc e);
-    R visitEContainsExpression(EContainsExpression e);
     R visitEMethodCall(EMethodCall e);
+
+    // Expression Tail
+    R visitETailNone(ETailNone e);
+    R visitEtailBPEtail(EtailBPEtail e);
+
+    // PRimary
+    R visitPConst(PConst e);
+    R visitPIdentifier(PIdentifier e);
+    R visitPParenthesis(PParenthesis e);
 
     // Statements
     R visitSif(Sif s);

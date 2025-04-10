@@ -74,28 +74,24 @@ public class ASTBuilder {
                 }
             }
 
+            case "primary" -> {
+                Object constantValue = children.getFirst();
+                if (constantValue instanceof Literals){
+                    return new PConst((Literals) constantValue);
+                }
+            }
+            case "expression_tail" -> {
+                Object binaryValue = children.get(0);
+                Object constValue = children.get(1);
+                if (binaryValue instanceof BinaryOperators && constValue instanceof  Primary){
+
+
+                }
+            }
+
             case "expression" -> {
 
-                if (children.size() == 3) {
-                    Object left = children.get(0);
-                    Object operator = children.get(1);
-                    Object right = children.get(2);
 
-                    if (left instanceof Expression && operator instanceof BinaryOperators && right instanceof Expression) {
-                        // All checks passed - now you can safely cast and use
-                        Expression leftExpr = (Expression) left;
-                        BinaryOperators binOp = (BinaryOperators) operator;
-                        Expression rightExpr = (Expression) right;
-
-                        return new Ebinaryoperators(binOp,leftExpr,rightExpr);
-                    }
-                }
-                else if (children.size() == 1){
-                    Object object = children.get(0);
-                    if (object instanceof Literals){
-                        return new Econstant((Literals)object);
-                    }
-                }
                 /*
                 if (prodSize == 3 && "(".equals(production.getRhs().getFirst())) {
                     //wtf skal den lave???
