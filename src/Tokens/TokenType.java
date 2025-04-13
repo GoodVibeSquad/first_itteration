@@ -13,7 +13,7 @@ public enum TokenType{
     MULTI_LINE_COMMENT(null),
     FOR("for"),
     WHILE("while"),
-    ARRAY("Array"),
+//    ARRAY("Array"),
     PLUS("+"),
     MINUS("-"),
     DOT("."),
@@ -58,10 +58,11 @@ public enum TokenType{
     PI("Pi"),
     EXPONENT("^"),
     MAX("Max"),
-    LAYER("Layer"),
-    NEURALNETWORK("NeuralNetwork"),
-    ACTIVATIONFUNCTION("ActivationFunction"),
+//    LAYER("Layer"),
+//    NEURALNETWORK("NeuralNetwork"),
+//    ACTIVATIONFUNCTION("ActivationFunction"),
     RELU("Relu"),
+    FUNCCLASS(null),
     EOF("EOF");
 
 

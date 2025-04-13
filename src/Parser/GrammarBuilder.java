@@ -47,7 +47,7 @@ public class GrammarBuilder {
         grammar.add("expression", "MAX","OPEN_PARENTHESIS","exlist","CLOSED_PARENTHESIS");
         grammar.add("expression", "expression","TERNARY","expression","COLON","expression");
         grammar.add("expression", "TYPE","expression");
-        grammar.add("expression", "NEW","funcClass","OPEN_PARENTHESIS","exlist","CLOSED_PARENTHESIS");
+        grammar.add("expression", "NEW","FUNCCLASS","OPEN_PARENTHESIS","exlist","CLOSED_PARENTHESIS");
         grammar.add("expression", "identifier","DOT","identifier");
 
         //Exlist
@@ -55,10 +55,10 @@ public class GrammarBuilder {
         grammar.add("exlist","exlist","COMMA","expression");
 
         //funcClass
-        grammar.add("funcClass", "NEURALNETWORK");
-        grammar.add("funcClass", "LAYER");
-        grammar.add("funcClass", "ACTIVATIONFUNCTION");
-        grammar.add("funcClass", "ARRAY");
+//        grammar.add("funcClass", "NEURALNETWORK");
+//        grammar.add("funcClass", "LAYER");
+//        grammar.add("funcClass", "ACTIVATIONFUNCTION");
+//        grammar.add("funcClass", "ARRAY");
 
         //Statements
         // Top-level dispatch
@@ -101,7 +101,7 @@ public class GrammarBuilder {
         grammar.add("identifier", "ID");
 
         grammar.add("typed_identifier", "TYPE", "ID");
-        grammar.add("typed_identifier", "funcClass", "ID");
+        grammar.add("typed_identifier", "FUNCCLASS", "ID");
 
 
         //Unaryoperator
