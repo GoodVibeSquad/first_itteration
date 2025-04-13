@@ -1,4 +1,5 @@
 {
-    Layer input = new Layer(6);
-    Layer inputs = new Layer(6);
+    Layer data = "something";
+    int dataType;
+
 }

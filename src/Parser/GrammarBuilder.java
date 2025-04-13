@@ -47,7 +47,7 @@ public class GrammarBuilder {
         grammar.add("expression", "MAX","OPEN_PARENTHESIS","exlist","CLOSED_PARENTHESIS");
         grammar.add("expression", "expression","TERNARY","expression","COLON","expression");
         grammar.add("expression", "TYPE","expression");
-        grammar.add("expression", "NEW","FUNCCLASS","OPEN_PARENTHESIS","exlist","CLOSED_PARENTHESIS");
+        grammar.add("expression", "FUNCCLASS","OPEN_PARENTHESIS","exlist","CLOSED_PARENTHESIS");
         grammar.add("expression", "identifier","DOT","identifier");
 
         //Exlist
