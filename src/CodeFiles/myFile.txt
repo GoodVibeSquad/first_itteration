@@ -19,6 +19,8 @@ nn.saveModel("c:\Neuro\network", "Neuro1");
 
 NeuralNetwork nn = NeuralNetwork.loadModel("c:\Neuro\network\Neuro1.txt");
 
+
+
 string data = "c:\Neuro\imgs2";
 string dataType = ".img";
 nn.predict(data, dataType);
