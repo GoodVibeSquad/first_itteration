@@ -1,4 +1,4 @@
-package Ast;
+package Ast.Typing;
 
 import java.util.HashMap;
 import java.util.List;
