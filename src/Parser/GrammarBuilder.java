@@ -51,7 +51,6 @@ public class GrammarBuilder {
 
         grammar.add("expression", "TYPE","OPEN_PARENTHESIS","exlist","CLOSED_PARENTHESIS");
         grammar.add("expression", "ID","DOT","ID","OPEN_PARENTHESIS","exlist","CLOSED_PARENTHESIS");
-
         // Calling methods on TYPE
         grammar.add("expression", "TYPE","DOT","ID","OPEN_PARENTHESIS","exlist","CLOSED_PARENTHESIS");
 
