@@ -3,7 +3,12 @@ package Ast;
 import Tokens.TokenType;
 
 public enum AssignmentOperator {
-    EQUALS(TokenType.EQUALS), ADDITION_ASSIGNMENT(TokenType.ADDITION_ASSIGNMENT), SUBTRACTION_ASSIGNMENT(TokenType.SUBTRACTION_ASSIGNMENT);
+    ASSIGN(TokenType.ASSIGN),
+    ADD_ASSIGN(TokenType.ADD_ASSIGN),
+    SUB_ASSIGN(TokenType.SUB_ASSIGN),
+    DIV_ASSIGN(TokenType.DIV_ASSIGN),
+    MUL_ASSIGN(TokenType.MUL_ASSIGN),
+    MOD_ASSIGN(TokenType.MOD_ASSIGN);
 
     private final TokenType token;
 
