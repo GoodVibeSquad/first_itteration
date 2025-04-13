@@ -46,9 +46,12 @@ public class GrammarBuilder {
         grammar.add("expression", "SQUARE_ROOT","OPEN_PARENTHESIS","expression","CLOSED_PARENTHESIS");
         grammar.add("expression", "MAX","OPEN_PARENTHESIS","exlist","CLOSED_PARENTHESIS");
         grammar.add("expression", "expression","TERNARY","expression","COLON","expression");
+
         grammar.add("expression", "OPEN_PARENTHESIS","TYPE","CLOSED_PARENTHESIS","expression");
-        grammar.add("expression", "FUNCCLASS","OPEN_PARENTHESIS","exlist","CLOSED_PARENTHESIS");
+
+        grammar.add("expression", "NEW", "TYPE","OPEN_PARENTHESIS","exlist","CLOSED_PARENTHESIS");
         grammar.add("expression", "identifier","DOT","identifier");
+
 
         //Exlist
         grammar.add("exlist","expression");
@@ -102,8 +105,6 @@ public class GrammarBuilder {
 
 
         grammar.add("typed_identifier", "TYPE", "ID");
-        grammar.add("typed_identifier", "FUNCCLASS", "ID");
-
 
         //Unaryoperator
         grammar.add("unaryOperator", "MINUS");

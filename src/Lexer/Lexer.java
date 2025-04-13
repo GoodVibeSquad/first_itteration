@@ -116,17 +116,12 @@ public class Lexer {
         types.add("string");
         types.add("double");
         types.add("bool");
+        types.add("Array");
+        types.add("Layer");
+        types.add("NeuralNetwork");
+        types.add("ActivationFunction");
         if (types.contains(word)) {
             return new Token(TokenType.TYPE, word);
-        }
-
-        ArrayList<String> funcClass = new ArrayList<>();
-        funcClass.add("Array");
-        funcClass.add("Layer");
-        funcClass.add("NeuralNetwork");
-        funcClass.add("ActivationFunction");
-        if (funcClass.contains(word)) {
-            return new Token(TokenType.FUNCCLASS, word);
         }
 
         if (word.equals("true") || word.equals("false")) {
