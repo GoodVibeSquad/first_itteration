@@ -78,10 +78,10 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
 
         switch (op) {
             //arithmetic operators
-            case PLUS, MINUS, MULTIPLY, DIVISION, MODULUS -> {
+            case PLUS, MINUS, MULTIPLY, DIVISION, MODULUS, EXPONENT -> {
                 if (leftType == TypeCheck.INT && rightType == TypeCheck.INT) {
                     return TypeCheck.INT;
-                } else if (leftType == TypeCheck.DOUBLE && rightType == TypeCheck.DOUBLE) {
+                } else if (isNumeric(leftType) && isNumeric(rightType)) {
                     return TypeCheck.DOUBLE;
                 } else {
                     System.err.println("Invalid arithmetic: " + leftType + " " + op + " " + rightType);
@@ -89,7 +89,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
                 }
             }
             //comparison operators
-            case COMPARISON, NOT_EQUALS, GREATER_OR_EQUALS, LESS_OR_EQUALS -> {
+            case EQUALS, NOT_EQUALS, GREATER_OR_EQUALS, LESS_OR_EQUALS -> {
                 if ((leftType == rightType) || (isNumeric(leftType)) && isNumeric(rightType)) {
                     return TypeCheck.BOOL;
                 } else {

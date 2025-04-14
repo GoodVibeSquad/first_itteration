@@ -26,7 +26,7 @@ public enum TokenType{
     GREATER_OR_EQUALS(">="),
     LESS_OR_EQUALS("<="),
     NOT_EQUALS("!="),
-    COMPARISON("=="),
+    EQUALS("=="),
     OPEN_PARENTHESIS("("),
     CLOSED_PARENTHESIS(")"),
     OPEN_CURLY_BRACKET("{"),

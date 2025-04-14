@@ -96,7 +96,6 @@ public class GrammarBuilder {
         grammar.add("typed_identifier", "TYPE", "ID");
 
         // ====== UNARY OPERATORS ======
-
         grammar.add("unaryOperator", "MINUS");
         grammar.add("unaryOperator", "NEGATION");
 
