@@ -72,6 +72,7 @@ public class GrammarBuilder {
         grammar.add("matched_stmt", "WHILE", "expression", "statement");
         grammar.add("matched_stmt", "BREAK", "SEMICOLON");
         grammar.add("matched_stmt", "CONTINUE", "SEMICOLON");
+        grammar.add("matched_stmt",  "ID", "In/deCrement", "SEMICOLON");
 
         // Unmatched: possible dangling else
         grammar.add("unmatched_stmt", "IF", "expression", "statement");
@@ -99,6 +100,10 @@ public class GrammarBuilder {
 
         grammar.add("unaryOperator", "MINUS");
         grammar.add("unaryOperator", "NEGATION");
+
+        // ====== In/deCrement OPERATORS ======
+        grammar.add("In/deCrement", "INCREMENT");
+        grammar.add("In/deCrement", "DECREMENT");
 
         return grammar;
     }
