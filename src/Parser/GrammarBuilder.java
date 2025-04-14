@@ -9,93 +9,114 @@ public class GrammarBuilder {
 
         grammar.setStartSymbol("statementlist");
 
+
         //Binary operators
-        grammar.add("binaryoperator","plus");
-        grammar.add("binaryoperator","-");
-        grammar.add("binaryoperator","*");
-        grammar.add("binaryoperator","/");
-        grammar.add("binaryoperator","%");
-        grammar.add("binaryoperator","==");
-        grammar.add("binaryoperator","!=");
-        grammar.add("binaryoperator",">");
-        grammar.add("binaryoperator","<");
-        grammar.add("binaryoperator",">=");
-        grammar.add("binaryoperator","<=");
-        grammar.add("binaryoperator","&&");
-        grammar.add("binaryoperator","||");
-        grammar.add("binaryoperator","^");
+        grammar.add("binaryoperator","PLUS");
+        grammar.add("binaryoperator","MINUS");
+        grammar.add("binaryoperator","MULTIPLY");
+        grammar.add("binaryoperator","DIVISION");
+        grammar.add("binaryoperator","MODULUS");
+        grammar.add("binaryoperator","COMPARISON");
+        grammar.add("binaryoperator","NOT_EQUALS");
+        grammar.add("binaryoperator","GREATER_THAN");
+        grammar.add("binaryoperator","LESS_THAN");
+        grammar.add("binaryoperator","GREATER_OR_EQUALS");
+        grammar.add("binaryoperator","LESS_OR_EQUALS");
+        grammar.add("binaryoperator","AND");
+        grammar.add("binaryoperator","OR");
+        grammar.add("binaryoperator","EXPONENT");
 
         //Constants
-        grammar.add("constant"," ");
-        grammar.add("constant","bool");
-        grammar.add("constant","int");
-        grammar.add("constant","double");
-        grammar.add("constant","string");
-        grammar.add("constant","Euler");
-        grammar.add("constant","Pi");
+        grammar.add("expression"," ");
+        grammar.add("expression","BOOL");
+        grammar.add("expression","INT");
+        grammar.add("expression","DOUBLE");
+        grammar.add("expression","STRING");
+        grammar.add("expression","EULER");
+        grammar.add("expression","PI");
 
         //expression
-        grammar.add("expression", "constant");
-        grammar.add("expression", "(", "expression" , ")");
+        //grammar.add("expression", "constant");
+        grammar.add("expression", "OPEN_PARENTHESIS", "expression" , "CLOSED_PARENTHESIS");
         grammar.add("expression", "expression", "binaryoperator", "expression");
-        grammar.add("expression", "unaryoperator", "expression");
+        grammar.add("expression", "unaryOperator", "expression");
         grammar.add("expression", "identifier");
-        grammar.add("expression", "identifier", "(", "exlist", ")");
-        grammar.add("expression", "Sum", "(", "expression", "expression", "ActivationFunction", ")");
-        grammar.add("expression", "Sqrt","(","expression",")");
-        grammar.add("expression", "Max","(","exlist",")");
-        grammar.add("expression", "expression","?","expression",":","expression");
-        grammar.add("expression", "type","expression");
-        grammar.add("expression", "new","funcClass");
-        grammar.add("expression", "identifier",".","identifier");
+        grammar.add("expression", "identifier", "OPEN_PARENTHESIS", "exlist", "CLOSED_PARENTHESIS");
+        grammar.add("expression", "SUM", "OPEN_PARENTHESIS", "expression", "expression", "ACTIVATIONFUNCTION", "CLOSED_PARENTHESIS");
+        grammar.add("expression", "SQUARE_ROOT","OPEN_PARENTHESIS","expression","CLOSED_PARENTHESIS");
+        grammar.add("expression", "MAX","OPEN_PARENTHESIS","exlist","CLOSED_PARENTHESIS");
+        grammar.add("expression", "expression","TERNARY","expression","COLON","expression");
+
+        grammar.add("expression", "OPEN_PARENTHESIS","TYPE","CLOSED_PARENTHESIS","expression");
+
+        grammar.add("expression", "NEW","TYPE","OPEN_PARENTHESIS","exlist","CLOSED_PARENTHESIS");
+
+        // Not sure if needed
+        //  grammar.add("expression", "TYPE","OPEN_PARENTHESIS","exlist","CLOSED_PARENTHESIS");
+
+
+
+        grammar.add("expression", "ID","DOT","ID","OPEN_PARENTHESIS","exlist","CLOSED_PARENTHESIS");
+        // Calling methods on TYPE
+        grammar.add("expression", "TYPE","DOT","ID","OPEN_PARENTHESIS","exlist","CLOSED_PARENTHESIS");
+
 
         //Exlist
         grammar.add("exlist","expression");
-        grammar.add("exlist","exlist",",","expression");
+        grammar.add("exlist","exlist","COMMA","expression");
 
         //funcClass
-        grammar.add("funcClass", "NeuralNetwork");
-        grammar.add("funcClass", "Layer");
-        grammar.add("funcClass", "ActivationFunction");
-        grammar.add("funcClass", "Array");
+//        grammar.add("funcClass", "NEURALNETWORK");
+//        grammar.add("funcClass", "LAYER");
+//        grammar.add("funcClass", "ACTIVATIONFUNCTION");
+//        grammar.add("funcClass", "ARRAY");
 
         //Statements
-        grammar.add("statement", "expression");
-        grammar.add("statement", "if", "expression", "statement", "stmtTail");
-        grammar.add("statement", "identifier", "eqop", "expression", ";");
-        grammar.add("statement", "{", "statementlist", "}");
-        grammar.add("statement", "for",  "(", "statement", "expression", ";", "statement", ")", "statement");
-        grammar.add("statement", "while", "expression", "statement");
-        grammar.add("statement", "break", ";");
-        grammar.add("statement", "continue", ";");
+        // Top-level dispatch
+        grammar.add("statement", "matched_stmt");
+        grammar.add("statement", "unmatched_stmt");
+
+        // Matched if-else and other complete statements
+        grammar.add("matched_stmt", "IF", "expression", "matched_stmt", "ELSE", "matched_stmt");
+        grammar.add("matched_stmt", "expression", "SEMICOLON");
+        grammar.add("matched_stmt", "identifier", "eqop", "expression", "SEMICOLON");
+        grammar.add("matched_stmt", "OPEN_CURLY_BRACKET", "statementlist", "CLOSED_CURLY_BRACKET");
+        grammar.add("matched_stmt", "FOR", "OPEN_PARENTHESIS", "statement", "expression", "SEMICOLON", "statement", "CLOSED_PARENTHESIS", "statement");
+        grammar.add("matched_stmt", "WHILE", "expression", "statement");
+        grammar.add("matched_stmt", "BREAK", "SEMICOLON");
+        grammar.add("matched_stmt", "CONTINUE", "SEMICOLON");
+
+        // Unmatched: possible dangling else
+        grammar.add("unmatched_stmt", "IF", "expression", "statement");
+        grammar.add("unmatched_stmt", "IF", "expression", "matched_stmt", "ELSE", "unmatched_stmt");
+
 
         //stmtTail
-        grammar.add("stmtTail", "else", "statement");
-        grammar.add("stmtTail", " ");
+//        grammar.add("stmtTail", "ELSE", "statement");
+//        grammar.add("stmtTail", " ");
 
         //StatementList
         grammar.add("statementlist", "statement");
-        grammar.add("statementlist", "statementlist", "statement");
+        grammar.add("statementlist", "statement", "statementlist");
 
-        //type
-        grammar.add("type", "funcClass");
-        grammar.add("type", "int");
-        grammar.add("type", "string");
-        grammar.add("type", "double");
-        grammar.add("type", "bool");
+
+
 
         //equals operator
-        grammar.add("eqop","=");
-        grammar.add("eqop","+=");
-        grammar.add("eqop","-=");
+        grammar.add("eqop","EQUALS");
+        grammar.add("eqop","ADDITION_ASSIGNMENT");
+        grammar.add("eqop","SUBTRACTION_ASSIGNMENT");
 
         //identifier
-        grammar.add("identifier", "identifier");
-        grammar.add("identifier", "type", "identifier");
+        grammar.add("identifier", "typed_identifier");
+        grammar.add("identifier", "ID");
+
+
+        grammar.add("typed_identifier", "TYPE", "ID");
 
         //Unaryoperator
-        grammar.add("unaryOperator", "-");
-        grammar.add("unaryOperator", "!");
+        grammar.add("unaryOperator", "MINUS");
+        grammar.add("unaryOperator", "NEGATION");
 
         return grammar;
     }
@@ -111,7 +132,4 @@ public class GrammarBuilder {
         return grammar;
 
     }
-
-
-
 }

@@ -48,7 +48,7 @@ public class TableGenerator {
     }
 
     //Goto metode
-    public static Set<LRItem> gotoSet(Set<LRItem> items, String Symbol, Grammar grammar) {
+    public static Set<LRItem> gotoState(Set<LRItem> items, String Symbol, Grammar grammar) {
         Set<LRItem> nextSet = new HashSet<>();
         for (LRItem item : items) {
             if (Symbol.equals(item.nextSymbol())) {
@@ -150,7 +150,7 @@ public class TableGenerator {
             }
 
             for (String symbol : symbols) {
-                Set<LRItem> target = gotoSet(state, symbol, grammar);
+                Set<LRItem> target = gotoState(state, symbol, grammar);
 
                 if (!stateNumbers.containsKey(target)) {
                     int newStateNum = states.size();
@@ -175,6 +175,7 @@ public class TableGenerator {
             for (LRItem item : state) {
                 if (!item.isComplete()) {
                     String symbol = item.nextSymbol();
+
                     int target = transitions.get(i).get(symbol);
                     if (!isNonTerminal(symbol, grammar)) {
                         actionTable.computeIfAbsent(i, k -> new HashMap<>()).put(symbol, "S" + target);
@@ -204,3 +205,4 @@ public class TableGenerator {
 //        }
     }
 }
+

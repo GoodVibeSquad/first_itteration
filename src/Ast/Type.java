@@ -3,7 +3,7 @@ package Ast;
 import Tokens.TokenType;
 
 public enum Type {
-    NEURALNETWORK(TokenType.NEURALNETWORK), LAYER(TokenType.LAYER), ACTIVATIONFUNC(TokenType.ACTIVATIONFUNCTION), ARRAY(TokenType.ARRAY),
+    NEURALNETWORK(TokenType.FUNCCLASS), LAYER(TokenType.FUNCCLASS), ACTIVATIONFUNC(TokenType.FUNCCLASS), ARRAY(TokenType.FUNCCLASS),
     STRING(TokenType.STRING), INT(TokenType.INT), DOUBLE(TokenType.DOUBLE), BOOL(TokenType.BOOL);
 
     private final TokenType token;
