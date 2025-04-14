@@ -1,11 +1,11 @@
 {
-Layer input = Layer(6);
-Layer hidden = Layer(5,2);
-Layer output = Layer(10);
 
+Layer input = new Layer(6);
+Layer hidden = new Layer(5,2);
+Layer output = new Layer(10);
 
+NeuralNetwork nn = new NeuralNetwork(input, hidden, output);
 
-NeuralNetwork nn = NeuralNetwork(input, hidden, output);
 
 string data = "c:\Neuro\imgs";
 string dataType = ".img";

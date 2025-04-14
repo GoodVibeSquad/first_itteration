@@ -9,6 +9,7 @@ public class GrammarBuilder {
 
         grammar.setStartSymbol("statementlist");
 
+
         // ====== BINARY OPS ======
         grammar.add("binaryoperator","PLUS");
         grammar.add("binaryoperator","MINUS");
@@ -25,6 +26,7 @@ public class GrammarBuilder {
         grammar.add("binaryoperator","OR");
         grammar.add("binaryoperator","EXPONENT");
 
+
         // ====== CONSTANTS ======
         grammar.add("expression"," ");
         grammar.add("expression","BOOL");
@@ -34,8 +36,8 @@ public class GrammarBuilder {
         grammar.add("expression","EULER");
         grammar.add("expression","PI");
 
+
         // ====== EXPRESSIONS ======
-        //grammar.add("expression", "constant");
         grammar.add("expression", "OPEN_PARENTHESIS", "expression" , "CLOSED_PARENTHESIS");
         grammar.add("expression", "expression", "binaryoperator", "expression");
         grammar.add("expression", "unaryOperator", "expression");
@@ -64,6 +66,7 @@ public class GrammarBuilder {
         grammar.add("matched_stmt", "IF", "expression", "matched_stmt", "ELSE", "matched_stmt");
         grammar.add("matched_stmt", "expression", "SEMICOLON");
         grammar.add("matched_stmt", "identifier", "assop", "expression", "SEMICOLON");
+
         grammar.add("matched_stmt", "OPEN_CURLY_BRACKET", "statementlist", "CLOSED_CURLY_BRACKET");
         grammar.add("matched_stmt", "FOR", "OPEN_PARENTHESIS", "statement", "expression", "SEMICOLON", "statement", "CLOSED_PARENTHESIS", "statement");
         grammar.add("matched_stmt", "WHILE", "expression", "statement");
@@ -73,6 +76,7 @@ public class GrammarBuilder {
         // Unmatched: possible dangling else
         grammar.add("unmatched_stmt", "IF", "expression", "statement");
         grammar.add("unmatched_stmt", "IF", "expression", "matched_stmt", "ELSE", "unmatched_stmt");
+
 
         // ====== STATEMENT LIST ======
         grammar.add("statementlist", "statement");
@@ -92,6 +96,7 @@ public class GrammarBuilder {
         grammar.add("typed_identifier", "TYPE", "ID");
 
         // ====== UNARY OPERATORS ======
+
         grammar.add("unaryOperator", "MINUS");
         grammar.add("unaryOperator", "NEGATION");
 
