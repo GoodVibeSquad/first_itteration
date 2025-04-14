@@ -1,7 +1,7 @@
 package Ast;
 
 
- interface AstVisitor<R> {
+ public interface AstVisitor<R> {
     // Constants
     R visitCNone(CNone c);
     R visitCBool(CBool c);

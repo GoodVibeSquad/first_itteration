@@ -1,7 +1,7 @@
-package Ast;
+package TypeChecking;
 
-import javax.lang.model.type.TypeVisitor;
-import java.util.HashMap;
+import Ast.*;
+
 import java.util.List;
 
 public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {

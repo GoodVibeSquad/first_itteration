@@ -1,6 +1,6 @@
 package Ast;
 
-record SBreak() implements Statement{
+public record SBreak() implements Statement{
 
     @Override
     public <R> R accept(AstVisitor<R> visitor) {

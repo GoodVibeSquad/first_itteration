@@ -1,4 +1,4 @@
-package Ast.Typing;
+package TypeChecking;
 
 public enum TypeCheck {
     INT,

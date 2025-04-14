@@ -1,4 +1,4 @@
-package Ast.Typing;
+package TypeChecking;
 
 import java.util.HashMap;
 import java.util.List;

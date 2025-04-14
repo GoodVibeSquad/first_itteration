@@ -1,6 +1,6 @@
 package Ast;
 
-record EContainsExpression(Expression expression) implements Expression {
+public record EContainsExpression(Expression expression) implements Expression {
     //accept metode (vizitor)
     @Override
     public <R> R accept(AstVisitor<R> visitor) {

@@ -1,6 +1,6 @@
 package Ast;
 
-record SContinue() implements Statement{
+public record SContinue() implements Statement{
 
     @Override
     public <R> R accept(AstVisitor<R> visitor) {
