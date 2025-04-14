@@ -4,7 +4,8 @@ import Parser.TableGenerator.TableGenerator;
 import Tokens.Token;
 import Tokens.TokenGetter;
 import Tokens.TokenType;
-
+import TypeChecking.SymbolTable;
+import TypeChecking.TypeCheck;
 
 import java.io.IOException;
 import java.util.ArrayList;
