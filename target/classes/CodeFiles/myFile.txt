@@ -12,6 +12,9 @@ double learningRate = 0.01;
 string trueAnswers = "c:\Neuro\answers.txt";
 int batchSize = 6;
 
+batchSize++;
+batchSize--;
+
 nn.train(data, dataType, epochs, learningRate, trueAnswers,  batchSize);
 nn.saveModel("c:\Neuro\network", "Neuro1");
 

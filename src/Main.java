@@ -7,7 +7,6 @@ import Tokens.TokenType;
 import TypeChecking.SymbolTable;
 import TypeChecking.TypeCheck;
 
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
