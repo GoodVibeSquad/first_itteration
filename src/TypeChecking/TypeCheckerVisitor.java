@@ -315,24 +315,42 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     @Override
     public TypeCheck visitEContainsExpression(EContainsExpression e) {
        return e.expression().accept(this);
-       
+
     }
+
+
+    //  @Override
+
+    /// /    public TypeCheck visitEMethodCall(EMethodCall e) {
+    /// /        TypeCheck receiverType = e.receiver().accept(this);
+    /// /        String methodName = e.method().getId();
+    /// /
+    /// /        if (!symbolTable.hasMethod(receiverType, methodName)) {
+    /// /            System.err.println("No method '" + methodName + "' for type " + receiverType);
+    /// /            return TypeCheck.ERROR;
+    /// /        }
+    /// /
+    ///
+    ///
+    ///
 
     @Override
     public TypeCheck visitEMethodCall(EMethodCall e) {
-        TypeCheck receiverType = e.receiver().accept(this);
-        String methodName = e.method().getId();
+        String objectName = e.object().getId();
+        TypeCheck objectType;
 
-        if (!symbolTable.hasMethod(receiverType, methodName)) {
-            System.err.println("No method '" + methodName + "' for type " + receiverType);
+        if (symbolTable.contains(objectName)) {
+            objectType = symbolTable.lookup(objectName);
+        } else {
+            System.err.println("Undeclared variable: " + objectName);
             return TypeCheck.ERROR;
         }
 
-        SymbolTable.MethodSignature sig = symbolTable.getMethod(receiverType, methodName);
+        SymbolTable.MethodSignature sig = symbolTable.getMethod(objectType, objectName);
         List<Expression> actualArgs = e.args().elements();
 
         if (sig.paramTypes.size() != actualArgs.size()) {
-            System.err.println("Method '" + methodName + "' expects " + sig.paramTypes.size()
+            System.err.println("Method '" + objectName + "' expects " + sig.paramTypes.size()
                     + " args but got " + actualArgs.size());
             return TypeCheck.ERROR;
         }
