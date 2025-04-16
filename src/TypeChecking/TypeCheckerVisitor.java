@@ -10,6 +10,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     public TypeCheckerVisitor(SymbolTable symbolTable) {
         this.symbolTable = symbolTable;
     }
+    private int loopDepth = 0;
 
 
     // Constants
@@ -349,70 +350,195 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         return sig.returnType;
     }
 
-    // Statements
     @Override
     public TypeCheck visitSif(Sif s) {
+        TypeCheck conditionType = s.condition().accept(this);
+        if (conditionType != TypeCheck.BOOL) {
+            System.err.println("Condition of if statement must be BOOL");
+            return TypeCheck.ERROR;
+        }
+
+        TypeCheck thenType = s.thenBranch().accept(this);
+        if (thenType == TypeCheck.ERROR) {
+            return TypeCheck.ERROR;
+        }
+
+        if (s.elseBranch() != null) {
+            TypeCheck elseType = s.elseBranch().accept(this);
+            if (elseType == TypeCheck.ERROR) {
+                return TypeCheck.ERROR;
+            }
+        }
+
         return TypeCheck.VOID;
     }
+
 
     @Override
     public TypeCheck visitSassign(Sassign s) {
+        String varName = s.var().getId();
+        TypeCheck exprType = s.expr().accept(this);
+
+        if (!symbolTable.contains(varName)) {
+            System.err.println("Undeclared variable in assignment: " + varName);
+            return TypeCheck.ERROR;
+        }
+
+        TypeCheck declaredType = symbolTable.lookup(varName);
+        if (declaredType != exprType) {
+            System.err.println("Type mismatch in assignment to " + varName + ": expected " + declaredType + ", got " + exprType);
+            return TypeCheck.ERROR;
+        }
+
         return TypeCheck.VOID;
     }
 
+
     @Override
     public TypeCheck visitSprint(Sprint s) {
+        TypeCheck exprType = s.expr().accept(this);
+        if (exprType == TypeCheck.ERROR) {
+            System.err.println("Cannot print Error:" + exprType);
+            return TypeCheck.ERROR;
+        }
+
         return TypeCheck.VOID;
     }
 
     @Override
     public TypeCheck visitSblock(Sblock s) {
+        for (Statement stmt : s.stmts()) {
+            stmt.accept(this);
+        }
         return TypeCheck.VOID;
     }
 
     @Override
     public TypeCheck visitSfor(Sfor s) {
-        return TypeCheck.VOID;
+       // symbolTable.declareVariable(s.var.getId(), TypeCheck.INT); skal den være en int? eller må den også iterate over double??
+
+       // Check the assigment (initialization)
+       if (s.assignment() != null ){
+           TypeCheck assignmentType = s.assignment().accept(this);
+           if (assignmentType == TypeCheck.ERROR) return TypeCheck.ERROR;
+       }
+
+       // Check the comparison (must be BOOL)
+        if (s.comparison() != null) {
+            TypeCheck compType = s.comparison().accept(this);
+            if (compType != TypeCheck.BOOL) {
+                System.err.println("For-loop comparison must be of tyoe BOOL.");
+                return TypeCheck.ERROR;
+            }
+        }
+
+        // Check the iteration step
+        if (s.iterrate() != null) {
+            TypeCheck iterateType = s.iterrate().accept(this);
+            if (iterateType == TypeCheck.ERROR) {
+                System.err.println("iteration must not be error 😒");
+                return TypeCheck.ERROR;
+            }
+        }
+
+        // Check the body type
+        loopDepth++;
+        if (s.body() != null) {
+            TypeCheck bodyType = s.body().accept(this);
+            if (bodyType == TypeCheck.ERROR) {
+                System.err.println("we discriminate, go to the gym");
+                loopDepth--;
+                return TypeCheck.ERROR;
+            }
+        }
+        loopDepth--;
+
+    return TypeCheck.VOID;
     }
 
     @Override
     public TypeCheck visitSExpression(SExpression s) {
+        s.value().accept(this);
         return TypeCheck.VOID;
     }
 
     @Override
     public TypeCheck visitSWhile(SWhile s) {
+        TypeCheck exprType = s.expression().accept(this);
+        if (exprType != TypeCheck.BOOL) {
+            System.err.println("Condition of while loop must be BOOL");
+            return TypeCheck.ERROR;
+        }
+        loopDepth++;
+        TypeCheck body = s.body().accept(this);
+        loopDepth--;
+
+        if (body == TypeCheck.ERROR) {
+            System.err.println("call customer service please, im unavailable atm");
+            return TypeCheck.ERROR;
+        }
         return TypeCheck.VOID;
     }
-
     @Override
     public TypeCheck visitSBreak(SBreak s) {
+        if (loopDepth == 0) {
+            System.err.println("Error: 'break' used outside of a loop!!");
+            return TypeCheck.ERROR;
+        }
         return TypeCheck.VOID;
     }
 
     @Override
     public TypeCheck visitSContinue(SContinue s) {
+        if (loopDepth == 0) {
+            System.err.println("Error: continue used outside of a loop!!");
+            return TypeCheck.ERROR;
+        }
         return TypeCheck.VOID;
     }
 
     @Override
-    public TypeCheck visitSlist(Slist slist) {
+    public TypeCheck visitSlist(Slist s) {
+        for (Statement stmt : s.elements()) {
+            stmt.accept(this);
+        }
         return TypeCheck.VOID;
     }
 
-    // Other
+    // Other (This is chat solution, check correctness)
     @Override
     public TypeCheck visitDef(Def d) {
+        List<TypeCheck> paramTypes = d.params().stream()
+                .map(Parameter::type)
+                .toList();
+
+        symbolTable.declareFunction(d.name().getId(), paramTypes, TypeCheck.VOID);
+
+        symbolTable.enterScope(); // 🔥 enter function scope
+
+        for (Parameter param : d.params()) {
+            String paramName = param.name().getId();
+            if (symbolTable.contains(paramName)) {
+                System.err.println("Parameter " + paramName + " already declared.");
+                symbolTable.exitScope();
+                return TypeCheck.ERROR;
+            }
+            symbolTable.declareVariable(paramName, param.type());
+        }
+
+        TypeCheck bodyType = d.body().accept(this);
+
+        symbolTable.exitScope(); // 🔥 exit function scope
+
+        if (bodyType == TypeCheck.ERROR) {
+            System.err.println("Error in body of function: " + d.name().getId());
+            return TypeCheck.ERROR;
+        }
+
         return TypeCheck.VOID;
     }
 
-    @Override
-    public TypeCheck visitFile(File f) {
-        return TypeCheck.VOID;
-    }
-
-
-    // Helper functions
+    /* ===== HELPER FUNCTIONS ===== */
     private boolean isNumeric(TypeCheck t) {
         return t == TypeCheck.INT || t == TypeCheck.DOUBLE;
     }
@@ -432,7 +558,6 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
 
     }
 
-
     private boolean canConvert(TypeCheck from, TypeCheck to) {
 
         if ((from == TypeCheck.INT || from == TypeCheck.DOUBLE) &&
@@ -440,9 +565,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
             return true;
         }
 
-
         if (to == TypeCheck.STRING) return true;
-
 
         return from == to;
     }
@@ -454,7 +577,6 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         };
     }
 }
-
 
 /*
 
