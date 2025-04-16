@@ -96,9 +96,7 @@ static Set<String> computeFirst(String symbol, Grammar grammar) {
 
         for (Production p : grammar.getProductions()) {
             if (p.getLhs().equals(symbol)) {
-                if (p.getRhs().isEmpty()) {
-                    result.add("ε"); // Explicitly support epsilon/empty
-                } else {
+                if (!p.getRhs().isEmpty()) {
                     String firstSym = p.getRhs().get(0);
                     result.addAll(computeFirst(firstSym, grammar, visited));
                 }
