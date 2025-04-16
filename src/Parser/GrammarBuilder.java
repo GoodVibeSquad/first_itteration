@@ -67,7 +67,6 @@ public class GrammarBuilder {
         grammar.add("matched_stmt", "IF", "expression", "matched_stmt", "ELSE", "matched_stmt");
         grammar.add("matched_stmt", "expression", "SEMICOLON");
         grammar.add("matched_stmt", "identifier", "assop", "expression", "SEMICOLON");
-
         grammar.add("matched_stmt", "OPEN_CURLY_BRACKET", "statementlist", "CLOSED_CURLY_BRACKET");
         grammar.add("matched_stmt", "FOR", "OPEN_PARENTHESIS", "statement", "expression", "SEMICOLON", "statement", "CLOSED_PARENTHESIS", "statement");
         grammar.add("matched_stmt", "WHILE", "expression", "statement");
