@@ -1,25 +1,27 @@
-{
 
- 
-Layer input = new Layer(6)
-Layer hidden = new Layer(5,2, relu)
-Layer output = new Layer(10,softmax)
+Layer input = new Layer(6);
+Layer hidden = new Layer(5,2);
+Layer output = new Layer(10);
 
-NeuralNetwork nn = new NeuralNetwork(input, hidden, output,resultArray)
 
-data = "filepath"
-dataType = "img"
-epochs = int
-learningRate = double
 
-nn.train(data, dataType, epochs, learningRate, lossFunction,batchSize)
-nn.saveModel("filepath")
+NeuralNetwork nn = new NeuralNetwork(input, hidden, output);
 
-NeuralNetwork nn = new NeuralNetwork().loadModel("filepath")
+string data = "c:\Neuro\imgs";
+string dataType = ".img";
+string epochs = 5;
+double learningRate = 0.01;
+string trueAnswers = "c:\Neuro\answers.txt";
+int batchSize = 6;
 
-data = "filepath"
-dataType = "img"
-nn.predict(data, dataType)
+nn.train(data, dataType, epochs, learningRate, trueAnswers,  batchSize);
+nn.saveModel("c:\Neuro\network", "Neuro1");
 
-}
+NeuralNetwork nn = NeuralNetwork.loadModel("c:\Neuro\network\Neuro1.txt");
+
+string data = "c:\Neuro\imgs2";
+string dataType = ".img";
+nn.predict(data, dataType);
+
+
 

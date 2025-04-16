@@ -286,7 +286,7 @@ public class ASTBuilder {
                 }
             }
 
-            case "exlist" -> {
+            case "expr_list" -> {
                 if(children.size() == 1){
                     Object first = children.getFirst();
 
@@ -464,7 +464,7 @@ public class ASTBuilder {
                         second instanceof Slist slist){
 
                         List<Statement> newStatements = new ArrayList<>(slist.elements());
-                        newStatements.add(stmt);
+                        newStatements.addFirst(stmt);
 
                         return new Slist(newStatements);
 
