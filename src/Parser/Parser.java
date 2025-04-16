@@ -11,10 +11,13 @@ public class Parser {
     public static void parse(List<Token> input) {
         Stack<Integer> stateStack = new Stack<>();
         stateStack.push(0); // Start state
-
+        Stack<Object> objectStack = new Stack<>();
+        ASTBuilder astBuilder = new ASTBuilder();
         Queue<Token> tokenStream = new LinkedList<>(input);
         tokenStream.add(new Token(TokenType.EOF)); // End marker
-        String nextSymbol = tokenStream.poll().getType().toString();
+        Token token = tokenStream.poll();
+        String nextSymbol = token.getType().toString();
+
 
         while (true) {
             int currentState = stateStack.peek();
@@ -35,17 +38,29 @@ public class Parser {
 
                 stateStack.push(state);
                System.out.println("Shifted " + stateStack.peek());
-                nextSymbol = tokenStream.poll().getType().toString(); // move to next input symbol
+                objectStack.push(token);
+                token = tokenStream.poll();
+                nextSymbol = token.getType().toString();// move to next input symbol
+
             } else if (action.startsWith("R")) {
+                List<Object> children = new ArrayList<>();
                 String prodStr = action.substring(1); // format: "A -> β"
                 String[] parts = prodStr.split("->");
                 String lhs = parts[0].trim();
                 String[] rhs = parts[1].trim().split("\\s+");
-
+                List<String> rhs1 = List.of(parts[1].trim().split("\\s+"));
+                Production prod = new Production(lhs,rhs1);
                 int popCount = rhs[0].equals("") ? 0 : rhs.length;
                 for (int i = 0; i < popCount; i++) {
                     stateStack.pop();
+                    children.add(objectStack.pop());
                 }
+//                for (Object child : children) {
+//                    System.out.println("Child: " + child.getClass());
+//                }
+
+                 Object node = astBuilder.buildAst(prod,children.reversed());
+                 objectStack.push(node);
 
                 currentState = stateStack.peek();
                 Integer nextState = TableGenerator.gotoTable
@@ -69,5 +84,6 @@ public class Parser {
 
         }
         System.out.println("\n");
+        System.out.println(objectStack.pop());
     }
 }
