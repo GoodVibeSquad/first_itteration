@@ -46,15 +46,8 @@ public class Main {
             System.out.println(token);
         }
 
-        List<String> tokenStream = new ArrayList<>();
-        for (Token token : tokens) {
-            tokenStream.add(token.getType().toString());
-        }
-
-         // your tokenized input
-
         for (int i = 0; i < 1000;i++){
-        Parser.parse(tokenStream);
+        Parser.parse(tokens);
         System.out.println("Parsing iteration: " + i);
     }
 

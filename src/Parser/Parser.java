@@ -1,19 +1,20 @@
 package Parser;
 
 import Parser.TableGenerator.TableGenerator;
+import Tokens.Token;
+import Tokens.TokenType;
 
 import java.util.*;
 
 public class Parser {
 
-    public static void parse(List<String> input) {
+    public static void parse(List<Token> input) {
         Stack<Integer> stateStack = new Stack<>();
         stateStack.push(0); // Start state
 
-        Queue<String> tokenStream = new LinkedList<>(input);
-        tokenStream.add("EOF"); // End marker
-
-        String nextSymbol = tokenStream.poll();
+        Queue<Token> tokenStream = new LinkedList<>(input);
+        tokenStream.add(new Token(TokenType.EOF)); // End marker
+        String nextSymbol = tokenStream.poll().getType().toString();
 
         while (true) {
             int currentState = stateStack.peek();
@@ -34,7 +35,7 @@ public class Parser {
 
                 stateStack.push(state);
                System.out.println("Shifted " + stateStack.peek());
-                nextSymbol = tokenStream.poll(); // move to next input symbol
+                nextSymbol = tokenStream.poll().getType().toString(); // move to next input symbol
             } else if (action.startsWith("R")) {
                 String prodStr = action.substring(1); // format: "A -> β"
                 String[] parts = prodStr.split("->");
