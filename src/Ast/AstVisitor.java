@@ -38,6 +38,7 @@ package Ast;
     R visitSBreak(SBreak s);
     R visitSContinue(SContinue s);
     R visitSlist(Slist slist);
+    R visitSInDeCrement(SInDeCrement sInDeCrement);
 
 
     //Other

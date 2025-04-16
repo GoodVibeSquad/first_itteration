@@ -1,6 +1,8 @@
 package Ast;
 
-public record ETypeconversion(Type type, Expression expression) implements Expression{
+import Tokens.Token;
+
+public record ETypeconversion(Token type, Expression expression) implements Expression{
     //accept metode (visitor)
     @Override
     public <R> R accept(AstVisitor<R> visitor) {

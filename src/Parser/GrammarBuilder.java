@@ -43,13 +43,14 @@ public class GrammarBuilder {
         grammar.add("expression", "unaryOperator", "expression");
         grammar.add("expression", "identifier");
         grammar.add("expression", "identifier", "OPEN_PARENTHESIS", "expr_list", "CLOSED_PARENTHESIS");
-        grammar.add("expression", "SUM", "OPEN_PARENTHESIS", "expression", "expression", "ACTIVATIONFUNCTION", "CLOSED_PARENTHESIS");
+        grammar.add("expression", "SUM", "OPEN_PARENTHESIS", "expression","COMMA", "expression","COMMA", "ID", "CLOSED_PARENTHESIS");
         grammar.add("expression", "SQUARE_ROOT","OPEN_PARENTHESIS","expression","CLOSED_PARENTHESIS");
         grammar.add("expression", "MAX","OPEN_PARENTHESIS","expr_list","CLOSED_PARENTHESIS");
         grammar.add("expression", "expression","TERNARY","expression","COLON","expression");
         grammar.add("expression", "OPEN_PARENTHESIS","TYPE","CLOSED_PARENTHESIS","expression");
         grammar.add("expression", "NEW","TYPE","OPEN_PARENTHESIS","expr_list","CLOSED_PARENTHESIS");
         grammar.add("expression", "ID","DOT","ID","OPEN_PARENTHESIS","expr_list","CLOSED_PARENTHESIS");
+
         // Calling methods on TYPE
         grammar.add("expression", "TYPE","DOT","ID","OPEN_PARENTHESIS","expr_list","CLOSED_PARENTHESIS");
 
@@ -66,7 +67,6 @@ public class GrammarBuilder {
         grammar.add("matched_stmt", "IF", "expression", "matched_stmt", "ELSE", "matched_stmt");
         grammar.add("matched_stmt", "expression", "SEMICOLON");
         grammar.add("matched_stmt", "identifier", "assop", "expression", "SEMICOLON");
-
         grammar.add("matched_stmt", "OPEN_CURLY_BRACKET", "statementlist", "CLOSED_CURLY_BRACKET");
         grammar.add("matched_stmt", "FOR", "OPEN_PARENTHESIS", "statement", "expression", "SEMICOLON", "statement", "CLOSED_PARENTHESIS", "statement");
         grammar.add("matched_stmt", "WHILE", "expression", "statement");
