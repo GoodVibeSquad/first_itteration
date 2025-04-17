@@ -1,8 +1,6 @@
 {
-    if(i<z){
-        break;
-    }
-    if(i<z){
-            break;
+    for(int i = 0; i<z; i++;){
+        int i = 0;
+        i++;
     }
 }
