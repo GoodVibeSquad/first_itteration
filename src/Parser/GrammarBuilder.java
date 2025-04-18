@@ -9,6 +9,7 @@ public class GrammarBuilder {
 
         grammar.setStartSymbol("statementlist");
 
+
         // ====== BINARY OPS ======
         grammar.add("binaryoperator","PLUS");
         grammar.add("binaryoperator","MINUS");
@@ -25,6 +26,7 @@ public class GrammarBuilder {
         grammar.add("binaryoperator","OR");
         grammar.add("binaryoperator","EXPONENT");
 
+
         // ====== CONSTANTS ======
         grammar.add("expression"," ");
         grammar.add("expression","BOOL");
@@ -33,6 +35,7 @@ public class GrammarBuilder {
         grammar.add("expression","STRING");
         grammar.add("expression","EULER");
         grammar.add("expression","PI");
+
 
         // ====== EXPRESSIONS ======
         grammar.add("expression", "OPEN_PARENTHESIS", "expression" , "CLOSED_PARENTHESIS");
@@ -47,6 +50,7 @@ public class GrammarBuilder {
         grammar.add("expression", "OPEN_PARENTHESIS","TYPE","CLOSED_PARENTHESIS","expression");
         grammar.add("expression", "NEW","TYPE","OPEN_PARENTHESIS","expr_list","CLOSED_PARENTHESIS");
         grammar.add("expression", "ID","DOT","ID","OPEN_PARENTHESIS","expr_list","CLOSED_PARENTHESIS");
+        // Calling methods on TYPE
         grammar.add("expression", "TYPE","DOT","ID","OPEN_PARENTHESIS","expr_list","CLOSED_PARENTHESIS");
 
         // ====== EXPRESSION LIST ======
@@ -54,27 +58,33 @@ public class GrammarBuilder {
         grammar.add("expr_list","expr_list","COMMA","expression");
 
         // ====== STATEMENTS ======
+        // Top-level dispatch
         grammar.add("statement", "matched_stmt");
         grammar.add("statement", "unmatched_stmt");
 
-        // ====== MATCHED STATEMENTS ======
-        grammar.add("matched_stmt", "IF", "expression", "matched_stmt"); // <-- this is the key fix!
-        grammar.add("matched_stmt", "OPEN_CURLY_BRACKET", "statementlist", "CLOSED_CURLY_BRACKET");
+        // Matched if-else and other complete statements
+        grammar.add("matched_stmt", "IF", "expression", "matched_stmt");
         grammar.add("matched_stmt", "expression", "SEMICOLON");
         grammar.add("matched_stmt", "identifier", "assop", "expression", "SEMICOLON");
+
+        grammar.add("matched_stmt", "OPEN_CURLY_BRACKET", "statementlist", "CLOSED_CURLY_BRACKET");
         grammar.add("matched_stmt", "FOR", "OPEN_PARENTHESIS", "statement", "expression", "SEMICOLON", "statement", "CLOSED_PARENTHESIS", "statement");
         grammar.add("matched_stmt", "WHILE", "expression", "statement");
         grammar.add("matched_stmt", "BREAK", "SEMICOLON");
         grammar.add("matched_stmt", "CONTINUE", "SEMICOLON");
-        grammar.add("matched_stmt", "ID", "In/deCrement", "SEMICOLON");
+        grammar.add("matched_stmt",  "ID", "In/deCrement", "SEMICOLON");
 
-        // ====== UNMATCHED STATEMENTS ======
+        // Unmatched: possible dangling else
         grammar.add("unmatched_stmt", "IF", "expression", "statement");
-        // removed ELSE handling for now (safe mode)
+        grammar.add("unmatched_stmt", "IF", "expression", "matched_stmt");
+
 
         // ====== STATEMENT LIST ======
-        grammar.add("statementlist", "statementlist", "matched_stmt");
         grammar.add("statementlist", "statement");
+        grammar.add("statementlist", "statement", "statementlist");
+
+        // DIFFERENT
+        grammar.add("statementlist", "statementlist", "matched_stmt");
 
         // ====== ASSIGNMENT OPS ======
         grammar.add("assop", "ASSIGN");
@@ -99,7 +109,6 @@ public class GrammarBuilder {
 
         return grammar;
     }
-
     public static Grammar createSimpleGrammar(){
         Grammar grammar = new Grammar();
         grammar.setStartSymbol("S");
@@ -110,5 +119,6 @@ public class GrammarBuilder {
         grammar.add("T", "int");
 
         return grammar;
+
     }
 }

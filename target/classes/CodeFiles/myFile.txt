@@ -23,4 +23,13 @@ NeuralNetwork nn = NeuralNetwork.loadModel("c:\Neuro\network\Neuro1.txt");
 string data = "c:\Neuro\imgs2";
 string dataType = ".img";
 nn.predict(data, dataType);
+
+    if(1>10){
+    int j = 1;
+    }
+
+    if(1>10){
+    int j = 1;
+    }
+
 }
