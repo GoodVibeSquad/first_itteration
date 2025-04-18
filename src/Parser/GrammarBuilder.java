@@ -58,12 +58,13 @@ public class GrammarBuilder {
         grammar.add("expr_list","expr_list","COMMA","expression");
 
         // ====== STATEMENTS ======
-        // Top-level dispatch
+// Top-level dispatch
         grammar.add("statement", "matched_stmt");
         grammar.add("statement", "unmatched_stmt");
 
-        // Matched if-else and other complete statements
-        grammar.add("matched_stmt", "IF", "expression", "matched_stmt");
+// Matched if-else and other complete statements
+        grammar.add("matched_stmt", "IF", "expression", "matched_stmt", "ELSE", "matched_stmt"); // Handles if-else
+        grammar.add("matched_stmt", "IF", "expression", "matched_stmt"); // Handles if without else
         grammar.add("matched_stmt", "expression", "SEMICOLON");
         grammar.add("matched_stmt", "identifier", "assop", "expression", "SEMICOLON");
 
@@ -72,11 +73,12 @@ public class GrammarBuilder {
         grammar.add("matched_stmt", "WHILE", "expression", "statement");
         grammar.add("matched_stmt", "BREAK", "SEMICOLON");
         grammar.add("matched_stmt", "CONTINUE", "SEMICOLON");
-        grammar.add("matched_stmt",  "ID", "In/deCrement", "SEMICOLON");
+        grammar.add("matched_stmt", "ID", "In/deCrement", "SEMICOLON");
 
-        // Unmatched: possible dangling else
+// Unmatched: possible dangling else
         grammar.add("unmatched_stmt", "IF", "expression", "statement");
         grammar.add("unmatched_stmt", "IF", "expression", "matched_stmt");
+
 
 
         // ====== STATEMENT LIST ======
