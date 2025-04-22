@@ -84,8 +84,7 @@ public class GrammarBuilder {
         grammar.add("statementlist", "statement");
         grammar.add("statementlist", "statement", "statementlist");
 
-       // DIFFERENT
-       grammar.add("statementlist", "statementlist", "matched_stmt");
+
 
         // ====== ASSIGNMENT OPS ======
         grammar.add("assop", "ASSIGN");
