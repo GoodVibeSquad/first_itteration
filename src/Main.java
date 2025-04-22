@@ -53,10 +53,10 @@ public class Main {
 
          // your tokenized input
 
-        for (int i = 0; i < 1;i++){
-        Parser.parse(tokenStream);
-        System.out.println("Parsing iteration: " + i);
-    }
+        for (int i = 0; i < 1000;i++){
+            Parser.parse(tokenStream);
+            System.out.println("Parsing iteration: " + i);
+        }
 
         // System.out.println("Total number of tokens: " + tokens.size());
         SymbolTable symbols = new SymbolTable();
