@@ -217,8 +217,20 @@ static Set<String> computeFirst(String symbol, Grammar grammar) {
                         actionTable.computeIfAbsent(i, k -> new HashMap<>()).put("EOF", "ACC");
                     } else {
                         for (String terminal : followSets.get(item.production.getLhs())) {
-                            actionTable.computeIfAbsent(i, k -> new HashMap<>()).put(terminal, "R" + item.production);
+                            String existingAction = actionTable
+                                    .computeIfAbsent(i, k -> new HashMap<>())
+                                    .get(terminal);
+
+                            // Resolve dangling else by preferring shift on ELSE
+                            if ("ELSE".equals(terminal) && existingAction != null && existingAction.startsWith("S")) {
+                                // Skip adding reduce action to favor shifting ELSE
+                                continue;
+                            }
+
+                            // Default: add the reduce action
+                            actionTable.get(i).put(terminal, "R" + item.production);
                         }
+
                     }
                 }
             }
