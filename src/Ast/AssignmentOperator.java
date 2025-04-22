@@ -2,6 +2,9 @@ package Ast;
 
 import Tokens.TokenType;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public enum AssignmentOperator {
     ASSIGN(TokenType.ASSIGN),
     ADD_ASSIGN(TokenType.ADD_ASSIGN),
@@ -14,5 +17,17 @@ public enum AssignmentOperator {
 
     AssignmentOperator(TokenType token) {
         this.token = token;
+    }
+
+    private static final Map<TokenType, AssignmentOperator> tokenToOperatorMap = new HashMap<>();
+
+    static {
+        for (AssignmentOperator op : values()) {
+            tokenToOperatorMap.put(op.token, op);
+        }
+    }
+
+    public static AssignmentOperator fromTokenType(TokenType type) {
+        return tokenToOperatorMap.get(type);
     }
 }

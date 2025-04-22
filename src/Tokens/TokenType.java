@@ -61,11 +61,8 @@ public enum TokenType{
     PI("Pi"),
     EXPONENT("^"),
     MAX("Max"),
-//    LAYER("Layer"),
-//    NEURALNETWORK("NeuralNetwork"),
-//    ACTIVATIONFUNCTION("ActivationFunction"),
     RELU("Relu"),
-    FUNCCLASS(null),
+
     EOF("EOF");
 
 
