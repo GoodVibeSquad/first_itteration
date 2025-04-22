@@ -75,8 +75,8 @@ public class GrammarBuilder {
         grammar.add("matched_stmt", "ID", "In/deCrement", "SEMICOLON");
 
         // Unmatched: possible dangling else
-        grammar.add("unmatched_stmt", "IF", "expression", "matched_stmt");
-        grammar.add("unmatched_stmt", "IF", "expression", "unmatched_stmt");
+        grammar.add("unmatched_stmt", "IF", "expression", "statement");
+        grammar.add("unmatched_stmt", "IF", "expression", "matched_stmt", "ELSE", "unmatched_stmt");
 
 
 
@@ -84,8 +84,8 @@ public class GrammarBuilder {
         grammar.add("statementlist", "statement");
         grammar.add("statementlist", "statement", "statementlist");
 
-        // DIFFERENT
-        grammar.add("statementlist", "statementlist", "matched_stmt");
+       // DIFFERENT
+       grammar.add("statementlist", "statementlist", "matched_stmt");
 
         // ====== ASSIGNMENT OPS ======
         grammar.add("assop", "ASSIGN");
