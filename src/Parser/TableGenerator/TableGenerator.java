@@ -65,24 +65,54 @@ public class TableGenerator {
         return false;
     }
 
-    static Set<String> first(String nonTerminal, Grammar grammar) {
-        Set<String> firstSet = new HashSet<>();
+//    static Set<String> first(String nonTerminal, Grammar grammar) {
+//        Set<String> firstSet = new HashSet<>();
+//
+//        for (Production p : grammar.getProductions()) {
+//            if (p.getLhs().equals(nonTerminal)) {
+//                if (!p.getRhs().isEmpty()) {
+//                    firstSet.add(p.getRhs().get(0));
+//                }
+//            }
+//        }
+//        return firstSet;
+//    }
+static Set<String> computeFirst(String symbol, Grammar grammar) {
+    return computeFirst(symbol, grammar, new HashSet<>());
+}
+
+    private static Set<String> computeFirst(String symbol, Grammar grammar, Set<String> visited) {
+        Set<String> result = new HashSet<>();
+
+        if (!isNonTerminal(symbol, grammar)) {
+            result.add(symbol); // Terminal
+            return result;
+        }
+
+        if (visited.contains(symbol)) {
+            return result; // Prevent infinite recursion
+        }
+        visited.add(symbol);
+
         for (Production p : grammar.getProductions()) {
-            if (p.getLhs().equals(nonTerminal)) {
+            if (p.getLhs().equals(symbol)) {
                 if (!p.getRhs().isEmpty()) {
-                    firstSet.add(p.getRhs().get(0));
+                    String firstSym = p.getRhs().get(0);
+                    result.addAll(computeFirst(firstSym, grammar, visited));
                 }
             }
         }
-        return firstSet;
+
+        return result;
     }
 
     static Set<String> isFirst(String symbol, Grammar grammar) {
-        if (!isNonTerminal(symbol, grammar)) {
-            return Set.of(symbol);
-        } else {
-            return first(symbol, grammar);
-        }
+//        if (!isNonTerminal(symbol, grammar)) {
+//            return Set.of(symbol);
+//        } else {
+//            return first(symbol, grammar);
+//        }
+        return computeFirst(symbol,grammar);
     }
 
     static Map<String, Set<String>> computeFollowSets(Grammar grammar) {
@@ -151,7 +181,6 @@ public class TableGenerator {
 
             for (String symbol : symbols) {
                 Set<LRItem> target = gotoState(state, symbol, grammar);
-
                 if (!stateNumbers.containsKey(target)) {
                     int newStateNum = states.size();
                     stateNumbers.put(target, newStateNum);
@@ -163,6 +192,7 @@ public class TableGenerator {
                 transitions.computeIfAbsent(stateNum, k -> new HashMap<>()).put(symbol, targetNum);
             }
         }
+
 
         Map<String, Set<String>> followSets = computeFollowSets(grammar);
         actionTable = new HashMap<>();
@@ -187,8 +217,20 @@ public class TableGenerator {
                         actionTable.computeIfAbsent(i, k -> new HashMap<>()).put("EOF", "ACC");
                     } else {
                         for (String terminal : followSets.get(item.production.getLhs())) {
-                            actionTable.computeIfAbsent(i, k -> new HashMap<>()).put(terminal, "R" + item.production);
+                            String existingAction = actionTable
+                                    .computeIfAbsent(i, k -> new HashMap<>())
+                                    .get(terminal);
+
+                            // Resolve dangling else by preferring shift on ELSE
+                            if ("ELSE".equals(terminal) && existingAction != null && existingAction.startsWith("S")) {
+                                // Skip adding reduce action to favor shifting ELSE
+                                continue;
+                            }
+
+                            // Default: add the reduce action
+                            actionTable.get(i).put(terminal, "R" + item.production);
                         }
+
                     }
                 }
             }
