@@ -75,7 +75,8 @@ public class GrammarBuilder {
         grammar.add("matched_stmt", "ID", "In/deCrement", "SEMICOLON");
 
         // Unmatched: possible dangling else
-        grammar.add("unmatched_stmt", "IF", "expression", "statement");
+        grammar.add("unmatched_stmt", "IF", "expression", "matched_stmt");
+        grammar.add("unmatched_stmt", "IF", "expression", "unmatched_stmt");
 
 
 
