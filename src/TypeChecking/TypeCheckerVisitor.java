@@ -16,7 +16,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     // Constants
     @Override
     public TypeCheck visitCNone(CNone c) {
-        //wtf?
+
         return TypeCheck.VOID;
     }
 
