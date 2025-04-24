@@ -1,5 +1,6 @@
 package Parser;
 
+import Ast.Slist;
 import Parser.TableGenerator.TableGenerator;
 import Tokens.Token;
 import Tokens.TokenType;
@@ -8,7 +9,7 @@ import java.util.*;
 
 public class Parser {
 
-    public static void parse(List<Token> input) {
+    public static Slist parse(List<Token> input) {
         Stack<Integer> stateStack = new Stack<>();
         stateStack.push(0); // Start state
         Stack<Object> objectStack = new Stack<>();
@@ -26,10 +27,9 @@ public class Parser {
                     .getOrDefault(nextSymbol, null);
 
             if (action == null) {
-                System.err.println("Syntax error at symbol: " + nextSymbol);
-                System.err.println("In state: " + currentState);
-                System.err.println("Available actions: " + TableGenerator.actionTable.getOrDefault(currentState, Map.of()));
-                return;
+                throw new RuntimeException("Syntax error at symbol: " + nextSymbol
+                        + " in state: " + currentState +
+                        "\nAvailable actions: " + TableGenerator.actionTable.getOrDefault(currentState, Map.of()) );
             }
 
 
@@ -68,8 +68,7 @@ public class Parser {
                         .get(lhs);
 
                 if (nextState == null) {
-                    System.err.println("Goto error for non-terminal: " + lhs);
-                    return;
+                    throw new RuntimeException("Goto error for non-terminal: " + lhs);
                 }
 
                 stateStack.push(nextState);
@@ -78,12 +77,11 @@ public class Parser {
                 System.out.println("Input successfully parsed!");
                 break;
             } else {
-                System.err.println("Invalid action: " + action);
-                return;
+                throw new RuntimeException("Invalid action: " + action);
             }
 
         }
-        System.out.println("\n");
-        System.out.println(objectStack.pop());
+
+        return (Slist) objectStack.pop();
     }
 }

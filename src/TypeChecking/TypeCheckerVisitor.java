@@ -393,9 +393,15 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
 
 
     @Override
+    public TypeCheck visitSDeclaration(SDeclaration s) {
+        return null;
+    }
+
+    @Override
     public TypeCheck visitSassign(Sassign s) {
         String varName = s.var().getId();
         TypeCheck exprType = s.expr().accept(this);
+
 
         if (!symbolTable.contains(varName)) {
             System.err.println("Undeclared variable in assignment: " + varName);

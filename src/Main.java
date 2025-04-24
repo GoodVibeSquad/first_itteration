@@ -6,6 +6,7 @@ import Tokens.TokenGetter;
 import Tokens.TokenType;
 import TypeChecking.SymbolTable;
 import TypeChecking.TypeCheck;
+import TypeChecking.TypeCheckerVisitor;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,21 +47,19 @@ public class Main {
             System.out.println(token);
         }
 
+        Slist slist = Parser.parse(tokens);
 
-        for (int i = 0; i < 1;i++){
-            Parser.parse(tokens);
-            System.out.println("Parsing iteration: " + i);
-        }
 
         // System.out.println("Total number of tokens: " + tokens.size());
         SymbolTable symbols = new SymbolTable();
         symbols.declareVariable("x", TypeCheck.BOOL);
         symbols.declareVariable("y", TypeCheck.INT);
 
-//        TypeCheckerVisitor typeVisitor = new TypeCheckerVisitor(symbols);
-//        TypeCheck result = op.accept(typeVisitor);
-//        System.out.println("type check result: " + result);
-//        symbols.clear();
+
+        TypeCheckerVisitor typeVisitor = new TypeCheckerVisitor(symbols);
+        TypeCheck result = slist.accept(typeVisitor);
+        System.out.println("type check result: " + result);
+        symbols.clear();
 
         
     }

@@ -189,13 +189,14 @@ public class ASTBuilder {
                     Object first = children.get(2);
                     Object second = children.get(4);
                     Object third = children.get(6);
-
+                    Object fourth = children.get(8);
 
                     if (first instanceof Expression top &&
                             second instanceof Expression bot &&
-                            third instanceof Token id) {
+                            third instanceof Token id &&
+                            fourth instanceof Expression body) {
 
-                        return new ESum(top, bot, new Identifier(id.getValue()));
+                        return new ESum(top, bot, new Identifier(id.getValue()), body);
                     } else {
                         System.err.println("Invalid Expression at: " + first);
                         throw new RuntimeException();
@@ -404,7 +405,7 @@ public class ASTBuilder {
                         System.err.println("Invalid Statement at: " + firstE);
                         throw new RuntimeException();
                     }
-                }else if (first instanceof Identifier id
+                }else if    (first instanceof Identifier id
                         && children.size() == 4) {
                     Object assopObject = children.get(1);
                     Object expressionObject = children.get(2);
@@ -413,11 +414,15 @@ public class ASTBuilder {
                             && expressionObject instanceof Expression e
                             && semiObject instanceof Token semi){
                         if(semi.getType() == TokenType.SEMICOLON){
-                            return new Sassign(id,assop,e);
+                            if(id.getType() != null){
+                                return new SDeclaration(id,assop,e);
+                            }else {
+                                return new Sassign(id,assop,e);
+                            }
+                        }else {
+                            System.err.println("Invalid Statement at: " + id.getId());
+                            throw new RuntimeException();
                         }
-                    }else {
-                        System.err.println("Invalid Statement at: " + id.getId());
-                        throw new RuntimeException();
                     }
                 }
             }

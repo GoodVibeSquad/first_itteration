@@ -43,7 +43,7 @@ public class GrammarBuilder {
         grammar.add("expression", "unaryOperator", "expression");
         grammar.add("expression", "identifier");
         grammar.add("expression", "identifier", "OPEN_PARENTHESIS", "expr_list", "CLOSED_PARENTHESIS");
-        grammar.add("expression", "SUM", "OPEN_PARENTHESIS", "expression","COMMA", "expression","COMMA", "ID", "CLOSED_PARENTHESIS");
+        grammar.add("expression", "SUM", "OPEN_PARENTHESIS", "expression","COMMA", "expression","COMMA", "ID", "COMMA", "expression", "CLOSED_PARENTHESIS");
         grammar.add("expression", "SQUARE_ROOT","OPEN_PARENTHESIS","expression","CLOSED_PARENTHESIS");
         grammar.add("expression", "MAX","OPEN_PARENTHESIS","expr_list","CLOSED_PARENTHESIS");
         grammar.add("expression", "expression","TERNARY","expression","COLON","expression");
@@ -98,6 +98,8 @@ public class GrammarBuilder {
         grammar.add("identifier", "typed_identifier");
         grammar.add("identifier", "ID");
         grammar.add("typed_identifier", "TYPE", "ID");
+
+
 
         // ====== UNARY OPERATORS ======
         grammar.add("unaryOperator", "MINUS");
