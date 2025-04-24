@@ -358,6 +358,12 @@ public class ASTBuilder {
                                     && boddyObject instanceof Statement body){
                                 return new Sfor(null,assagin,comp,increase,body);// we need a system fo identifiers
                             }
+                            else if (assignObject instanceof SDeclaration declaration
+                                    && comparisonObject instanceof Expression comp
+                                    && incrementObject instanceof Statement increase
+                                    && boddyObject instanceof Statement body){
+                                return new Sfor(null,declaration,comp,increase,body);// we need a system fo identifiers
+                            }
                         }
                         case "WHILE" ->{
                             Object comparisonObject= children.get(1);

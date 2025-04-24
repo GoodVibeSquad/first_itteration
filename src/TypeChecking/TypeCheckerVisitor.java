@@ -91,7 +91,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
                 }
             }
             //comparison operators
-            case EQUALS, NOT_EQUALS, GREATER_OR_EQUALS, LESS_OR_EQUALS -> {
+            case EQUALS, NOT_EQUALS, GREATER_OR_EQUALS, LESS_OR_EQUALS, LESS_THAN, GREATER_THAN -> {
                 if ((leftType == rightType) || (isNumeric(leftType)) && isNumeric(rightType)) {
                     return TypeCheck.BOOL;
                 } else {
@@ -319,21 +319,6 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     }
 
 
-    //  @Override
-
-    /// /    public TypeCheck visitEMethodCall(EMethodCall e) {
-    /// /        TypeCheck receiverType = e.receiver().accept(this);
-    /// /        String methodName = e.method().getId();
-    /// /
-    /// /        if (!symbolTable.hasMethod(receiverType, methodName)) {
-    /// /            System.err.println("No method '" + methodName + "' for type " + receiverType);
-    /// /            return TypeCheck.ERROR;
-    /// /        }
-    /// /
-    ///
-    ///
-    ///
-
     @Override
     public TypeCheck visitEMethodCall(EMethodCall e) {
         String objectName = e.object().getId();
@@ -375,14 +360,17 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
             System.err.println("Condition of if statement must be BOOL");
             return TypeCheck.ERROR;
         }
-
+        symbolTable.enterScope();
         TypeCheck thenType = s.thenBranch().accept(this);
+        symbolTable.exitScope();
         if (thenType == TypeCheck.ERROR) {
             return TypeCheck.ERROR;
         }
 
         if (s.elseBranch() != null) {
+            symbolTable.enterScope();
             TypeCheck elseType = s.elseBranch().accept(this);
+            symbolTable.exitScope();
             if (elseType == TypeCheck.ERROR) {
                 return TypeCheck.ERROR;
             }
@@ -394,7 +382,24 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
 
     @Override
     public TypeCheck visitSDeclaration(SDeclaration s) {
-        return null;
+        String varName = s.var().getId();
+        TypeCheck varType = resolveType(s.var().getType());
+        TypeCheck exprType = s.expr().accept(this);
+
+        if (exprType == TypeCheck.ERROR) {
+            return TypeCheck.ERROR;
+        }
+        if (varType != exprType) {
+            System.err.println("Type mismatch in declaration of " + varName + ": expected " + varType + ", got " + exprType);
+        }
+
+        if (!symbolTable.contains(varName)) {
+            symbolTable.declareVariable(varName, varType);
+            return TypeCheck.VOID;
+        }
+        return TypeCheck.ERROR;
+
+
     }
 
     @Override
@@ -431,9 +436,13 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
 
     @Override
     public TypeCheck visitSblock(Sblock s) {
+        symbolTable.enterScope();
+
         for (Statement stmt : s.stmts()) {
             stmt.accept(this);
         }
+        symbolTable.exitScope();
+        
         return TypeCheck.VOID;
     }
 
@@ -441,15 +450,16 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     public TypeCheck visitSfor(Sfor s) {
        // symbolTable.declareVariable(s.var.getId(), TypeCheck.INT); skal den være en int? eller må den også iterate over double??
 
+        symbolTable.enterScope();
        // Check the assigment (initialization)
-       if (s.assignment() != null ){
-           TypeCheck assignmentType = s.assignment().accept(this);
+       if (s.init() != null ){
+           TypeCheck assignmentType = s.init().accept(this);
            if (assignmentType == TypeCheck.ERROR) return TypeCheck.ERROR;
        }
 
        // Check the comparison (must be BOOL)
-        if (s.comparison() != null) {
-            TypeCheck compType = s.comparison().accept(this);
+        if (s.condition() != null) {
+            TypeCheck compType = s.condition().accept(this);
             if (compType != TypeCheck.BOOL) {
                 System.err.println("For-loop comparison must be of tyoe BOOL.");
                 return TypeCheck.ERROR;
@@ -457,13 +467,14 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         }
 
         // Check the iteration step
-        if (s.iterrate() != null) {
-            TypeCheck iterateType = s.iterrate().accept(this);
+        if (s.update() != null) {
+            TypeCheck iterateType = s.update().accept(this);
             if (iterateType == TypeCheck.ERROR) {
                 System.err.println("iteration must not be error 😒");
                 return TypeCheck.ERROR;
             }
         }
+
 
         // Check the body type
         loopDepth++;
@@ -476,6 +487,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
             }
         }
         loopDepth--;
+        symbolTable.exitScope();
 
     return TypeCheck.VOID;
     }
@@ -524,7 +536,10 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     @Override
     public TypeCheck visitSlist(Slist s) {
         for (Statement stmt : s.elements()) {
-            stmt.accept(this);
+            TypeCheck result = stmt.accept(this);
+            if(result == TypeCheck.ERROR){
+                return TypeCheck.ERROR;
+            }
         }
         return TypeCheck.VOID;
     }
