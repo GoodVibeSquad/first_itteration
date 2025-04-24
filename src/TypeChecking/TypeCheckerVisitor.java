@@ -1,6 +1,7 @@
 package TypeChecking;
 
 import Ast.*;
+import Tokens.Token;
 
 import java.util.List;
 
@@ -281,7 +282,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
 
     @Override
     public TypeCheck visitETypeconversion(ETypeconversion e) {
-        Type targetType = e.type();
+        String targetType = e.type().getValue();
         TypeCheck actualType = resolveType(targetType);
 
         TypeCheck expressionType = e.expression().accept(this);
@@ -294,7 +295,6 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         }
 
     }
-
     @Override
     public TypeCheck visitENewFunc(ENewFunc e) {
         TypeCheck expressionType = e.e().accept(this);
@@ -523,6 +523,11 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         return TypeCheck.VOID;
     }
 
+    @Override
+    public TypeCheck visitSInDeCrement(SInDeCrement sInDeCrement) {
+        return null;
+    }
+
     // Other (This is chat solution, check correctness)
     @Override
     public TypeCheck visitDef(Def d) {
@@ -561,16 +566,16 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         return t == TypeCheck.INT || t == TypeCheck.DOUBLE;
     }
 
-    private TypeCheck resolveType(Type type) {
+    private TypeCheck resolveType(String type) {
         return switch (type) {
-            case INT -> TypeCheck.INT;
-            case DOUBLE -> TypeCheck.DOUBLE;
-            case BOOL -> TypeCheck.BOOL;
-            case STRING -> TypeCheck.STRING;
-            case NEURALNETWORK -> TypeCheck.NEURALNETWORK;
-            case LAYER -> TypeCheck.LAYER;
-            case ACTIVATIONFUNC -> TypeCheck.ACTIVATIONFUNC;
-            case ARRAY -> TypeCheck.ARRAY;
+            case "int" -> TypeCheck.INT;
+            case "double" -> TypeCheck.DOUBLE;
+            case "bool" -> TypeCheck.BOOL;
+            case "string" -> TypeCheck.STRING;
+            case "NeuralNetwork" -> TypeCheck.NEURALNETWORK;
+            case "Layer" -> TypeCheck.LAYER;
+            case "ActivationFunction" -> TypeCheck.ACTIVATIONFUNC;
+            case "Array" -> TypeCheck.ARRAY;
             default -> TypeCheck.ERROR;
         };
 
