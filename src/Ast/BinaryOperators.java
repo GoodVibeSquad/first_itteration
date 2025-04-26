@@ -30,4 +30,24 @@ public enum BinaryOperators {
         return tokenToOperatorMap.get(type);
     }
 
+    public String toSymbol() {
+        return switch (this) {
+            case PLUS -> "+";
+            case MINUS -> "-";
+            case MULTIPLY -> "*";
+            case DIVISION -> "/";
+            case MODULUS -> "%";
+            case EXPONENT -> "**";
+            case EQUALS -> "==";
+            case NOT_EQUALS -> "!=";
+            case LESS_THAN -> "<";
+            case LESS_OR_EQUALS -> "<=";
+            case GREATER_THAN -> ">";
+            case GREATER_OR_EQUALS -> ">=";
+            case AND -> "and";
+            case OR -> "or";
+        };
+    }
+
+
 }

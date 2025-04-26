@@ -32,6 +32,7 @@ public class Main {
 
         TokenGetter tokenGetter = new TokenGetter("myFile.txt");
         tokenGetter.initialize();
+
 //        List<String> input = new ArrayList<>();
 //
 //        for(Token token : tokenGetter.getTokens()) {
@@ -41,18 +42,23 @@ public class Main {
         Grammar grammar = GrammarBuilder.createGrammar();
         new TableGenerator(grammar);
 
+
         List<Token> tokens = tokenGetter.getTokens();
-        for (Token token : tokens) {
-            System.out.println(token);
-        }
+//        for (Token token : tokens) {
+//            System.out.println(token);
+//        }
 
+//        for (int i = 0; i < 1;i++){
+//            Parser.parse(tokens);
+//            System.out.println("Parsing iteration: " + i);
+//        }
 
-        for (int i = 0; i < 1;i++){
-            Parser.parse(tokens);
-            System.out.println("Parsing iteration: " + i);
-        }
+        Object astRoot = Parser.parse(tokens);
 
+        CodeGen codeGen = new CodeGen();
+        String parsedCode = codeGen.generate((Statement) astRoot);
 
+        System.out.println(parsedCode);
 
 
         
