@@ -7,6 +7,7 @@ import Tokens.TokenType;
 import TypeChecking.SymbolTable;
 import TypeChecking.TypeCheck;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,10 +59,17 @@ public class Main {
         CodeGen codeGen = new CodeGen();
         String parsedCode = codeGen.generate((Statement) astRoot);
 
-        System.out.println(parsedCode);
+        //System.out.println(parsedCode);
 
+        try (FileWriter writer = new FileWriter("pythonKode.py")) {
+            writer.write(parsedCode);
+            System.out.println("Output skrevet til " + "pythonKode.py");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        
     }
-
+        
 }
+
+

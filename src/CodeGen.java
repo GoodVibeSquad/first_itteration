@@ -20,6 +20,7 @@ public class CodeGen implements AstVisitor<Void> {
         return output.toString();
     }
 
+
     //Hjælpefunktion til indentation
     private String indent() {
         return "\t".repeat(scopeSize);
