@@ -1,17 +1,16 @@
+import math
 myString = "joe"
 myInt = 9
 myDouble = 6.0
-piNum = PI
-eulerNum = EULER
-myBool = true
-if x == y:
+piNum = math.pi
+eulerNum = math.e
+myBool = True
+x = 0
+y = 3
+z = 0
+if x == z:
 	y += 2
-elif i > l:
-	j += 3
-	if m > n:
-		k += 3
-elif k < m:
-	h += 5
-else:
-	m += 5
-Hej = 10
+
+print(piNum + eulerNum)
+print(myBool)
+print(y)

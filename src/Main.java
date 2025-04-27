@@ -1,18 +1,13 @@
 import Ast.*;
+import CodeGeneration.CodeGenVisitor;
 import Parser.*;
 import Parser.TableGenerator.TableGenerator;
 import Tokens.Token;
 import Tokens.TokenGetter;
-import Tokens.TokenType;
-import TypeChecking.SymbolTable;
-import TypeChecking.TypeCheck;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
 
 
 public class Main {
@@ -56,8 +51,8 @@ public class Main {
 
         Object astRoot = Parser.parse(tokens);
 
-        CodeGen codeGen = new CodeGen();
-        String parsedCode = codeGen.generate((Statement) astRoot);
+        CodeGenVisitor codeGenVisitor = new CodeGenVisitor();
+        String parsedCode = codeGenVisitor.generate((Statement) astRoot);
 
         //System.out.println(parsedCode);
 

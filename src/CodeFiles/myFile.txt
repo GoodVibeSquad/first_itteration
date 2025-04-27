@@ -5,16 +5,11 @@ double piNum = PI;
 double eulerNum = EULER;
 bool myBool = true;
 
-if( x == y ){
-    y+=2;
+int x = 0;
+int y = 3;
+int z = 0;
 
-} else if(i > l){
-     int j += 3;
-     if( m > n) {
-      int k += 3;
-     }
-} else if (k < m){
-    int h += 5;
-} else {
- m += 5;
+if( x == z ){
+    y+=2;
 }
+

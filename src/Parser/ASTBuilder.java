@@ -97,7 +97,6 @@ public class ASTBuilder {
 
             case "expression" -> {
                 Object expressionValue = children.getFirst();
-                System.out.println("expression value: " + expressionValue);
                 if (children.size() == 1 && expressionValue instanceof Token) {
                     Token type = (Token) expressionValue;
                     switch (type.getType().toString()) {
@@ -113,6 +112,12 @@ public class ASTBuilder {
                         }
                         case "DOUBLE" -> {
                             return new Econstant(new CDouble(Double.parseDouble(type.getValue())));
+                        }
+                        case "PI" -> {
+                            return new Econstant(new CPi());
+                        }
+                        case "EULER" -> {
+                            return new Econstant(new CEuler());
                         }
                         default -> {
                             System.err.println("Invalid Constant at: " + expressionValue);

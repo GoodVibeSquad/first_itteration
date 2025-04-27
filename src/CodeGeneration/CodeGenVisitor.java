@@ -1,23 +1,34 @@
+package CodeGeneration;
+
 import Ast.*;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
-public class CodeGen implements AstVisitor<Void> {
+public class CodeGenVisitor implements AstVisitor<Void> {
 
     private int scopeSize = 0;
     private StringBuilder output = new StringBuilder();
 
 
     //Constructor
-    public CodeGen() {}
+    public CodeGenVisitor() {}
 
 
     //Funktion som starter hele generation fra den første ast node
     public String generate(Statement ASTRoot) {
+        applyBaseCode();
+
         ASTRoot.accept(this);
         return output.toString();
+    }
+
+    //  Base code, libraries, classes needed for our python code to run
+    private void applyBaseCode() {
+        output.append("import math\n");
+
+        // Run with python pythonKode.py
+        // Test print functions since they don't work yet:
+//        print(piNum + eulerNum)
+//        print(myBool)
+//        print(y)
     }
 
 
@@ -45,7 +56,13 @@ public class CodeGen implements AstVisitor<Void> {
 
     @Override
     public Void visitCBool(CBool c) {
-        output.append(c.value());
+
+        // the value of c contains an actual boolean variable which prints to a true or false
+        // with un-capitalized first letter. Python requires capitalization (True, False)
+        // Therefore we capitalize the first letter before appending it.
+        String javaBool = String.valueOf(c.value());
+        String pythonBool = javaBool.substring(0, 1).toUpperCase() + javaBool.substring(1);
+        output.append(pythonBool);
         return null;
     }
 

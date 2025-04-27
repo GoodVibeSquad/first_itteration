@@ -111,6 +111,14 @@ public class Lexer {
             return new Token(TokenType.tokenTypeMap.get(word), word);
         }
 
+        // Checked for special constnat PI and Euler
+        if (word.equals("PI")) {
+            return new Token(TokenType.PI, word);
+        }
+        if (word.equals("EULER")) {
+            return new Token(TokenType.EULER, word);
+        }
+
         ArrayList<String> types = new ArrayList<>();
         types.add("int");
         types.add("string");
