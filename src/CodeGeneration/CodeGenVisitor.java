@@ -130,6 +130,10 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
     @Override
     public Void visitElist(Elist e) {
+        for (Expression expression : e.elements()) {
+            expression.accept(this);
+        }
+
         return null;
     }
 
@@ -236,6 +240,9 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
     @Override
     public Void visitSprint(Sprint s) {
+        output.append("print(");
+        s.expr().accept(this);
+        output.append(")\n");
         return null;
     }
 

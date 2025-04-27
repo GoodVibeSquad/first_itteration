@@ -5,8 +5,10 @@ import Parser.TableGenerator.TableGenerator;
 import Tokens.Token;
 import Tokens.TokenGetter;
 
+import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 
 
@@ -61,6 +63,32 @@ public class Main {
             System.out.println("Output skrevet til " + "pythonKode.py");
         } catch (IOException e) {
             e.printStackTrace();
+        }
+
+        try {
+            // Get the filename of the file
+            String pythonScriptPath = "pythonKode.py";
+
+            // Construct the command for the terminal
+            String command = "python " + pythonScriptPath;
+
+            // Execute the command
+            Process p = Runtime.getRuntime().exec(command);
+
+            // Print stack trace from python using a reader
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    System.out.println(line);  // Print each line of the Python script's output to the terminal
+                }
+            }
+
+            // Wait for the process to finish
+            p.waitFor();
+            System.out.println("Python script executed successfully.");
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            System.err.println("Failed to execute the Python script.");
         }
 
     }

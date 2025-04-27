@@ -10,3 +10,4 @@ y = 3
 z = 0
 if x == z:
 	y += 2
+print(y)
