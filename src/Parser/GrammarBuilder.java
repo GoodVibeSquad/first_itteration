@@ -26,6 +26,11 @@ public class GrammarBuilder {
         grammar.add("binaryoperator","OR");
         grammar.add("binaryoperator","EXPONENT");
 
+        // IDEA FOR FUNCTION CREATION
+//        grammar.add("functionIdentifier", "identifier", "OPEN_PARENTHESIS", "expr_list", "CLOSED_PARENTHESIS");
+//        grammar.add("functionIdentifier", "identifier", "OPEN_PARENTHESIS", "CLOSED_PARENTHESIS"); // For functions with no parameters
+//        grammar.add("function", "functionIdentifier", "OPEN_CURLY_BRACKET", "statementlist", "CLOSED_CURLY_BRACKET");
+//        grammar.add("matched_stmt", "function");
 
         // ====== CONSTANTS ======
         grammar.add("expression"," ");
