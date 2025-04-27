@@ -325,19 +325,27 @@ public class ASTBuilder {
 
             case "matched_stmt" -> {
                 Object first = children.getFirst();
+
+                // 🌟 New handling for typed variable declarations
                 if (first instanceof Identifier id && children.size() == 2) {
-                    // This handles the case of "int x;"
                     Object semiObject = children.getLast();
-                    if (semiObject instanceof Token semi && 
-                        semi.getType() == TokenType.SEMICOLON && 
-                        id.getType() != null) {
-                        // Create declaration with null expression for uninitialized variables
+                    if (semiObject instanceof Token semi && semi.getType() == TokenType.SEMICOLON) {
                         return new SDeclaration(id, AssignmentOperator.ASSIGN, null);
+                    }
+                } else if (first instanceof Eidentifier eid && children.size() == 2) {
+                    Object semiObject = children.getLast();
+                    if (semiObject instanceof Token semi && semi.getType() == TokenType.SEMICOLON) {
+                        Identifier id = eid.name();
+                        if (id.getType() != null) {
+                            return new SDeclaration(id, AssignmentOperator.ASSIGN, null);
+                        } else {
+                            return new SExpression(eid);
+                        }
                     }
                 } else if (first instanceof Token firstToken) {
 
-                    switch (firstToken.getType().toString()){
-                        case "IF" ->{
+                    switch (firstToken.getType().toString()) {
+                        case "IF" -> {
                             Object expresionObject = children.get(1);
                             Object statementObject1 = children.get(2);
                             Object statementObject2 = children.getLast();
@@ -345,63 +353,60 @@ public class ASTBuilder {
                                     && statementObject1 instanceof Statement statement1
                                     && statementObject2 instanceof Statement statement2) {
                                 return new Sif(expression, statement1, statement2);
-                            }else {
-                                System.err.println("Invalid Statement if at: " + expresionObject + ", " + statementObject1 + ", " +  statementObject2);
+                            } else {
+                                System.err.println("Invalid Statement if at: " + expresionObject + ", " + statementObject1 + ", " + statementObject2);
                                 throw new RuntimeException();
                             }
                         }
-                        case "OPEN_CURLY_BRACKET" ->{
+                        case "OPEN_CURLY_BRACKET" -> {
                             Object statementListObject = children.get(1);
-                            if(statementListObject instanceof Slist slist){
+                            if (statementListObject instanceof Slist slist) {
                                 return slist;
                             }
                         }
-                        case "FOR" ->{
+                        case "FOR" -> {
                             Object assignObject = children.get(2);
-                            Object comparisonObject= children.get(3);
+                            Object comparisonObject = children.get(3);
                             Object incrementObject = children.get(5);
                             Object boddyObject = children.get(7);
                             if (assignObject instanceof Sassign assagin
                                     && comparisonObject instanceof Expression comp
                                     && incrementObject instanceof Statement increase
-                                    && boddyObject instanceof Statement body){
-                                return new Sfor(null,assagin,comp,increase,body);// we need a system fo identifiers
-                            }
-                            else if (assignObject instanceof SDeclaration declaration
+                                    && boddyObject instanceof Statement body) {
+                                return new Sfor(null, assagin, comp, increase, body);
+                            } else if (assignObject instanceof SDeclaration declaration
                                     && comparisonObject instanceof Expression comp
                                     && incrementObject instanceof Statement increase
-                                    && boddyObject instanceof Statement body){
-                                return new Sfor(null,declaration,comp,increase,body);// we need a system fo identifiers
+                                    && boddyObject instanceof Statement body) {
+                                return new Sfor(null, declaration, comp, increase, body);
                             }
                         }
-                        case "WHILE" ->{
-                            Object comparisonObject= children.get(1);
+                        case "WHILE" -> {
+                            Object comparisonObject = children.get(1);
                             Object boddyObject = children.get(2);
-                            if(comparisonObject instanceof Expression comp
-                                    && boddyObject instanceof Statement buddy){
-                                return new SWhile(comp,buddy);
+                            if (comparisonObject instanceof Expression comp
+                                    && boddyObject instanceof Statement buddy) {
+                                return new SWhile(comp, buddy);
                             }
                         }
-                        case "BREAK" ->{
+                        case "BREAK" -> {
                             Object last = children.getLast();
-                            if(last instanceof Token t
-                                    && t.getType() == TokenType.SEMICOLON){
+                            if (last instanceof Token t
+                                    && t.getType() == TokenType.SEMICOLON) {
                                 return new SBreak();
                             }
-
                         }
-                        case "CONTINUE" ->{
+                        case "CONTINUE" -> {
                             Object last = children.getLast();
-                            if(last instanceof Token t
-                                    && t.getType() == TokenType.SEMICOLON){
+                            if (last instanceof Token t
+                                    && t.getType() == TokenType.SEMICOLON) {
                                 return new SContinue();
                             }
                         }
-                        case "ID" ->{
+                        case "ID" -> {
                             Object second = children.get(1);
                             if (first instanceof Token id &&
-                                second instanceof InDeCrement inDe){
-
+                                    second instanceof InDeCrement inDe) {
                                 return new SInDeCrement(new Identifier(id.getValue()), inDe);
                             }
                         }
@@ -412,35 +417,35 @@ public class ASTBuilder {
                     }
 
                 } else if (first instanceof Expression firstE) {
-                    if(children.get(1) instanceof Token token){
-                        if (token.getType() == TokenType.SEMICOLON){
+                    if (children.get(1) instanceof Token token) {
+                        if (token.getType() == TokenType.SEMICOLON) {
                             return new SExpression(firstE);
                         }
                     } else {
                         System.err.println("Invalid Statement at: " + firstE);
                         throw new RuntimeException();
                     }
-                }else if    (first instanceof Identifier id
-                        && children.size() == 4) {
+                } else if (first instanceof Identifier id && children.size() == 4) {
                     Object assopObject = children.get(1);
                     Object expressionObject = children.get(2);
                     Object semiObject = children.get(3);
-                    if(assopObject instanceof AssignmentOperator assop
+                    if (assopObject instanceof AssignmentOperator assop
                             && expressionObject instanceof Expression e
-                            && semiObject instanceof Token semi){
-                        if(semi.getType() == TokenType.SEMICOLON){
-                            if(id.getType() != null){
-                                return new SDeclaration(id,assop,e);
-                            }else {
-                                return new Sassign(id,assop,e);
+                            && semiObject instanceof Token semi) {
+                        if (semi.getType() == TokenType.SEMICOLON) {
+                            if (id.getType() != null) {
+                                return new SDeclaration(id, assop, e);
+                            } else {
+                                return new Sassign(id, assop, e);
                             }
-                        }else {
+                        } else {
                             System.err.println("Invalid Statement at: " + id.getId());
                             throw new RuntimeException();
                         }
                     }
                 }
             }
+
 
             case "unmatched_stmt" -> {
                 if (children.size() == 3) {

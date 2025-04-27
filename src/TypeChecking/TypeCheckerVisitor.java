@@ -384,7 +384,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     public TypeCheck visitSDeclaration(SDeclaration s) {
         String varName = s.var().getId();
         TypeCheck varType = resolveType(s.var().getType());
-        
+
         // Handle uninitialized variables (when expr is null)
         if (s.expr() == null) {
             if (!symbolTable.contains(varName)) {
@@ -393,14 +393,14 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
             }
             return TypeCheck.ERROR;
         }
-        
+
         // Existing code for initialized variables
         TypeCheck exprType = s.expr().accept(this);
         if (exprType == TypeCheck.ERROR) {
             return TypeCheck.ERROR;
         }
         if (varType != exprType) {
-            System.err.println("Type mismatch in declaration of " + varName + 
+            System.err.println("Type mismatch in declaration of " + varName +
                              ": expected " + varType + ", got " + exprType);
         }
 
@@ -416,20 +416,44 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         String varName = s.var().getId();
         TypeCheck exprType = s.expr().accept(this);
 
-
         if (!symbolTable.contains(varName)) {
             System.err.println("Undeclared variable in assignment: " + varName);
             return TypeCheck.ERROR;
         }
 
         TypeCheck declaredType = symbolTable.lookup(varName);
-        if (declaredType != exprType) {
-            System.err.println("Type mismatch in assignment to " + varName + ": expected " + declaredType + ", got " + exprType);
-            return TypeCheck.ERROR;
+
+
+
+
+        // Handle compound assignment operators
+        if (s.assignmentOperator() != AssignmentOperator.ASSIGN) {
+            // For compound operators like +=, -=, etc.
+            if (isNumeric(declaredType) && isNumeric(exprType)) {
+                // Allow operations between numeric types
+                if (declaredType == TypeCheck.INT && exprType == TypeCheck.DOUBLE) {
+                    System.err.println("Warning: Possible loss of precision in compound assignment: " +
+                            "implicit conversion from double to int");
+                }
+                return TypeCheck.VOID;
+            }
+        } else {
+            // For simple assignment (=)
+            if (declaredType != exprType) {
+                // Allow INT -> DOUBLE assignment
+                if (declaredType == TypeCheck.DOUBLE && exprType == TypeCheck.INT) {
+                    return TypeCheck.VOID; // allowed promotion ✅
+                }
+
+                System.err.println("Type mismatch in assignment to " + varName +
+                        ": expected " + declaredType + ", got " + exprType);
+                return TypeCheck.ERROR;
+            }
         }
 
         return TypeCheck.VOID;
     }
+
 
 
     @Override
@@ -503,6 +527,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
 
     @Override
     public TypeCheck visitSExpression(SExpression s) {
+        // Check if this is actually a declaration like "int x;"
         s.value().accept(this);
         return TypeCheck.VOID;
     }
@@ -554,8 +579,21 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     }
 
     @Override
-    public TypeCheck visitSInDeCrement(SInDeCrement sInDeCrement) {
-        return null;
+    public TypeCheck visitSInDeCrement(SInDeCrement s)  {
+        String varName = s.identifier().getId();
+
+        if (!symbolTable.contains(varName)) {
+            System.err.println("Undeclared variable in increment/decrement: " + varName);
+            return TypeCheck.ERROR;
+        }
+
+        TypeCheck varType = symbolTable.lookup(varName);
+        if (!isNumeric(varType)) {
+            System.err.println("In/Decrement operations require INT or DOUBLE types: " + varType);
+            return TypeCheck.ERROR;
+        }
+
+        return TypeCheck.VOID;
     }
 
     // Other (This is chat solution, check correctness)
