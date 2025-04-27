@@ -3,6 +3,11 @@ if( x > y ){
 
 } else if(i > l){
      int j += 3;
-} else {
+     if( m > n) {
+      int k += 3;
+     }
+} else if (k < m){
     int h += 5;
+} else {
+ m += 5;
 }

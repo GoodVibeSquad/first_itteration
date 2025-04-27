@@ -45,10 +45,6 @@ public class CodeGen implements AstVisitor<Void> {
         return false;
     }
 
-    private boolean containsIf(Statement elseBranch){
-        return elseBranch instanceof Sif sExpr;
-    }
-
     @Override
     public Void visitCNone(CNone c) {
         return null;
@@ -178,27 +174,32 @@ public class CodeGen implements AstVisitor<Void> {
         s.thenBranch().accept(this);
         scopeSize--;
 
-        System.out.println("Else branch: " + s.elseBranch());
-        if (!isEmptyElseBranch(s.elseBranch())) {
-            if(containsIf(s.elseBranch())) {
-                output.append(indent()).append("elif ");
-                s.condition().accept(this);
-                output.append(":\n");
-                scopeSize++;
-                s.thenBranch().accept(this);
-                scopeSize--;
-            }
+        Statement elseBranch = s.elseBranch();
+        while (!isEmptyElseBranch(elseBranch)) {
 
-            /*
-            if ( !containsIf(s.elseBranch())) {
+            // Keeps adding elif, because the AST contains Sif's on an else branch (which also have else branch)
+            // This is a problem because we need the else branch to be a continuation of the original
+            // scope. Instead of being an else of the (else if) is statement is a else to that
+            // specific if statement.
+            if (elseBranch instanceof Sif nestedIf) {
+                output.append(indent()).append("elif ");
+                nestedIf.condition().accept(this);
+                output.append(":\n");
+
+                scopeSize++;
+                nestedIf.thenBranch().accept(this);
+                scopeSize--;
+
+                // going deeper with elif in the while loop
+                elseBranch = nestedIf.elseBranch();
+
+            } else {
                 output.append(indent()).append("else:\n");
                 scopeSize++;
-                s.elseBranch().accept(this);
+                elseBranch.accept(this);
                 scopeSize--;
+                break;
             }
-            */
-
-
         }
 
         return null;
