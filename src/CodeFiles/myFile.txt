@@ -5,7 +5,7 @@ double piNum = PI;
 double eulerNum = EULER;
 bool myBool = true;
 
-if( x > y ){
+if( x == y ){
     y+=2;
 
 } else if(i > l){

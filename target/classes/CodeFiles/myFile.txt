@@ -1,8 +1,20 @@
+string myString = "joe";
+int myInt = 9;
+double myDouble = 6.0;
+double piNum = PI;
+double eulerNum = EULER;
+bool myBool = true;
 
-y=2;
-
-if( x > y ){
+if( x == y ){
     y+=2;
-}
 
-Bøvs = y < x;
+} else if(i > l){
+     int j += 3;
+     if( m > n) {
+      int k += 3;
+     }
+} else if (k < m){
+    int h += 5;
+} else {
+ m += 5;
+}
