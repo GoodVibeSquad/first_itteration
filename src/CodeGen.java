@@ -6,20 +6,12 @@ import java.nio.file.Paths;
 
 public class CodeGen implements AstVisitor<Void> {
 
-    private String sourceCode;
-
     private int scopeSize = 0;
     private StringBuilder output = new StringBuilder();
 
 
     //Constructor
-    public CodeGen() {
-        try {
-            this.sourceCode = Files.readString(Paths.get("src/CodeFiles/myFile.txt"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    public CodeGen() {}
 
 
     //Funktion som starter hele generation fra den første ast node
@@ -52,11 +44,14 @@ public class CodeGen implements AstVisitor<Void> {
 
     @Override
     public Void visitCBool(CBool c) {
+        output.append(c.value());
         return null;
     }
 
+    // NOTE: Maybe look into this such that it appends the stirng correctly
     @Override
     public Void visitCString(CString c) {
+        output.append('"' + c.value() + '"');
         return null;
     }
 
@@ -68,16 +63,19 @@ public class CodeGen implements AstVisitor<Void> {
 
     @Override
     public Void visitCDouble(CDouble c) {
+        output.append(c.value());
         return null;
     }
 
     @Override
     public Void visitCEuler(CEuler c) {
+        output.append("math.e");
         return null;
     }
 
     @Override
     public Void visitCPi(CPi c) {
+        output.append("math.pi");
         return null;
     }
 

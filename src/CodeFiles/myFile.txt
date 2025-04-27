@@ -1,3 +1,10 @@
+string myString = "joe";
+int myInt = 9;
+double myDouble = 6.0;
+double piNum = PI;
+double eulerNum = EULER;
+bool myBool = true;
+
 if( x > y ){
     y+=2;
 
