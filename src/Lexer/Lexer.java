@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class Lexer {
     private static final String BLANK = " \t\n\r";
-    private static final String OPERATORS = "+=-!|&";
+    private static final String OPERATORS = "+=-!|&/*%<>";
     private final SourceCodeReader2 reader;
 
     public Lexer(SourceCodeReader2 reader) {

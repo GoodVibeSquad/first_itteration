@@ -442,7 +442,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
             stmt.accept(this);
         }
         symbolTable.exitScope();
-        
+
         return TypeCheck.VOID;
     }
 
