@@ -325,7 +325,16 @@ public class ASTBuilder {
 
             case "matched_stmt" -> {
                 Object first = children.getFirst();
-                if(first instanceof Token firstToken){
+                if (first instanceof Identifier id && children.size() == 2) {
+                    // This handles the case of "int x;"
+                    Object semiObject = children.getLast();
+                    if (semiObject instanceof Token semi && 
+                        semi.getType() == TokenType.SEMICOLON && 
+                        id.getType() != null) {
+                        // Create declaration with null expression for uninitialized variables
+                        return new SDeclaration(id, AssignmentOperator.ASSIGN, null);
+                    }
+                } else if (first instanceof Token firstToken) {
 
                     switch (firstToken.getType().toString()){
                         case "IF" ->{
@@ -497,5 +506,3 @@ public class ASTBuilder {
         return null;
     }
 }
-
- 

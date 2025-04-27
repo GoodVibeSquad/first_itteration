@@ -53,9 +53,6 @@ public class Main {
 
         // System.out.println("Total number of tokens: " + tokens.size());
         SymbolTable symbols = new SymbolTable();
-        symbols.declareVariable("x", TypeCheck.BOOL);
-        symbols.declareVariable("y", TypeCheck.INT);
-
 
         TypeCheckerVisitor typeVisitor = new TypeCheckerVisitor(symbols);
         TypeCheck result = slist.accept(typeVisitor);

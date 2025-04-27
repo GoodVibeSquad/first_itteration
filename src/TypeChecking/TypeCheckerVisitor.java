@@ -384,13 +384,24 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     public TypeCheck visitSDeclaration(SDeclaration s) {
         String varName = s.var().getId();
         TypeCheck varType = resolveType(s.var().getType());
+        
+        // Handle uninitialized variables (when expr is null)
+        if (s.expr() == null) {
+            if (!symbolTable.contains(varName)) {
+                symbolTable.declareVariable(varName, varType);
+                return TypeCheck.VOID;
+            }
+            return TypeCheck.ERROR;
+        }
+        
+        // Existing code for initialized variables
         TypeCheck exprType = s.expr().accept(this);
-
         if (exprType == TypeCheck.ERROR) {
             return TypeCheck.ERROR;
         }
         if (varType != exprType) {
-            System.err.println("Type mismatch in declaration of " + varName + ": expected " + varType + ", got " + exprType);
+            System.err.println("Type mismatch in declaration of " + varName + 
+                             ": expected " + varType + ", got " + exprType);
         }
 
         if (!symbolTable.contains(varName)) {
@@ -398,8 +409,6 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
             return TypeCheck.VOID;
         }
         return TypeCheck.ERROR;
-
-
     }
 
     @Override
@@ -625,5 +634,3 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
 /*
 
  */
-
-
