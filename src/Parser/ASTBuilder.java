@@ -386,6 +386,16 @@ public class ASTBuilder {
                                 return new SContinue();
                             }
                         }
+                        case "PRINT" -> {
+                            // Checks if print statement is at 0 and if it's a token
+                            // Inserts the expression list into the Sprint
+                            Object printObject = children.get(0);
+                            Object exprObject = children.get(2);
+
+                            if (printObject instanceof Token) {
+                                return new Sprint((Expression) exprObject);
+                            }
+                        }
                         case "ID" ->{
                             Object second = children.get(1);
                             if (first instanceof Token id &&
