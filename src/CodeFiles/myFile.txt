@@ -1,9 +1,8 @@
-
-y=2;
-
 if( x > y ){
     y+=2;
+
+} else if(i > l){
+     int j += 3;
+} else {
+    int h += 5;
 }
-
-Bøvs = y < x;
-

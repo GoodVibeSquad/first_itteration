@@ -13,7 +13,7 @@ public class CodeGen implements AstVisitor<Void> {
 
 
     //Constructor
-    public CodeGen(){
+    public CodeGen() {
         try {
             this.sourceCode = Files.readString(Paths.get("src/CodeFiles/myFile.txt"));
         } catch (IOException e) {
@@ -23,7 +23,7 @@ public class CodeGen implements AstVisitor<Void> {
 
 
     //Funktion som starter hele generation fra den første ast node
-    public String generate(Statement ASTRoot){
+    public String generate(Statement ASTRoot) {
         ASTRoot.accept(this);
         return output.toString();
     }
@@ -33,6 +33,21 @@ public class CodeGen implements AstVisitor<Void> {
         return "\t".repeat(scopeSize);
     }
 
+
+    private boolean isEmptyElseBranch(Statement elseBranch) {
+        if (elseBranch instanceof SExpression sExpr) {
+            if (sExpr.value() instanceof Econstant eConst) {
+                if (eConst.value() instanceof CNone) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean containsIf(Statement elseBranch){
+        return elseBranch instanceof Sif sExpr;
+    }
 
     @Override
     public Void visitCNone(CNone c) {
@@ -147,6 +162,12 @@ public class CodeGen implements AstVisitor<Void> {
         return null;
     }
 
+
+    /*
+    * public record Sif(Expression condition, Statement thenBranch, Statement elseBranch) implements Statement {
+    //accept metode (visitor)
+    @Override
+    * */
     @Override
     public Void visitSif(Sif s) {
         output.append(indent()).append("if ");
@@ -156,6 +177,29 @@ public class CodeGen implements AstVisitor<Void> {
         scopeSize++;
         s.thenBranch().accept(this);
         scopeSize--;
+
+        System.out.println("Else branch: " + s.elseBranch());
+        if (!isEmptyElseBranch(s.elseBranch())) {
+            if(containsIf(s.elseBranch())) {
+                output.append(indent()).append("elif ");
+                s.condition().accept(this);
+                output.append(":\n");
+                scopeSize++;
+                s.thenBranch().accept(this);
+                scopeSize--;
+            }
+
+            /*
+            if ( !containsIf(s.elseBranch())) {
+                output.append(indent()).append("else:\n");
+                scopeSize++;
+                s.elseBranch().accept(this);
+                scopeSize--;
+            }
+            */
+
+
+        }
 
         return null;
     }
@@ -210,7 +254,7 @@ public class CodeGen implements AstVisitor<Void> {
 
     @Override
     public Void visitSlist(Slist slist) {
-        for (Statement statement : slist.elements() ){
+        for (Statement statement : slist.elements()) {
             statement.accept(this);
         }
         return null;
@@ -230,45 +274,4 @@ public class CodeGen implements AstVisitor<Void> {
     public Void visitFile(File f) {
         return null;
     }
-
-
-//    public void indent(Object node){
-//
-//
-//        for (String line : lines) {
-//
-//
-//            String stripped = line.trim();
-//
-//            //Indentation
-//            if (stripped.contains("{")){
-//                scopeSize++;
-//            }
-//
-//            if (stripped.contains("}")) {
-//                scopeSize--;
-//            }
-//
-//
-//            //If statement
-//            if(stripped.contains("if")){
-//                int conditionStart = stripped.indexOf("(");
-//                int conditionEnd = stripped.indexOf(")");
-//                String condition = stripped.substring(conditionStart + 1, conditionEnd);
-//
-//                output.append("\t".repeat(scopeSize)).append("if ").append(condition).append(":\n");
-//
-//            }
-//
-//            //Semicolon efter et statement
-//            if(stripped.endsWith(";")){
-//                stripped = stripped.substring(0, stripped.length() - 1);
-//                output.append("\t".repeat(scopeSize)).append(stripped).append("\n");
-//            }
-//
-//        }
-//
-//        System.out.println(output);
-//    }
-
 }
