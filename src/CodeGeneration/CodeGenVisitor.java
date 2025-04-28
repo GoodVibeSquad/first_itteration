@@ -258,6 +258,13 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
     @Override
     public Void visitSExpression(SExpression s) {
+        s.value().accept(this);
+
+        // Handles variable declaration with initialized value of 0
+        if(s.value() instanceof Eidentifier){
+            output.append("=0\n");
+        }
+
         return null;
     }
 
