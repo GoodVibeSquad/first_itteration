@@ -7,12 +7,12 @@ eulerNum = math.e
 myBool = True
 x = 0
 y = 3
-z = 0
+z = 5
 YAO=0
 if x == z:
 	y += 2
 	if 	x == 	z:
 		n = 2
-elif joe == joe:
+elif 0 == 0:
 	n=0
-print(y)
+print(y,z,x)

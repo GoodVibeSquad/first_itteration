@@ -18,4 +18,4 @@ if( x == z ){
 int n;
 }
 
-print(y);
+print(y,z,x);
