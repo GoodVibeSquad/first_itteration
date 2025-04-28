@@ -11,6 +11,8 @@ z = 0
 YAO=0
 if x == z:
 	y += 2
+	if 	x == 	z:
+		n = 2
 elif joe == joe:
 	n=0
 print(y)

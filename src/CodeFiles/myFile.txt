@@ -1,8 +1,8 @@
 string myString = "joe";
 int myInt = 9;
 double myDouble = 6.0;
-double piNum = PI;
-double eulerNum = EULER;
+double piNum = Pi;
+double eulerNum = E;
 bool myBool = true;
 
 int x = 0;
@@ -11,6 +11,9 @@ int z = 0;
 double YAO;
 if( x == z ){
     y+=2;
+    if(x == z){
+        int n = 2;
+    }
 } else if(joe == joe){
 int n;
 }
