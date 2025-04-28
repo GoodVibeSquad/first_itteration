@@ -105,7 +105,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
     @Override
     public Void visitEidentifier(Eidentifier e) {
-        output.append(e.name().getId());
+        output.append(indent() + e.name().getId());
         return null;
     }
 
