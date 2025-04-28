@@ -8,14 +8,9 @@ bool myBool = true;
 int x = 0;
 int y = 3;
 int z = 0;
-double YAO;
+
 if( x == z ){
     y+=2;
-    if(x == z){
-        int n = 2;
-    }
-} else if(joe == joe){
-int n;
 }
 
-print(y,z,x);
+print(y);
