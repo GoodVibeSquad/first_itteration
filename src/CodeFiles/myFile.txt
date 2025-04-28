@@ -1,5 +1,16 @@
-{
-        if(i == 5){
-            int n = 4;
-        }
+string myString = "joe";
+int myInt = 9;
+double myDouble = 6.0;
+double piNum = PI;
+double eulerNum = EULER;
+bool myBool = true;
+
+int x = 0;
+int y = 3;
+int z = 0;
+
+if( x == z ){
+    y+=2;
 }
+
+print(y);
