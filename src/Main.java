@@ -5,12 +5,17 @@ import Parser.*;
 import Parser.TableGenerator.TableGenerator;
 import Tokens.Token;
 import Tokens.TokenGetter;
+import TypeChecking.SymbolTable;
+import TypeChecking.TypeCheck;
+import TypeChecking.TypeCheckerVisitor;
 
 import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 
 
 public class Main {
@@ -31,33 +36,38 @@ public class Main {
 
         TokenGetter tokenGetter = new TokenGetter("myFile.txt");
         tokenGetter.initialize();
-
 //        List<String> input = new ArrayList<>();
 //
 //        for(Token token : tokenGetter.getTokens()) {
 //            input.add(token.getType().toString());
 //        }
 
+
         Grammar grammar = GrammarBuilder.createGrammar();
         new TableGenerator(grammar);
 
 
         List<Token> tokens = tokenGetter.getTokens();
-//        for (Token token : tokens) {
-//            System.out.println(token);
-//        }
+        for (Token token : tokens) {
+            System.out.println(token);
+        }
 
-//        for (int i = 0; i < 1;i++){
-//            Parser.parse(tokens);
-//            System.out.println("Parsing iteration: " + i);
-//        }
+        Slist slist = (Slist) Parser.parse(tokens);
+
+
+        // System.out.println("Total number of tokens: " + tokens.size());
+        SymbolTable symbols = new SymbolTable();
+
+
+        TypeCheckerVisitor typeVisitor = new TypeCheckerVisitor(symbols);
+        TypeCheck result = slist.accept(typeVisitor);
+        System.out.println("type check result: " + result);
+        symbols.clear();
 
         Object astRoot = Parser.parse(tokens);
 
         CodeGenerator generator = new CodeGenerator((Statement) astRoot);
         generator.generate();
     }
-        
+
 }
-
-

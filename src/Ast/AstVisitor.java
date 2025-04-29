@@ -30,6 +30,7 @@ package Ast;
     // Statements
     R visitSif(Sif s);
     R visitSassign(Sassign s);
+    R visitSDeclaration(SDeclaration s);
     R visitSprint(Sprint s);
     R visitSblock(Sblock s);
     R visitSfor(Sfor s);
@@ -43,5 +44,4 @@ package Ast;
 
     //Other
     R visitDef(Def d);
-    R visitFile(File f);
  }
