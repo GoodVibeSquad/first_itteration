@@ -39,6 +39,17 @@ public class SymbolTable {
         scopes.peek().put(name, type);
     }
 
+
+    // New method to check only current scope
+    public boolean declaredInScope(String name) {
+        if (scopes.isEmpty()) {
+            throw new IllegalStateException("No scopes available.");
+        }
+        return scopes.peek().containsKey(name);
+    }
+
+
+
     public boolean contains(String name) {
         for (Map<String, TypeCheck> scope : scopes) {
             if (scope.containsKey(name)) {

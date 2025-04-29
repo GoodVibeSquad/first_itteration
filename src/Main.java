@@ -39,6 +39,7 @@ public class Main {
 //            input.add(token.getType().toString());
 //        }
 
+
         Grammar grammar = GrammarBuilder.createGrammar();
         new TableGenerator(grammar);
 
@@ -50,7 +51,6 @@ public class Main {
         Slist slist = Parser.parse(tokens);
 
 
-
         // System.out.println("Total number of tokens: " + tokens.size());
         SymbolTable symbols = new SymbolTable();
 
@@ -59,7 +59,6 @@ public class Main {
         System.out.println("type check result: " + result);
         symbols.clear();
 
-        
     }
 
 }

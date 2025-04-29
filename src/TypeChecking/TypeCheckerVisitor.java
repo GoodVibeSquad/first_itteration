@@ -77,6 +77,8 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         TypeCheck leftType = e.left().accept(this);
         TypeCheck rightType = e.right().accept(this);
         BinaryOperators op = e.op();
+        System.out.println("THis is the binary operator: " + op + " and the types are: " + leftType + " and " + rightType + " and the result is:");
+        System.out.println(leftType + " " + op + " " + rightType);
 
         switch (op) {
             //arithmetic operators
@@ -91,10 +93,20 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
                 }
             }
             //comparison operators
-            case EQUALS, NOT_EQUALS, GREATER_OR_EQUALS, LESS_OR_EQUALS, LESS_THAN, GREATER_THAN -> {
-                if ((leftType == rightType) || (isNumeric(leftType)) && isNumeric(rightType)) {
+            case EQUALS, NOT_EQUALS  -> {
+                if (leftType == rightType) {
                     return TypeCheck.BOOL;
                 } else {
+                    System.err.println("Invalid comparison: " + leftType + " " + op + " " + rightType);
+                    return TypeCheck.ERROR;
+                }
+            }
+
+            case GREATER_OR_EQUALS, LESS_OR_EQUALS, LESS_THAN, GREATER_THAN -> {
+                if((isNumeric(leftType)) && isNumeric(rightType)) {
+                    return TypeCheck.BOOL;
+                }
+                else {
                     System.err.println("Invalid comparison: " + leftType + " " + op + " " + rightType);
                     return TypeCheck.ERROR;
                 }
@@ -253,6 +265,8 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
             return TypeCheck.ERROR;
         }
 
+
+        /* SHOULD RETURN INT OR DOUBLE? */
         return TypeCheck.DOUBLE;
     }
 
@@ -385,6 +399,11 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         String varName = s.var().getId();
         TypeCheck varType = resolveType(s.var().getType());
 
+        if (symbolTable.declaredInScope(varName)) {
+            System.err.println("Variable '" + varName + "' already declared in this scope");
+            return TypeCheck.ERROR;
+        }
+
         // Handle uninitialized variables (when expr is null)
         if (s.expr() == null) {
             if (!symbolTable.contains(varName)) {
@@ -393,7 +412,6 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
             }
             return TypeCheck.ERROR;
         }
-
         // Existing code for initialized variables
         TypeCheck exprType = s.expr().accept(this);
         if (exprType == TypeCheck.ERROR) {
@@ -402,6 +420,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         if (varType != exprType) {
             System.err.println("Type mismatch in declaration of " + varName +
                              ": expected " + varType + ", got " + exprType);
+            return TypeCheck.ERROR;
         }
 
         if (!symbolTable.contains(varName)) {
@@ -422,9 +441,6 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         }
 
         TypeCheck declaredType = symbolTable.lookup(varName);
-
-
-
 
         // Handle compound assignment operators
         if (s.assignmentOperator() != AssignmentOperator.ASSIGN) {
@@ -455,7 +471,6 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     }
 
 
-
     @Override
     public TypeCheck visitSprint(Sprint s) {
         TypeCheck exprType = s.expr().accept(this);
@@ -475,6 +490,9 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
             stmt.accept(this);
         }
         symbolTable.exitScope();
+        // Add to visitSblock at the end of each scope
+        System.out.println("DEBUG: After exit scope, symbolTable contains 'y'? " + symbolTable.contains("y"));
+
 
         return TypeCheck.VOID;
     }
