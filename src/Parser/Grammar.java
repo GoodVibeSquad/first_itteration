@@ -8,7 +8,7 @@ public class Grammar {
     List<Production> productions = new ArrayList<>();
     String startSymbol;
 
-    void add(String lhs, String... rhs) {
+    public void add(String lhs, String... rhs) {
         productions.add(new Production(lhs, Arrays.asList(rhs)));
     }
 
