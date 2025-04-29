@@ -17,23 +17,27 @@ public class PrecedenceVisitor implements AstVisitor<Expression> {
         int currentPrec = op.getPrecedence();
         BinaryOperators.Associativity assoc = op.getAssociativity();
 
-        // Check left child if it's a binary op with lower precedence (lift it)
+        // Check left child — rotate if lower precedence or equal and right-associative
         if (left instanceof Ebinaryoperators leftBin) {
             int leftPrec = leftBin.op().getPrecedence();
+            BinaryOperators.Associativity leftAssoc = leftBin.op().getAssociativity();
+
             if (leftPrec < currentPrec ||
                     (leftPrec == currentPrec && assoc == BinaryOperators.Associativity.RIGHT)) {
-                // ((a leftOp b) op c)  → (a leftOp (b op c))
+                // Left rotate: ( (a leftOp b) op c ) → ( a leftOp (b op c) )
                 Expression newRight = new Ebinaryoperators(op, leftBin.right(), right);
                 return new Ebinaryoperators(leftBin.op(), leftBin.left(), newRight).accept(this);
             }
         }
 
-        // Check right child if it's a binary op with higher precedence (lift it)
+        // Check right child — rotate if higher precedence or equal and left-associative
         if (right instanceof Ebinaryoperators rightBin) {
             int rightPrec = rightBin.op().getPrecedence();
+            BinaryOperators.Associativity rightAssoc = rightBin.op().getAssociativity();
+
             if (rightPrec > currentPrec ||
                     (rightPrec == currentPrec && assoc == BinaryOperators.Associativity.LEFT)) {
-                // (a op (b rightOp c))  → ((a op b) rightOp c)
+                // Right rotate: ( a op (b rightOp c) ) → ( (a op b) rightOp c )
                 Expression newLeft = new Ebinaryoperators(op, left, rightBin.left());
                 return new Ebinaryoperators(rightBin.op(), newLeft, rightBin.right()).accept(this);
             }
