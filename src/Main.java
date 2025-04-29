@@ -41,7 +41,6 @@ public class Main {
         Grammar grammar = GrammarBuilder.createGrammar();
         new TableGenerator(grammar);
 
-
         List<Token> tokens = tokenGetter.getTokens();
 //        for (Token token : tokens) {
 //            System.out.println(token);

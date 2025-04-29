@@ -37,17 +37,8 @@ public class GrammarBuilder {
 //        grammar.add("function", "ex", "OPEN_CURLY_BRACKET", "statementlist", "CLOSED_CURLY_BRACKET");
 //        grammar.add("matched_stmt", "function");
 
-        // Navn og parametre på en funktion (VI har tilføjet TYPE og ændret identifier til ID)
-        grammar.add("functionIdentifier", "TYPE", "ID", "OPEN_PARENTHESIS", "expr_list", "CLOSED_PARENTHESIS");
-        grammar.add("functionIdentifier", "TYPE", "ID", "OPEN_PARENTHESIS", "CLOSED_PARENTHESIS");
-
-// En hel funktion: "function" nøgleordet, navnet, og kroppen
-        grammar.add("function", "functionIdentifier", "OPEN_CURLY_BRACKET", "statementlist", "CLOSED_CURLY_BRACKET");
-
-
 
         // ====== CONSTANTS ======
-        grammar.add("expression"," ");
         grammar.add("expression","BOOL");
         grammar.add("expression","INT");
         grammar.add("expression","DOUBLE");
@@ -154,3 +145,4 @@ public class GrammarBuilder {
 
     }
 }
+

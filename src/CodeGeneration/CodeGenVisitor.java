@@ -71,7 +71,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         //Checks for duplicates throught all recorded scopes and if there are, we ignore the newest duplicated variable
         for (Set<String> scope : scopeStack) {
             if (scope.contains(varName)){
-                System.out.println("Duplicate " + varName + " detected in " + scopeSize);
+                System.out.println("Duplicate " + varName + " detected in the " + scopeSize + "'st scope");
                 return;
             }
         }
