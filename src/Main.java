@@ -1,6 +1,7 @@
 import Ast.*;
 import Parser.*;
 import Parser.TableGenerator.TableGenerator;
+import Precedence.PrecedenceVisitor;
 import Tokens.Token;
 import Tokens.TokenGetter;
 import Tokens.TokenType;
@@ -54,6 +55,8 @@ public class Main {
         // System.out.println("Total number of tokens: " + tokens.size());
         SymbolTable symbols = new SymbolTable();
 
+        PrecedenceVisitor precedenceVisitor = new PrecedenceVisitor();
+        slist.accept(precedenceVisitor);
         TypeCheckerVisitor typeVisitor = new TypeCheckerVisitor(symbols);
         TypeCheck result = slist.accept(typeVisitor);
         System.out.println("type check result: " + result);

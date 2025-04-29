@@ -77,8 +77,6 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         TypeCheck leftType = e.left().accept(this);
         TypeCheck rightType = e.right().accept(this);
         BinaryOperators op = e.op();
-        System.out.println("THis is the binary operator: " + op + " and the types are: " + leftType + " and " + rightType + " and the result is:");
-        System.out.println(leftType + " " + op + " " + rightType);
 
         switch (op) {
             //arithmetic operators
@@ -412,6 +410,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
             }
             return TypeCheck.ERROR;
         }
+
         // Existing code for initialized variables
         TypeCheck exprType = s.expr().accept(this);
         if (exprType == TypeCheck.ERROR) {
@@ -596,6 +595,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         return TypeCheck.VOID;
     }
 
+    // burde den ikke retunere void
     @Override
     public TypeCheck visitSInDeCrement(SInDeCrement s)  {
         String varName = s.identifier().getId();
