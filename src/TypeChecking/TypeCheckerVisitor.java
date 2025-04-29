@@ -69,7 +69,6 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
             System.err.println("Undeclared variable: " + name);
             return TypeCheck.ERROR;
         }
-
     }
 
     @Override
@@ -86,7 +85,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
                 } else if (isNumeric(leftType) && isNumeric(rightType)) {
                     return TypeCheck.DOUBLE;
                 } else {
-                    System.err.println("Invalid arithmetic: " + leftType + " " + op + " " + rightType);
+                    System.err.println("Invalid arithmetic: " + leftType.toString() + " " + op.toSymbol() + " " + rightType);
                     return TypeCheck.ERROR;
                 }
             }
@@ -95,7 +94,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
                 if (leftType == rightType) {
                     return TypeCheck.BOOL;
                 } else {
-                    System.err.println("Invalid comparison: " + leftType + " " + op + " " + rightType);
+                    System.err.println("Invalid comparison: " + leftType.name() + " " + op.toSymbol() + " " + rightType);
                     return TypeCheck.ERROR;
                 }
             }
@@ -105,7 +104,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
                     return TypeCheck.BOOL;
                 }
                 else {
-                    System.err.println("Invalid comparison: " + leftType + " " + op + " " + rightType);
+                    System.err.println("Invalid comparison: " + leftType.toString() + " " + op.toSymbol() + " " + rightType);
                     return TypeCheck.ERROR;
                 }
             }
@@ -115,7 +114,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
                 if (leftType == TypeCheck.BOOL && rightType == TypeCheck.BOOL) {
                     return TypeCheck.BOOL;
                 } else {
-                    System.err.println("Logical operation requires booleans: " + leftType + " " + op + " " + rightType);
+                    System.err.println("Invalid logic: " + leftType + " " + op + " " + rightType);
                     return TypeCheck.ERROR;
                 }
 
@@ -237,8 +236,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
             return TypeCheck.DOUBLE;
         }
 
-
-        System.err.println("Ternary expression branches must have compatible types, but got: " + trueType + " and " + falseType);
+        System.err.println("Ternary expression must have same type in both branches, but got: " + trueType + " and " + falseType);
         return TypeCheck.ERROR;
     }
 
@@ -263,8 +261,11 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
             return TypeCheck.ERROR;
         }
 
+        /* SHOULD RETURN INT OR DOUBLE */
+        if (topType == TypeCheck.INT && botType == TypeCheck.INT && bodyType == TypeCheck.INT) {
+            return TypeCheck.INT;
+        }
 
-        /* SHOULD RETURN INT OR DOUBLE? */
         return TypeCheck.DOUBLE;
     }
 
@@ -376,6 +377,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         TypeCheck thenType = s.thenBranch().accept(this);
         symbolTable.exitScope();
         if (thenType == TypeCheck.ERROR) {
+            System.err.println("Error in then branch of if statement");
             return TypeCheck.ERROR;
         }
 
@@ -384,6 +386,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
             TypeCheck elseType = s.elseBranch().accept(this);
             symbolTable.exitScope();
             if (elseType == TypeCheck.ERROR) {
+                System.err.println("Error in else branch of if statement");
                 return TypeCheck.ERROR;
             }
         }
@@ -408,12 +411,14 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
                 symbolTable.declareVariable(varName, varType);
                 return TypeCheck.VOID;
             }
+            System.err.println("Variable '" + varName + "' already declared");
             return TypeCheck.ERROR;
         }
 
         // Existing code for initialized variables
         TypeCheck exprType = s.expr().accept(this);
         if (exprType == TypeCheck.ERROR) {
+            System.err.println("Error in initialization of " + varName + ": " + exprType);
             return TypeCheck.ERROR;
         }
         if (varType != exprType) {
@@ -426,6 +431,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
             symbolTable.declareVariable(varName, varType);
             return TypeCheck.VOID;
         }
+        System.err.println("Variable '" + varName + "' already declared");
         return TypeCheck.ERROR;
     }
 
@@ -433,6 +439,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     public TypeCheck visitSassign(Sassign s) {
         String varName = s.var().getId();
         TypeCheck exprType = s.expr().accept(this);
+
 
         if (!symbolTable.contains(varName)) {
             System.err.println("Undeclared variable in assignment: " + varName);
@@ -474,7 +481,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     public TypeCheck visitSprint(Sprint s) {
         TypeCheck exprType = s.expr().accept(this);
         if (exprType == TypeCheck.ERROR) {
-            System.err.println("Cannot print Error:" + exprType);
+            System.err.println("Error in print statement: " + exprType);
             return TypeCheck.ERROR;
         }
 
@@ -485,33 +492,38 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     public TypeCheck visitSblock(Sblock s) {
         symbolTable.enterScope();
 
+        TypeCheck result = TypeCheck.VOID;
         for (Statement stmt : s.stmts()) {
-            stmt.accept(this);
+            TypeCheck stmtResult = stmt.accept(this);
+            if (stmtResult == TypeCheck.ERROR) {
+                result = TypeCheck.ERROR;
+                break;
+            }
         }
+
         symbolTable.exitScope();
-        // Add to visitSblock at the end of each scope
-        System.out.println("DEBUG: After exit scope, symbolTable contains 'y'? " + symbolTable.contains("y"));
-
-
-        return TypeCheck.VOID;
+        return result;
     }
+
 
     @Override
     public TypeCheck visitSfor(Sfor s) {
-       // symbolTable.declareVariable(s.var.getId(), TypeCheck.INT); skal den være en int? eller må den også iterate over double??
 
         symbolTable.enterScope();
        // Check the assigment (initialization)
        if (s.init() != null ){
            TypeCheck assignmentType = s.init().accept(this);
-           if (assignmentType == TypeCheck.ERROR) return TypeCheck.ERROR;
+           if (assignmentType == TypeCheck.ERROR) {
+               System.err.println("Error in for loop initialization: " + s.var().getId());
+               return TypeCheck.ERROR;
+           }
        }
 
        // Check the comparison (must be BOOL)
         if (s.condition() != null) {
             TypeCheck compType = s.condition().accept(this);
             if (compType != TypeCheck.BOOL) {
-                System.err.println("For-loop comparison must be of tyoe BOOL.");
+                System.err.println("For-loop comparison must be of type BOOL.");
                 return TypeCheck.ERROR;
             }
         }
@@ -520,7 +532,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         if (s.update() != null) {
             TypeCheck iterateType = s.update().accept(this);
             if (iterateType == TypeCheck.ERROR) {
-                System.err.println("iteration must not be error 😒");
+                System.err.println("Error in for loop update: " + s.var().getId() + " 😒");
                 return TypeCheck.ERROR;
             }
         }
@@ -531,7 +543,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         if (s.body() != null) {
             TypeCheck bodyType = s.body().accept(this);
             if (bodyType == TypeCheck.ERROR) {
-                System.err.println("we discriminate, go to the gym");
+                System.err.println("Error in body of for loop: " + s.var().getId());
                 loopDepth--;
                 return TypeCheck.ERROR;
             }
@@ -561,7 +573,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         loopDepth--;
 
         if (body == TypeCheck.ERROR) {
-            System.err.println("call customer service please, im unavailable atm");
+            System.err.println("Error in body of while loop");
             return TypeCheck.ERROR;
         }
         return TypeCheck.VOID;
@@ -578,7 +590,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     @Override
     public TypeCheck visitSContinue(SContinue s) {
         if (loopDepth == 0) {
-            System.err.println("Error: continue used outside of a loop!!");
+            System.err.println("Error: 'continue' used outside of a loop!!");
             return TypeCheck.ERROR;
         }
         return TypeCheck.VOID;
@@ -595,7 +607,6 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         return TypeCheck.VOID;
     }
 
-    // burde den ikke retunere void
     @Override
     public TypeCheck visitSInDeCrement(SInDeCrement s)  {
         String varName = s.identifier().getId();
@@ -614,7 +625,6 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         return TypeCheck.VOID;
     }
 
-    // Other (This is chat solution, check correctness)
     @Override
     public TypeCheck visitDef(Def d) {
         List<TypeCheck> paramTypes = d.params().stream()
