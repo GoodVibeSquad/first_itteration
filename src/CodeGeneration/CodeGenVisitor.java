@@ -237,6 +237,23 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         return null;
     }
 
+    @Override
+    public Void visitSDeclaration(SDeclaration s) {
+        output.append(indent()).append(s.var().getId()).append(" ").
+                append(s.assignmentOperator().toSymbol()).append(" ");
+
+        if (s.expr() != null) {
+            s.expr().accept(this);
+        }
+        else {
+            output.append("0");
+        }
+
+        output.append("\n");
+
+        return null;
+    }
+
 
     @Override
     public Void visitSprint(Sprint s) {
@@ -301,8 +318,4 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         return null;
     }
 
-    @Override
-    public Void visitFile(File f) {
-        return null;
-    }
 }

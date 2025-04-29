@@ -14,7 +14,7 @@ public class CodeGenerator {
 
     public CodeGenerator(Statement AstRoot) {
         this.visitor = new CodeGenVisitor();
-        this.parsedCode = visitor.generate((Statement) AstRoot);
+        this.parsedCode = visitor.generate(AstRoot);
     }
 
     // Method to generate the code file and execute the Python script

@@ -52,7 +52,7 @@ public class Main {
             System.out.println(token);
         }
 
-        Slist slist = (Slist) Parser.parse(tokens);
+        Slist slist = Parser.parse(tokens);
 
 
         // System.out.println("Total number of tokens: " + tokens.size());
@@ -64,9 +64,7 @@ public class Main {
         System.out.println("type check result: " + result);
         symbols.clear();
 
-        Object astRoot = Parser.parse(tokens);
-
-        CodeGenerator generator = new CodeGenerator((Statement) astRoot);
+        CodeGenerator generator = new CodeGenerator(slist);
         generator.generate();
     }
 
