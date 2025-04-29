@@ -1,1 +1,27 @@
-bool i = 2 % 3 == 1;
+{
+    int x = 0;
+    
+    if(x > 0) {
+        int y = 10;
+        while(y > 0) {
+            y = y - 1;
+            if(y == 5) {
+                continue;
+            }
+        }
+    } else {
+        for(int i = 0; i < 10; i++;) {
+            if(i % 2 == 0) {
+                x = x + i;
+            }
+        }
+    }
+    
+    while(x < 20) {
+        x = x + 1;
+        if(x == 15) {
+            bool done = true;
+            break;
+        }
+    }
+}

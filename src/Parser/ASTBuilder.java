@@ -533,23 +533,24 @@ public class ASTBuilder {
             if (leftPrec < currentPrec ||
                     (leftPrec == currentPrec && assoc == BinaryOperators.Associativity.RIGHT)) {
                 // Left rotate: ( (a leftOp b) op c ) → ( a leftOp (b op c) )
+                System.out.println();
                 Expression newRight = Precedence(op, leftBin.right(), expr2);
                 return new Ebinaryoperators(leftBin.op(), leftBin.left(), newRight);
+
             }
         }
 
         // Check right child — rotate if higher precedence or equal and left-associative
         if (expr2 instanceof Ebinaryoperators rightBin) {
             int rightPrec = rightBin.op().getPrecedence();
-
-            if (rightPrec > currentPrec ||
+            if (rightPrec < currentPrec ||
                     (rightPrec == currentPrec && assoc == BinaryOperators.Associativity.LEFT)) {
                 // Right rotate: ( a op (b rightOp c) ) → ( (a op b) rightOp c )
                 Expression newLeft = Precedence(op, expr1, rightBin.left());
+
                 return new Ebinaryoperators(rightBin.op(), newLeft, rightBin.right());
             }
         }
-
         return new Ebinaryoperators(op, expr1, expr2);
     }
 }
