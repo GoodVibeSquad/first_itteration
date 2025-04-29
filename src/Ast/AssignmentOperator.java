@@ -30,4 +30,16 @@ public enum AssignmentOperator {
     public static AssignmentOperator fromTokenType(TokenType type) {
         return tokenToOperatorMap.get(type);
     }
+
+
+    public String toSymbol(){
+        return switch (this){
+            case ASSIGN -> "=";
+            case ADD_ASSIGN -> "+=";
+            case SUB_ASSIGN -> "-=";
+            case DIV_ASSIGN -> "/=";
+            case MUL_ASSIGN -> "*=";
+            case MOD_ASSIGN -> "%=";
+        };
+    }
 }

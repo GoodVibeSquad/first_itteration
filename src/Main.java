@@ -1,17 +1,16 @@
 import Ast.*;
+import CodeGeneration.CodeGenVisitor;
+import CodeGeneration.CodeGenerator;
 import Parser.*;
 import Parser.TableGenerator.TableGenerator;
 import Tokens.Token;
 import Tokens.TokenGetter;
-import Tokens.TokenType;
-import TypeChecking.SymbolTable;
-import TypeChecking.TypeCheck;
 
+import java.io.BufferedReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.io.InputStreamReader;
 import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
 
 
 public class Main {
@@ -32,6 +31,7 @@ public class Main {
 
         TokenGetter tokenGetter = new TokenGetter("myFile.txt");
         tokenGetter.initialize();
+
 //        List<String> input = new ArrayList<>();
 //
 //        for(Token token : tokenGetter.getTokens()) {
@@ -41,21 +41,23 @@ public class Main {
         Grammar grammar = GrammarBuilder.createGrammar();
         new TableGenerator(grammar);
 
+
         List<Token> tokens = tokenGetter.getTokens();
-        for (Token token : tokens) {
-            System.out.println(token);
-        }
+//        for (Token token : tokens) {
+//            System.out.println(token);
+//        }
 
+//        for (int i = 0; i < 1;i++){
+//            Parser.parse(tokens);
+//            System.out.println("Parsing iteration: " + i);
+//        }
 
-        for (int i = 0; i < 1;i++){
-            Parser.parse(tokens);
-            System.out.println("Parsing iteration: " + i);
-        }
+        Object astRoot = Parser.parse(tokens);
 
-
-
-
-        
+        CodeGenerator generator = new CodeGenerator((Statement) astRoot);
+        generator.generate();
     }
-
+        
 }
+
+

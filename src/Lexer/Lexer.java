@@ -111,6 +111,7 @@ public class Lexer {
             return new Token(TokenType.tokenTypeMap.get(word), word);
         }
 
+
         ArrayList<String> types = new ArrayList<>();
         types.add("int");
         types.add("string");

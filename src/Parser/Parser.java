@@ -8,7 +8,7 @@ import java.util.*;
 
 public class Parser {
 
-    public static void parse(List<Token> input) {
+    public static Object parse(List<Token> input) {
         Stack<Integer> stateStack = new Stack<>();
         stateStack.push(0); // Start state
         Stack<Object> objectStack = new Stack<>();
@@ -29,7 +29,7 @@ public class Parser {
                 System.err.println("Syntax error at symbol: " + nextSymbol);
                 System.err.println("In state: " + currentState);
                 System.err.println("Available actions: " + TableGenerator.actionTable.getOrDefault(currentState, Map.of()));
-                return;
+                //return ;
             }
 
 
@@ -69,7 +69,7 @@ public class Parser {
 
                 if (nextState == null) {
                     System.err.println("Goto error for non-terminal: " + lhs);
-                    return;
+                    //return;
                 }
 
                 stateStack.push(nextState);
@@ -79,11 +79,13 @@ public class Parser {
                 break;
             } else {
                 System.err.println("Invalid action: " + action);
-                return;
+                //return;
             }
 
         }
-        System.out.println("\n");
-        System.out.println(objectStack.pop());
+        //System.out.println("\n");
+        //System.out.println(objectStack.pop());
+
+        return objectStack.pop();
     }
 }
