@@ -1,9 +1,7 @@
-string myString = "joe";
-int myInt = 9;
-double myDouble = 6.0;
-double piNum = Pi;
-double eulerNum = E;
-bool myBool = true;
+
+int add(x, y) {
+    print("Yello");
+}
 
 int x = 0;
 int y = 3;
@@ -12,5 +10,3 @@ int z = 0;
 if( x == z ){
     y+=2;
 }
-
-print(y);

@@ -14,7 +14,43 @@ public class ASTBuilder {
     public Object buildAst(Production production, List<Object> children) {
         int prodSize = production.getRhs().size();
         System.out.println("Children:" + children);
+
         switch (production.lhs) {
+
+            case "functionIdentifier" -> {
+                if (children.size() == 5) {  // Function af denne form : TYPE ID ( expr_list )
+                    Object type = children.get(0);
+                    Object id = children.get(1);
+                    Object exprList = children.get(3);
+
+                    if (type instanceof Token typeToken && id instanceof Token idToken && exprList instanceof Elist params) {
+                        // Brug to-strengs constructor for at sætte både id og type rigtigt
+                        Identifier name = new Identifier(idToken.getValue());
+                        Identifier var = new Identifier(idToken.getValue(), typeToken.getValue()); // her er type sat korrekt
+                        return new FunctionIdentifier(name, var, params);
+                    }
+                } else if (children.size() == 4) {  // Function af denne form : TYPE ID ( )
+                    Object type = children.get(0);
+                    Object id = children.get(1);
+
+                    if (type instanceof Token typeToken && id instanceof Token idToken) {
+                        Identifier name = new Identifier(idToken.getValue());
+                        Identifier var = new Identifier(idToken.getValue(), typeToken.getValue()); // type gemmes
+                        return new FunctionIdentifier(name, var, new Elist(List.of()));
+                    }
+                }
+            }
+
+            case "function" -> {
+                if (children.size() == 4) {
+                    Object functionIdentifier = children.get(0); // <-- FEJL! Skal være children.get(0)
+                    Object statementList = children.get(2);
+
+                    if (functionIdentifier instanceof FunctionIdentifier identifier && statementList instanceof Slist body) {
+                        return new SFunction(identifier, body);
+                    }
+                }
+            }
 
             case "binaryoperator" -> {
                 Object operatorValue = children.getFirst();
@@ -329,6 +365,11 @@ public class ASTBuilder {
 
             case "matched_stmt" -> {
                 Object first = children.getFirst();
+
+                if (first instanceof SFunction sFunction) {
+                    return sFunction;
+                }
+
                 if(first instanceof Token firstToken){
 
                     switch (firstToken.getType().toString()){

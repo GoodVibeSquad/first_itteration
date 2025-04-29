@@ -2,11 +2,13 @@ package CodeGeneration;
 
 import Ast.*;
 
-public class CodeGenVisitor implements AstVisitor<Void> {
+import java.util.*;
 
+public class CodeGenVisitor implements AstVisitor<Void> {
     private int scopeSize = 0;
     private StringBuilder output = new StringBuilder();
 
+    private Deque<Set<String>> scopeStack = new ArrayDeque<>();
 
     //Constructor
     public CodeGenVisitor() {}
@@ -16,7 +18,10 @@ public class CodeGenVisitor implements AstVisitor<Void> {
     public String generate(Statement ASTRoot) {
         applyBaseCode();
 
+        scopeStack.push(new HashSet<>());
         ASTRoot.accept(this);
+        scopeStack.pop(); //tror ikke den her er nødvendig men den er her just in case
+
         return output.toString();
     }
 
@@ -49,10 +54,38 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         return false;
     }
 
+    //ScopeSize tilføjelser
+
+    private void enterScope(){
+        scopeStack.push(new HashSet<>());
+        scopeSize++;
+    }
+
+    private void exitScope(){
+        scopeStack.pop();
+        scopeSize--;
+    }
+
+    private void addVarToStack (String varName){
+
+        //Checks for duplicates throught all recorded scopes and if there are, we ignore the newest duplicated variable
+        for (Set<String> scope : scopeStack) {
+            if (scope.contains(varName)){
+                System.out.println("Duplicate " + varName + " detected in " + scopeSize);
+                return;
+            }
+        }
+
+        //Peek is used to get the most recent recorded scope set, so we can add the string to the scope we're currently in
+        scopeStack.peek().add(varName);
+    }
+
+
     @Override
     public Void visitCNone(CNone c) {
         return null;
     }
+
 
     @Override
     public Void visitCBool(CBool c) {
@@ -105,7 +138,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
     @Override
     public Void visitEidentifier(Eidentifier e) {
-        output.append(indent() + e.name().getId());
+        output.append(e.name().getId());
         return null;
     }
 
@@ -130,10 +163,12 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
     @Override
     public Void visitElist(Elist e) {
-        for (Expression expression : e.elements()) {
-            expression.accept(this);
+        for (int i = 0; i < e.elements().size(); i++) {
+            e.elements().get(i).accept(this);
+            if (i < e.elements().size() - 1) {
+                output.append(", ");
+            }
         }
-
         return null;
     }
 
@@ -179,20 +214,15 @@ public class CodeGenVisitor implements AstVisitor<Void> {
     }
 
 
-    /*
-    * public record Sif(Expression condition, Statement thenBranch, Statement elseBranch) implements Statement {
-    //accept metode (visitor)
-    @Override
-    * */
     @Override
     public Void visitSif(Sif s) {
-        output.append(indent()).append("if ");
+        output.append("if ");
         s.condition().accept(this);
         output.append(":\n");
 
-        scopeSize++;
+        enterScope();
         s.thenBranch().accept(this);
-        scopeSize--;
+        exitScope();
 
         Statement elseBranch = s.elseBranch();
         while (!isEmptyElseBranch(elseBranch)) {
@@ -206,18 +236,19 @@ public class CodeGenVisitor implements AstVisitor<Void> {
                 nestedIf.condition().accept(this);
                 output.append(":\n");
 
-                scopeSize++;
+                enterScope();
                 nestedIf.thenBranch().accept(this);
-                scopeSize--;
+                exitScope();
 
                 // going deeper with elif in the while loop
                 elseBranch = nestedIf.elseBranch();
 
             } else {
                 output.append(indent()).append("else:\n");
-                scopeSize++;
+
+                enterScope();
                 elseBranch.accept(this);
-                scopeSize--;
+                exitScope();
                 break;
             }
         }
@@ -227,8 +258,11 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
     @Override
     public Void visitSassign(Sassign s) {
-        output.append(indent()).append(s.var().getId()).append(" ").
+        output.append(s.var().getId()).append(" ").
                 append(s.assignmentOperator().toSymbol()).append(" ");
+
+        addVarToStack(s.var().getId());
+        System.out.println("scopeStack : " + scopeStack);
 
         s.expr().accept(this);
 
@@ -286,6 +320,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
     @Override
     public Void visitSlist(Slist slist) {
         for (Statement statement : slist.elements()) {
+            output.append(indent());
             statement.accept(this);
         }
         return null;
@@ -305,4 +340,28 @@ public class CodeGenVisitor implements AstVisitor<Void> {
     public Void visitFile(File f) {
         return null;
     }
+
+    @Override
+    public Void visitSFunction(SFunction sFunction) {
+        output.append("def ");
+        sFunction.functionIdentifier().accept(this);
+        output.append(": \n");
+
+        enterScope();
+        sFunction.body().accept(this);
+        exitScope();
+
+        output.append("\n");
+        return null;
+    }
+
+    @Override
+    public Void visitFunctionIdentifier(FunctionIdentifier functionIdentifier) {
+        output.append(functionIdentifier.name().getId());
+        output.append("(");
+        functionIdentifier.params().accept(this);
+        output.append(")");
+        return null;
+    }
+
 }

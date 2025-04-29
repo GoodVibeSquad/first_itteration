@@ -37,6 +37,15 @@ public class GrammarBuilder {
 //        grammar.add("function", "ex", "OPEN_CURLY_BRACKET", "statementlist", "CLOSED_CURLY_BRACKET");
 //        grammar.add("matched_stmt", "function");
 
+        // Navn og parametre på en funktion (VI har tilføjet TYPE og ændret identifier til ID)
+        grammar.add("functionIdentifier", "TYPE", "ID", "OPEN_PARENTHESIS", "expr_list", "CLOSED_PARENTHESIS");
+        grammar.add("functionIdentifier", "TYPE", "ID", "OPEN_PARENTHESIS", "CLOSED_PARENTHESIS");
+
+// En hel funktion: "function" nøgleordet, navnet, og kroppen
+        grammar.add("function", "functionIdentifier", "OPEN_CURLY_BRACKET", "statementlist", "CLOSED_CURLY_BRACKET");
+
+
+
         // ====== CONSTANTS ======
         grammar.add("expression"," ");
         grammar.add("expression","BOOL");
@@ -86,17 +95,24 @@ public class GrammarBuilder {
         grammar.add("matched_stmt", "CONTINUE", "SEMICOLON");
         grammar.add("matched_stmt", "ID", "In/deCrement", "SEMICOLON");
         grammar.add("matched_stmt", "PRINT", "OPEN_PARENTHESIS","expr_list","CLOSED_PARENTHESIS", "SEMICOLON");
+        grammar.add("matched_stmt", "function");
 
         // Unmatched: possible dangling else
         grammar.add("unmatched_stmt", "IF", "expression", "statement");
         grammar.add("unmatched_stmt", "IF", "expression", "matched_stmt", "ELSE", "unmatched_stmt");
 
 
-
         // ====== STATEMENT LIST ======
         grammar.add("statementlist", "statement");
         grammar.add("statementlist", "statement", "statementlist");
 
+
+        // ====== FUNCTIONS ======
+        // En hel funktion: "function" nøgleordet, navnet, og kroppen
+        grammar.add("function", "functionIdentifier", "OPEN_CURLY_BRACKET", "statementlist", "CLOSED_CURLY_BRACKET");
+        // Navn og parametre på en funktion (VI har tilføjet TYPE og ændret identifier til ID)
+        grammar.add("functionIdentifier", "TYPE", "ID", "OPEN_PARENTHESIS", "expr_list", "CLOSED_PARENTHESIS");
+        grammar.add("functionIdentifier", "TYPE", "ID", "OPEN_PARENTHESIS", "CLOSED_PARENTHESIS");
 
 
         // ====== ASSIGNMENT OPS ======
