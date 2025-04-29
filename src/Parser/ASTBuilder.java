@@ -138,7 +138,10 @@ public class ASTBuilder {
                             second instanceof BinaryOperators op &&
                             third instanceof Expression expr2) {
 
-                        return new Ebinaryoperators(op, expr1, expr2);
+
+
+
+                        return Precedence(op,expr1,expr2);
                     } else {
                         System.err.println("Invalid Expression at: " + second);
                         throw new RuntimeException();
@@ -510,4 +513,46 @@ public class ASTBuilder {
         }
         return null;
     }
+
+    private Expression Precedence(BinaryOperators op, Expression expr1, Expression expr2) {
+        // Recursively apply reversed precedence normalization to subtrees
+        if (expr1 instanceof Ebinaryoperators leftBin) {
+            expr1 = Precedence(leftBin.op(), leftBin.left(), leftBin.right());
+        }
+        if (expr2 instanceof Ebinaryoperators rightBin) {
+            expr2 = Precedence(rightBin.op(), rightBin.left(), rightBin.right());
+        }
+
+        int currentPrec = op.getPrecedence();
+        BinaryOperators.Associativity assoc = op.getAssociativity();
+
+        // Reverse the logic: rotate left child if it has *higher* precedence or equal and *left*-associative
+        if (expr1 instanceof Ebinaryoperators leftBin) {
+            int leftPrec = leftBin.op().getPrecedence();
+
+            if (leftPrec > currentPrec ||
+                    (leftPrec == currentPrec && assoc == BinaryOperators.Associativity.LEFT)) {
+                // Reverse of previous left rotation: Right rotate
+                // ( a leftOp (b op c) ) → ( (a leftOp b) op c )
+                Expression newLeft = Precedence(op, leftBin.right(), expr2);
+                return new Ebinaryoperators(leftBin.op(), leftBin.left(), newLeft);
+            }
+        }
+
+        // Reverse the logic: rotate right child if it has *lower* precedence or equal and *right*-associative
+        if (expr2 instanceof Ebinaryoperators rightBin) {
+            int rightPrec = rightBin.op().getPrecedence();
+
+            if (rightPrec < currentPrec ||
+                    (rightPrec == currentPrec && assoc == BinaryOperators.Associativity.RIGHT)) {
+                // Reverse of previous right rotation: Left rotate
+                // ( (a op b) rightOp c ) → ( a op (b rightOp c) )
+                Expression newRight = Precedence(op, expr1, rightBin.left());
+                return new Ebinaryoperators(rightBin.op(), newRight, rightBin.right());
+            }
+        }
+
+        return new Ebinaryoperators(op, expr1, expr2);
+    }
+
 }
