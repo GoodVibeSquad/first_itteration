@@ -1,9 +1,1 @@
-{
-    int x;
-    int y = 10;
-    double z = 3.14;
-    x = 5;
-    y = x + 10;
-    z = x + y;
-    x += (int)z;
-}
+bool i = 2 % 4 == 2;

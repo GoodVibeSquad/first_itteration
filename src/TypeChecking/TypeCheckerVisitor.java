@@ -91,7 +91,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
                 }
             }
             //comparison operators
-            case EQUALS, NOT_EQUALS, GREATER_OR_EQUALS, LESS_OR_EQUALS, LESS_THAN, GREATER_THAN -> {
+            case EQUALS, NOT_EQUALS, GREATER_OR_EQUALS, LESS_OR_EQUALS, LESS_THAN, GREATER_THAN -> {//skal laves om
                 if ((leftType == rightType) || (isNumeric(leftType)) && isNumeric(rightType)) {
                     return TypeCheck.BOOL;
                 } else {
@@ -187,7 +187,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
 
     @Override
     public TypeCheck visitElist(Elist e) {
-        if (e.elements().isEmpty()) {
+        if (e.elements().isEmpty()) {//should there not be a better case for empty
             return TypeCheck.ERROR;
         }
 
@@ -253,6 +253,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
             return TypeCheck.ERROR;
         }
 
+        // int
         return TypeCheck.DOUBLE;
     }
 
@@ -578,6 +579,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         return TypeCheck.VOID;
     }
 
+    // burde den ikke retunere void
     @Override
     public TypeCheck visitSInDeCrement(SInDeCrement s)  {
         String varName = s.identifier().getId();

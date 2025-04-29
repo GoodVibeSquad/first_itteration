@@ -16,7 +16,7 @@ public class GrammarBuilder {
         grammar.add("binaryoperator","MULTIPLY");
         grammar.add("binaryoperator","DIVISION");
         grammar.add("binaryoperator","MODULUS");
-        grammar.add("binaryoperator","COMPARISON");
+        grammar.add("binaryoperator","EQUALS");
         grammar.add("binaryoperator","NOT_EQUALS");
         grammar.add("binaryoperator","GREATER_THAN");
         grammar.add("binaryoperator","LESS_THAN");

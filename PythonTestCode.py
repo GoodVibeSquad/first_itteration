@@ -246,7 +246,7 @@ maxVal = max(0, 1)
 
 
 # OUR CODE VERSION (SUM)
-# int sum = Sum(i,n,Expression);
+# int sum = Sum(i,n,id,Expression);
 
 # RUNS n TIMES FROM i(including i) expression is interchangeable for value k
 # FIRST K IS WHERE YOU INSERT THE EXPRESSION IN THE SUM VALUE (THe function for the sum)
