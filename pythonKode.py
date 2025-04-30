@@ -1,2 +1,2 @@
 import math
-x = x
+x = 0

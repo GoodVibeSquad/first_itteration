@@ -309,7 +309,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
     }
 
     @Override
-    public Void visitSInDeCrement(SInDeCrement sInDeCrement) {
+    public Void visitSInDeCrement(EInDeCrement eInDeCrement) {
         return null;
     }
 

@@ -156,8 +156,16 @@ public class ASTBuilder {
                     Object first = children.getFirst();
                     Object second = children.getLast();
 
-                    if (first instanceof UnaryOperators op && second instanceof Expression expr) {
-                        return new Eunaryoperators(op, expr);
+                    if (first instanceof Token && second instanceof InDeCrement) {
+                        // Handle postfix case (i++)
+                        Token idToken = (Token) first;
+                        InDeCrement op = (InDeCrement) second;
+                        return new Eidentifier(new Identifier(idToken.getValue()));
+                    }else if (first instanceof InDeCrement && second instanceof Token) {
+                        // Handle prefix case (++i)
+                        Token idToken = (Token) second;
+                        InDeCrement op = (InDeCrement) first;
+                        return new Eidentifier(new Identifier(idToken.getValue()));
                     } else {
                         System.err.println("Invalid Expression at: " + second);
                         throw new RuntimeException();
@@ -378,16 +386,16 @@ public class ASTBuilder {
                             Object comparisonObject = children.get(3);
                             Object incrementObject = children.get(5);
                             Object boddyObject = children.get(7);
-                            if (assignObject instanceof Sassign assagin
+                            if (assignObject instanceof Sassign sassign
                                     && comparisonObject instanceof Expression comp
-                                    && incrementObject instanceof Statement increase
+                                    && incrementObject instanceof Expression update
                                     && boddyObject instanceof Statement body) {
-                                return new Sfor(null, assagin, comp, increase, body);
+                                return new Sfor(null, sassign, comp, update, body);
                             } else if (assignObject instanceof SDeclaration declaration
                                     && comparisonObject instanceof Expression comp
-                                    && incrementObject instanceof Statement increase
+                                    && incrementObject instanceof Expression update
                                     && boddyObject instanceof Statement body) {
-                                return new Sfor(null, declaration, comp, increase, body);
+                                return new Sfor(null, declaration, comp, update, body);
                             }
                         }
                         case "WHILE" -> {
@@ -427,7 +435,7 @@ public class ASTBuilder {
                             Object second = children.get(1);
                             if (first instanceof Token id &&
                                     second instanceof InDeCrement inDe) {
-                                return new SInDeCrement(new Identifier(id.getValue()), inDe);
+                                return new EInDeCrement(new Identifier(id.getValue()), inDe, true);
                             }
                         }
                         default -> {
@@ -525,7 +533,17 @@ public class ASTBuilder {
 
             }
 
+            case "post_increment", "pre_increment" -> {
+                Object idPart = (production.lhs.equals("post_increment")) ? children.getFirst() : children.getLast();
+                Object opPart = (production.lhs.equals("post_increment")) ? children.getLast() : children.getFirst();
 
+                if (idPart instanceof Token idToken && opPart instanceof InDeCrement op) {
+                    return new Eidentifier(new Identifier(idToken.getValue()));
+                } else {
+                    System.err.println("Invalid increment/decrement expression");
+                    throw new RuntimeException();
+                }
+            }
         }
         return null;
     }
@@ -569,4 +587,24 @@ public class ASTBuilder {
         }
         return new Ebinaryoperators(op, expr1, expr2);
     }
+
+    private Expression handleInDecrementPrecedence(InDeCrement op, Expression expr, boolean isPostfix) {
+        if (expr instanceof Ebinaryoperators binOp) {
+            int binPrec = binOp.op().getPrecedence();
+            int indePrec = op.getPrecedence();
+
+            if (binPrec < indePrec) {
+                // The binary operation has lower precedence, apply increment/decrement first
+                if (isPostfix) {
+                    Expression newLeft = new EInDeCrement(binOp.left(), op, isPostfix);
+                    return new Ebinaryoperators(binOp.op(), newLeft, binOp.right());
+                } else {
+                    Expression newRight = new EInDeCrement(binOp.right(), op, isPostfix);
+                    return new Ebinaryoperators(binOp.op(), binOp.left(), newRight);
+                }
+            }
+        }
+        return new EInDeCrement(expr, op, isPostfix);
+    }
+
 }

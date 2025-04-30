@@ -1,7 +1,6 @@
 package TypeChecking;
 
 import Ast.*;
-import Tokens.Token;
 
 import java.util.List;
 
@@ -512,8 +511,8 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         symbolTable.enterScope();
        // Check the assigment (initialization)
        if (s.init() != null ){
-           TypeCheck assignmentType = s.init().accept(this);
-           if (assignmentType == TypeCheck.ERROR) {
+           TypeCheck initType = s.init().accept(this);
+           if (initType == TypeCheck.ERROR) {
                System.err.println("Error in for loop initialization: " + s.var().getId());
                return TypeCheck.ERROR;
            }
@@ -521,8 +520,8 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
 
        // Check the comparison (must be BOOL)
         if (s.condition() != null) {
-            TypeCheck compType = s.condition().accept(this);
-            if (compType != TypeCheck.BOOL) {
+            TypeCheck comdType = s.condition().accept(this);
+            if (comdType != TypeCheck.BOOL) {
                 System.err.println("For-loop comparison must be of type BOOL.");
                 return TypeCheck.ERROR;
             }
@@ -530,29 +529,37 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
 
         // Check the iteration step
         if (s.update() != null) {
-            TypeCheck iterateType = s.update().accept(this);
-            if (iterateType == TypeCheck.ERROR) {
-                System.err.println("Error in for loop update: " + s.var().getId() + " 😒");
+            TypeCheck varType = null;
+            if (s.update() instanceof Eidentifier eId) {
+                String varName = eId.name().getId();
+                varType = symbolTable.lookup(varName);
+            }
+            // Verify the variable is numeric (int or double)
+            if (varType != TypeCheck.INT && varType != TypeCheck.DOUBLE) {
+                System.err.println("For-loop update variable must be numeric type (int or double)");
                 return TypeCheck.ERROR;
             }
+
         }
 
 
-        // Check the body type
+        // Check the body
         loopDepth++;
         if (s.body() != null) {
             TypeCheck bodyType = s.body().accept(this);
             if (bodyType == TypeCheck.ERROR) {
-                System.err.println("Error in body of for loop: " + s.var().getId());
+                System.err.println("Error in for loop body");
                 loopDepth--;
+                symbolTable.exitScope();
                 return TypeCheck.ERROR;
             }
         }
         loopDepth--;
-        symbolTable.exitScope();
 
-    return TypeCheck.VOID;
+        symbolTable.exitScope();
+        return TypeCheck.VOID;
     }
+
 
     @Override
     public TypeCheck visitSExpression(SExpression s) {
@@ -608,7 +615,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     }
 
     @Override
-    public TypeCheck visitSInDeCrement(SInDeCrement s)  {
+    public TypeCheck visitSInDeCrement(EInDeCrement s)  {
         String varName = s.identifier().getId();
 
         if (!symbolTable.contains(varName)) {

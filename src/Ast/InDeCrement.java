@@ -6,13 +6,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum InDeCrement {
-    INCREMENT(TokenType.INCREMENT),  // -e
-    DECREMENT(TokenType.DECREMENT); // not e
+    INCREMENT(TokenType.INCREMENT, 5),
+    DECREMENT(TokenType.DECREMENT, 5);
 
     private final TokenType token;
+    private final int precedence;
 
-    InDeCrement(TokenType token) {
+    InDeCrement(TokenType token, int precedence) {
         this.token = token;
+        this.precedence = precedence;
     }
 
     private static final Map<TokenType, InDeCrement> tokenToOperatorMap = new HashMap<>();
@@ -25,5 +27,9 @@ public enum InDeCrement {
 
     public static InDeCrement fromTokenType(TokenType type) {
         return tokenToOperatorMap.get(type);
+    }
+
+    public int getPrecedence() {
+        return precedence;
     }
 }

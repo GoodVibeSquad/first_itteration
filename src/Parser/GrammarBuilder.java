@@ -27,6 +27,7 @@ public class GrammarBuilder {
         grammar.add("binaryoperator","EXPONENT");
 
 
+
         // ====== CONSTANTS ======
         grammar.add("expression","BOOL");
         grammar.add("expression","INT");
@@ -40,7 +41,7 @@ public class GrammarBuilder {
         grammar.add("expression", "OPEN_PARENTHESIS", "expression" , "CLOSED_PARENTHESIS");
         grammar.add("expression", "expression", "binaryoperator", "expression");
         grammar.add("expression", "unaryOperator", "expression");
-        grammar.add("expression", "identifier");
+
         grammar.add("expression", "ID", "OPEN_PARENTHESIS", "expr_list", "CLOSED_PARENTHESIS");
         grammar.add("expression", "SUM", "OPEN_PARENTHESIS", "expression","COMMA", "expression","COMMA", "ID", "COMMA", "expression", "CLOSED_PARENTHESIS");
         grammar.add("expression", "SQUARE_ROOT","OPEN_PARENTHESIS","expression","CLOSED_PARENTHESIS");
@@ -50,6 +51,12 @@ public class GrammarBuilder {
         grammar.add("expression", "NEW","TYPE","OPEN_PARENTHESIS","expr_list","CLOSED_PARENTHESIS");
         grammar.add("expression", "ID","DOT","ID","OPEN_PARENTHESIS","expr_list","CLOSED_PARENTHESIS");
 
+
+        grammar.add("expression", "ID", "In/deCrement");  // postfix i++
+        grammar.add("expression", "In/deCrement", "ID");  // prefix ++i
+
+        grammar.add("expression", "identifier");
+        
         // Calling methods on TYPE
         grammar.add("expression", "TYPE","DOT","ID","OPEN_PARENTHESIS","expr_list","CLOSED_PARENTHESIS");
 
@@ -67,7 +74,7 @@ public class GrammarBuilder {
         grammar.add("matched_stmt", "expression", "SEMICOLON");
         grammar.add("matched_stmt", "identifier", "assop", "expression", "SEMICOLON");
         grammar.add("matched_stmt", "OPEN_CURLY_BRACKET", "statementlist", "CLOSED_CURLY_BRACKET");
-        grammar.add("matched_stmt", "FOR", "OPEN_PARENTHESIS", "statement", "expression", "SEMICOLON", "statement", "CLOSED_PARENTHESIS", "statement");
+        grammar.add("matched_stmt", "FOR", "OPEN_PARENTHESIS", "statement", "expression", "SEMICOLON", "expression", "CLOSED_PARENTHESIS", "statement");
         grammar.add("matched_stmt", "WHILE", "expression", "statement");
         grammar.add("matched_stmt", "BREAK", "SEMICOLON");
         grammar.add("matched_stmt", "CONTINUE", "SEMICOLON");
