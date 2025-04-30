@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum InDeCrement {
-    INCREMENT(TokenType.INCREMENT, 5),
+    INCREMENT(TokenType.INCREMENT, 5),  // Higher precedence than binary operators
     DECREMENT(TokenType.DECREMENT, 5);
 
     private final TokenType token;
@@ -33,3 +33,4 @@ public enum InDeCrement {
         return precedence;
     }
 }
+

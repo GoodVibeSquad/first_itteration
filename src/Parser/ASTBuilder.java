@@ -588,23 +588,31 @@ public class ASTBuilder {
         return new Ebinaryoperators(op, expr1, expr2);
     }
 
-    private Expression handleInDecrementPrecedence(InDeCrement op, Expression expr, boolean isPostfix) {
+    private Expression handleInDecrementPrecedence(Token idToken, InDeCrement op, boolean isPostfix) {
+        Expression expr = new Eidentifier(new Identifier(idToken.getValue()));
+
         if (expr instanceof Ebinaryoperators binOp) {
             int binPrec = binOp.op().getPrecedence();
             int indePrec = op.getPrecedence();
 
             if (binPrec < indePrec) {
-                // The binary operation has lower precedence, apply increment/decrement first
+                // The binary operation has lower precedence
                 if (isPostfix) {
-                    Expression newLeft = new EInDeCrement(binOp.left(), op, isPostfix);
-                    return new Ebinaryoperators(binOp.op(), newLeft, binOp.right());
+                    // For postfix, apply to the left operand: (a + b)++ → (a++ + b)
+                    if (binOp.left() instanceof Eidentifier leftId) {
+                        Expression newLeft = new EInDeCrement(leftId.name(), op, true);
+                        return new Ebinaryoperators(binOp.op(), newLeft, binOp.right());
+                    }
                 } else {
-                    Expression newRight = new EInDeCrement(binOp.right(), op, isPostfix);
-                    return new Ebinaryoperators(binOp.op(), binOp.left(), newRight);
+                    // For prefix, apply to the right operand: ++(a + b) → (++a + b)
+                    if (binOp.right() instanceof Eidentifier rightId) {
+                        Expression newRight = new EInDeCrement(rightId.name(), op, false);
+                        return new Ebinaryoperators(binOp.op(), binOp.left(), newRight);
+                    }
                 }
             }
         }
-        return new EInDeCrement(expr, op, isPostfix);
+        return new EInDeCrement(new Identifier(idToken.getValue()), op, isPostfix);
     }
 
 }

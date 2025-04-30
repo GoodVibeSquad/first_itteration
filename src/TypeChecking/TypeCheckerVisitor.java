@@ -616,7 +616,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
 
     @Override
     public TypeCheck visitSInDeCrement(EInDeCrement s)  {
-        String varName = s.identifier().getId();
+        String varName = s.id().getId();
 
         if (!symbolTable.contains(varName)) {
             System.err.println("Undeclared variable in increment/decrement: " + varName);
