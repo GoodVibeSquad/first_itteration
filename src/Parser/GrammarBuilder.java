@@ -26,19 +26,8 @@ public class GrammarBuilder {
         grammar.add("binaryoperator","OR");
         grammar.add("binaryoperator","EXPONENT");
 
-        // IDEA FOR FUNCTION CREATION
-
-//        function identifier = myFunc(exprList)
-//        function = function{
-//            statementlist
-//        }
-//        grammar.add("functionIdentifier", "identifier", "OPEN_PARENTHESIS", "expr_list", "CLOSED_PARENTHESIS");
-//        grammar.add("functionIdentifier", "identifier", "OPEN_PARENTHESIS", "CLOSED_PARENTHESIS"); // For functions with no parameters
-//        grammar.add("function", "ex", "OPEN_CURLY_BRACKET", "statementlist", "CLOSED_CURLY_BRACKET");
-//        grammar.add("matched_stmt", "function");
 
         // ====== CONSTANTS ======
-        grammar.add("expression"," ");
         grammar.add("expression","BOOL");
         grammar.add("expression","INT");
         grammar.add("expression","DOUBLE");
@@ -52,10 +41,8 @@ public class GrammarBuilder {
         grammar.add("expression", "expression", "binaryoperator", "expression");
         grammar.add("expression", "unaryOperator", "expression");
         grammar.add("expression", "identifier");
-
         grammar.add("expression", "ID", "OPEN_PARENTHESIS", "expr_list", "CLOSED_PARENTHESIS");
-
-        grammar.add("expression", "SUM", "OPEN_PARENTHESIS", "expression","COMMA", "expression","COMMA", "ID", "CLOSED_PARENTHESIS");
+        grammar.add("expression", "SUM", "OPEN_PARENTHESIS", "expression","COMMA", "expression","COMMA", "ID", "COMMA", "expression", "CLOSED_PARENTHESIS");
         grammar.add("expression", "SQUARE_ROOT","OPEN_PARENTHESIS","expression","CLOSED_PARENTHESIS");
         grammar.add("expression", "MAX","OPEN_PARENTHESIS","expr_list","CLOSED_PARENTHESIS");
         grammar.add("expression", "expression","TERNARY","expression","COLON","expression");
@@ -86,6 +73,8 @@ public class GrammarBuilder {
         grammar.add("matched_stmt", "CONTINUE", "SEMICOLON");
         grammar.add("matched_stmt", "ID", "In/deCrement", "SEMICOLON");
         grammar.add("matched_stmt", "PRINT", "OPEN_PARENTHESIS","expr_list","CLOSED_PARENTHESIS", "SEMICOLON");
+
+
 
         // Unmatched: possible dangling else
         grammar.add("unmatched_stmt", "IF", "expression", "statement");

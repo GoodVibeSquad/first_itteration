@@ -143,7 +143,10 @@ public class ASTBuilder {
                             second instanceof BinaryOperators op &&
                             third instanceof Expression expr2) {
 
-                        return new Ebinaryoperators(op, expr1, expr2);
+
+
+
+                        return Precedence(op,expr1,expr2);
                     } else {
                         System.err.println("Invalid Expression at: " + second);
                         throw new RuntimeException();
@@ -194,13 +197,14 @@ public class ASTBuilder {
                     Object first = children.get(2);
                     Object second = children.get(4);
                     Object third = children.get(6);
-
+                    Object fourth = children.get(8);
 
                     if (first instanceof Expression top &&
                             second instanceof Expression bot &&
-                            third instanceof Token id) {
+                            third instanceof Token id &&
+                            fourth instanceof Expression body) {
 
-                        return new ESum(top, bot, new Identifier(id.getValue()));
+                        return new ESum(top, bot, new Identifier(id.getValue()), body);
                     } else {
                         System.err.println("Invalid Expression at: " + first);
                         throw new RuntimeException();
@@ -329,10 +333,27 @@ public class ASTBuilder {
 
             case "matched_stmt" -> {
                 Object first = children.getFirst();
-                if(first instanceof Token firstToken){
 
-                    switch (firstToken.getType().toString()){
-                        case "IF" ->{
+                // 🌟 New handling for typed variable declarations
+                if (first instanceof Identifier id && children.size() == 2) {
+                    Object semiObject = children.getLast();
+                    if (semiObject instanceof Token semi && semi.getType() == TokenType.SEMICOLON) {
+                        return new SDeclaration(id, AssignmentOperator.ASSIGN, null);
+                    }
+                } else if (first instanceof Eidentifier eid && children.size() == 2) {
+                    Object semiObject = children.getLast();
+                    if (semiObject instanceof Token semi && semi.getType() == TokenType.SEMICOLON) {
+                        Identifier id = eid.name();
+                        if (id.getType() != null) {
+                            return new SDeclaration(id, AssignmentOperator.ASSIGN, null);
+                        } else {
+                            return new SExpression(eid);
+                        }
+                    }
+                } else if (first instanceof Token firstToken) {
+
+                    switch (firstToken.getType().toString()) {
+                        case "IF" -> {
                             Object expresionObject = children.get(1);
                             Object statementObject1 = children.get(2);
                             Object statementObject2 = children.getLast();
@@ -340,49 +361,55 @@ public class ASTBuilder {
                                     && statementObject1 instanceof Statement statement1
                                     && statementObject2 instanceof Statement statement2) {
                                 return new Sif(expression, statement1, statement2);
-                            }else {
-                                System.err.println("Invalid Statement if at: " + expresionObject + ", " + statementObject1 + ", " +  statementObject2);
+                            } else {
+                                System.err.println("Invalid Statement if at: " + expresionObject + ", " + statementObject1 + ", " + statementObject2);
                                 throw new RuntimeException();
                             }
                         }
-                        case "OPEN_CURLY_BRACKET" ->{
+                        case "OPEN_CURLY_BRACKET" -> {
                             Object statementListObject = children.get(1);
-                            if(statementListObject instanceof Slist slist){
-                                return slist;
+                            if (statementListObject instanceof Slist slist) {
+                                return new Sblock(slist.elements());  // Create a proper block instead of just returning Slist
+
                             }
                         }
-                        case "FOR" ->{
+                        case "FOR" -> {
                             Object assignObject = children.get(2);
-                            Object comparisonObject= children.get(3);
+                            Object comparisonObject = children.get(3);
                             Object incrementObject = children.get(5);
                             Object boddyObject = children.get(7);
                             if (assignObject instanceof Sassign assagin
                                     && comparisonObject instanceof Expression comp
                                     && incrementObject instanceof Statement increase
-                                    && boddyObject instanceof Statement body){
-                                return new Sfor(null,assagin,comp,increase,body);// we need a system fo identifiers
+                                    && boddyObject instanceof Statement body) {
+                                return new Sfor(null, assagin, comp, increase, body);
+                            } else if (assignObject instanceof SDeclaration declaration
+                                    && comparisonObject instanceof Expression comp
+                                    && incrementObject instanceof Statement increase
+                                    && boddyObject instanceof Statement body) {
+                                return new Sfor(null, declaration, comp, increase, body);
                             }
                         }
-                        case "WHILE" ->{
-                            Object comparisonObject= children.get(1);
+                        case "WHILE" -> {
+                            Object comparisonObject = children.get(1);
                             Object boddyObject = children.get(2);
-                            if(comparisonObject instanceof Expression comp
-                                    && boddyObject instanceof Statement buddy){
-                                return new SWhile(comp,buddy);
+                            if (comparisonObject instanceof Expression comp
+                                    && boddyObject instanceof Statement buddy) {
+                                return new SWhile(comp, buddy);
                             }
                         }
-                        case "BREAK" ->{
+                        case "BREAK" -> {
                             Object last = children.getLast();
-                            if(last instanceof Token t
-                                    && t.getType() == TokenType.SEMICOLON){
+                            if (last instanceof Token t
+                                    && t.getType() == TokenType.SEMICOLON) {
                                 return new SBreak();
                             }
 
                         }
-                        case "CONTINUE" ->{
+                        case "CONTINUE" -> {
                             Object last = children.getLast();
-                            if(last instanceof Token t
-                                    && t.getType() == TokenType.SEMICOLON){
+                            if (last instanceof Token t
+                                    && t.getType() == TokenType.SEMICOLON) {
                                 return new SContinue();
                             }
                         }
@@ -399,8 +426,7 @@ public class ASTBuilder {
                         case "ID" ->{
                             Object second = children.get(1);
                             if (first instanceof Token id &&
-                                second instanceof InDeCrement inDe){
-
+                                    second instanceof InDeCrement inDe) {
                                 return new SInDeCrement(new Identifier(id.getValue()), inDe);
                             }
                         }
@@ -411,28 +437,31 @@ public class ASTBuilder {
                     }
 
                 } else if (first instanceof Expression firstE) {
-                    if(children.get(1) instanceof Token token){
-                        if (token.getType() == TokenType.SEMICOLON){
+                    if (children.get(1) instanceof Token token) {
+                        if (token.getType() == TokenType.SEMICOLON) {
                             return new SExpression(firstE);
                         }
                     } else {
                         System.err.println("Invalid Statement at: " + firstE);
                         throw new RuntimeException();
                     }
-                }else if (first instanceof Identifier id
-                        && children.size() == 4) {
+                } else if (first instanceof Identifier id && children.size() == 4) {
                     Object assopObject = children.get(1);
                     Object expressionObject = children.get(2);
                     Object semiObject = children.get(3);
-                    if(assopObject instanceof AssignmentOperator assop
+                    if (assopObject instanceof AssignmentOperator assop
                             && expressionObject instanceof Expression e
-                            && semiObject instanceof Token semi){
-                        if(semi.getType() == TokenType.SEMICOLON){
-                            return new Sassign(id,assop,e);
+                            && semiObject instanceof Token semi) {
+                        if (semi.getType() == TokenType.SEMICOLON) {
+                            if (id.getType() != null) {
+                                return new SDeclaration(id, assop, e);
+                            } else {
+                                return new Sassign(id, assop, e);
+                            }
+                        } else {
+                            System.err.println("Invalid Statement at: " + id.getId());
+                            throw new RuntimeException();
                         }
-                    }else {
-                        System.err.println("Invalid Statement at: " + id.getId());
-                        throw new RuntimeException();
                     }
                 }
             }
@@ -500,6 +529,44 @@ public class ASTBuilder {
         }
         return null;
     }
-}
 
- 
+    private Expression Precedence(BinaryOperators op, Expression expr1, Expression expr2) {
+        // Recursively apply precedence normalization to subtrees
+        if (expr1 instanceof Ebinaryoperators leftBin) {
+            expr1 = Precedence(leftBin.op(), leftBin.left(), leftBin.right());
+        }
+        if (expr2 instanceof Ebinaryoperators rightBin) {
+            expr2 = Precedence(rightBin.op(), rightBin.left(), rightBin.right());
+        }
+
+        int currentPrec = op.getPrecedence();
+        BinaryOperators.Associativity assoc = op.getAssociativity();
+
+        // Check left child — rotate if lower precedence or equal and right-associative
+        if (expr1 instanceof Ebinaryoperators leftBin) {
+            int leftPrec = leftBin.op().getPrecedence();
+
+            if (leftPrec < currentPrec ||
+                    (leftPrec == currentPrec && assoc == BinaryOperators.Associativity.RIGHT)) {
+                // Left rotate: ( (a leftOp b) op c ) → ( a leftOp (b op c) )
+                System.out.println();
+                Expression newRight = Precedence(op, leftBin.right(), expr2);
+                return new Ebinaryoperators(leftBin.op(), leftBin.left(), newRight);
+
+            }
+        }
+
+        // Check right child — rotate if higher precedence or equal and left-associative
+        if (expr2 instanceof Ebinaryoperators rightBin) {
+            int rightPrec = rightBin.op().getPrecedence();
+            if (rightPrec < currentPrec ||
+                    (rightPrec == currentPrec && assoc == BinaryOperators.Associativity.LEFT)) {
+                // Right rotate: ( a op (b rightOp c) ) → ( (a op b) rightOp c )
+                Expression newLeft = Precedence(op, expr1, rightBin.left());
+
+                return new Ebinaryoperators(rightBin.op(), newLeft, rightBin.right());
+            }
+        }
+        return new Ebinaryoperators(op, expr1, expr2);
+    }
+}
