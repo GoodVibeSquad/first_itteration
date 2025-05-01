@@ -28,4 +28,11 @@ public enum UnaryOperators {
         return tokenToOperatorMap.get(type);
     }
 
+    public String toSymbol() {
+        return switch (this) {
+            case NEG -> "-";
+            case NOT -> "!";
+        };
+    }
+
 }

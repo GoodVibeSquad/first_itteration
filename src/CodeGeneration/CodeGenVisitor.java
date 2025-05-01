@@ -8,10 +8,11 @@ public class CodeGenVisitor implements AstVisitor<Void> {
     private int scopeSize = 0;
     private StringBuilder output = new StringBuilder();
 
-    private Deque<Set<String>> scopeStack = new ArrayDeque<>();
+    private Stack<Set<String>> scopeStack = new Stack<>();
 
     //Constructor
-    public CodeGenVisitor() {}
+    public CodeGenVisitor() {
+    }
 
 
     //Funktion som starter hele generation fra den første ast node
@@ -56,21 +57,26 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
     //ScopeSize tilføjelser
 
-    private void enterScope(){
+    private void enterScope() {
         scopeStack.push(new HashSet<>());
         scopeSize++;
     }
 
-    private void exitScope(){
+    private void exitScope() {
+        Set<String> currentScope = scopeStack.peek();
+        for (String var : currentScope) {
+            output.append(indent()).append("del ").append(var).append("\n");
+        }
+
         scopeStack.pop();
         scopeSize--;
     }
 
-    private void addVarToStack (String varName){
+    private void addVarToStack(String varName) {
 
         //Checks for duplicates throught all recorded scopes and if there are, we ignore the newest duplicated variable
         for (Set<String> scope : scopeStack) {
-            if (scope.contains(varName)){
+            if (scope.contains(varName)) {
                 System.out.println("Duplicate " + varName + " detected in the " + scopeSize + "'st scope");
                 return;
             }
@@ -153,11 +159,23 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
     @Override
     public Void visitEunaryoperators(Eunaryoperators e) {
+        //output.append(e.op().toSymbol()); ! istedet for not????
+        //e.expr().accept(this); ! istedet for not????
+
+        output.append("not ");
+        e.expr().accept(this);
+
         return null;
     }
 
     @Override
     public Void visitEcall(EFuncCall e) {
+        output.append(e.func().getId()).append("(");
+        e.args().accept(this);
+        output.append(")");
+
+        //PROBELM MED PARSRSER WTF???!!
+
         return null;
     }
 
@@ -172,13 +190,48 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         return null;
     }
 
+    //Expression condition, Expression trueExpr, Expression falseExpr
+    // The Python format: true if condition else false
     @Override
     public Void visitEternary(Eternary e) {
+        output.append("(");
+        e.trueExpr().accept(this);
+        output.append(" if ");
+        e.condition().accept(this);
+        output.append(" else ");
+        e.falseExpr().accept(this);
         return null;
     }
 
+//Expression topExpression, Expression bottomExpression, Identifier identifier
     @Override
     public Void visitESum(ESum e) {
+
+        //I python siger man : SUM(startRange, endRange, variable)
+
+        output.append("sum(");
+        e.bottomExpression().accept(this);
+        output.append(", ");
+        e.topExpression().accept(this);
+        output.append(", ").append(e.identifier().getId()).append(")");
+
+        //ELLLER?
+
+//@Override
+//public Void visitESum(ESum e) {
+//    output.append("sum([");                  // Start Python list comprehension
+//    e.body().accept(this);                  // What we want to accumulate (e.g., x*x)
+//    output.append(" for ");
+//    output.append(e.identifier().getId());  // Loop variable name (e.g., x)
+//    output.append(" in range(");
+//    e.bottomExpression().accept(this);      // Lower bound
+//    output.append(", ");
+//    e.topExpression().accept(this);         // Upper bound (exclusive)
+//    output.append(" + 1)])");               // Make range inclusive
+//    return null;
+//}
+
+
         return null;
     }
 
@@ -210,6 +263,8 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
     @Override
     public Void visitEMethodCall(EMethodCall e) {
+
+
         return null;
     }
 
@@ -222,7 +277,11 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
         enterScope();
         s.thenBranch().accept(this);
+
+        System.out.println(scopeStack);
+
         exitScope();
+        System.out.println(scopeStack);
 
         Statement elseBranch = s.elseBranch();
         while (!isEmptyElseBranch(elseBranch)) {
@@ -261,9 +320,6 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         output.append(s.var().getId()).append(" ").
                 append(s.assignmentOperator().toSymbol()).append(" ");
 
-        addVarToStack(s.var().getId());
-        System.out.println("scopeStack : " + scopeStack);
-
         s.expr().accept(this);
 
         output.append("\n");
@@ -295,7 +351,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         s.value().accept(this);
 
         // Handles variable declaration with initialized value of 0
-        if(s.value() instanceof Eidentifier){
+        if (s.value() instanceof Eidentifier) {
             output.append("=0\n");
         }
 
@@ -364,4 +420,24 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         return null;
     }
 
+
+
+    @Override
+    public Void visitSDeclaration(SDeclaration s) {
+        output.append(s.var().getId()).append(" ")
+                .append(s.assignmentOperator().toSymbol()).append(" ");
+
+        //
+        if (s.expr() != null) {
+            s.expr().accept(this);
+        } else {
+            output.append("0");  //if no initialised value.
+        }
+
+        addVarToStack(s.var().getId()); //track that the variable has been declared
+        output.append("\n");
+        return null;
+    }
 }
+
+

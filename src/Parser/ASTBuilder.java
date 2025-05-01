@@ -43,7 +43,7 @@ public class ASTBuilder {
 
             case "function" -> {
                 if (children.size() == 4) {
-                    Object functionIdentifier = children.get(0); // <-- FEJL! Skal være children.get(0)
+                    Object functionIdentifier = children.get(0);
                     Object statementList = children.get(2);
 
                     if (functionIdentifier instanceof FunctionIdentifier identifier && statementList instanceof Slist body) {
@@ -132,7 +132,9 @@ public class ASTBuilder {
             }
 
             case "expression" -> {
+
                 Object expressionValue = children.getFirst();
+
                 if (children.size() == 1 && expressionValue instanceof Token) {
                     Token type = (Token) expressionValue;
                     switch (type.getType().toString()) {
@@ -207,6 +209,7 @@ public class ASTBuilder {
                     }
 
                 }
+
                 else if (children.size() == 4 && expressionValue instanceof Identifier) {
                     Object first = children.getFirst();
                     Object second = children.get(1);
@@ -220,11 +223,12 @@ public class ASTBuilder {
 
                         return new EFuncCall(id, exprList);
 
-                    } else {
+                            } else {
                         System.err.println("Invalid Expression at: " + third);
                         throw new RuntimeException();
                     }
                 }
+
                 else if (expressionValue instanceof Token token && token.getType() == TokenType.SUM) {
 
                     Object first = children.get(2);
@@ -312,10 +316,13 @@ public class ASTBuilder {
                             System.err.println("Invalid Expression at: " + first);
                             throw new RuntimeException();
                         }
+
+
                 }
+
                 else if (children.getFirst() instanceof Token token && token.getType() == TokenType.TYPE){
-                        Object first = children.get(2);
-                        Object second = children.get(4);
+                        Object first = children.get(0);
+                        Object second = children.get(2);
 
                         if(first instanceof Token id &&
                            second instanceof Elist args ){
@@ -325,6 +332,8 @@ public class ASTBuilder {
                             throw new RuntimeException();
                         }
                 }
+
+
             }
 
             case "expr_list" -> {
@@ -370,113 +379,136 @@ public class ASTBuilder {
                     return sFunction;
                 }
 
-                if(first instanceof Token firstToken){
+                if (first instanceof Identifier id && children.size() == 2) {
+                    Object semiObject = children.getLast();
+                    if (semiObject instanceof Token semi && semi.getType() == TokenType.SEMICOLON) {
+                        return new SDeclaration(id, AssignmentOperator.ASSIGN, null);
+                    }
+                } else if (first instanceof Eidentifier eid && children.size() == 2) {
+                    Object semiObject = children.getLast();
+                    if (semiObject instanceof Token semi && semi.getType() == TokenType.SEMICOLON) {
+                        Identifier id = eid.name();
+                        if (id.getType() != null) {
+                            return new SDeclaration(id, AssignmentOperator.ASSIGN, null);
+                        } else {
+                            return new SExpression(eid);
+                        }
+                    }
+                } else if (first instanceof Token firstToken) {
 
-                    switch (firstToken.getType().toString()){
-                        case "IF" ->{
-                            Object expresionObject = children.get(1);
-                            Object statementObject1 = children.get(2);
-                            Object statementObject2 = children.getLast();
-                            if (expresionObject instanceof Expression expression
-                                    && statementObject1 instanceof Statement statement1
-                                    && statementObject2 instanceof Statement statement2) {
-                                return new Sif(expression, statement1, statement2);
-                            }else {
-                                System.err.println("Invalid Statement if at: " + expresionObject + ", " + statementObject1 + ", " +  statementObject2);
+                    switch (firstToken.getType().toString()) {
+                        case "IF" -> {
+                                Object expresionObject = children.get(1);
+                                Object statementObject1 = children.get(2);
+                                Object statementObject2 = children.getLast();
+                                if (expresionObject instanceof Expression expression
+                                        && statementObject1 instanceof Statement statement1
+                                        && statementObject2 instanceof Statement statement2) {
+                                    return new Sif(expression, statement1, statement2);
+                                } else {
+                                    System.err.println("Invalid Statement if at: " + expresionObject + ", " + statementObject1 + ", " + statementObject2);
+                                    throw new RuntimeException();
+                                }
+                            }
+                            case "OPEN_CURLY_BRACKET" -> {
+                                Object statementListObject = children.get(1);
+                                if (statementListObject instanceof Slist slist) {
+                                    return slist;
+                                }
+                            }
+                            case "FOR" -> {
+                                Object assignObject = children.get(2);
+                                Object comparisonObject = children.get(3);
+                                Object incrementObject = children.get(5);
+                                Object boddyObject = children.get(7);
+                                if (assignObject instanceof Sassign assagin
+                                        && comparisonObject instanceof Expression comp
+                                        && incrementObject instanceof Statement increase
+                                        && boddyObject instanceof Statement body) {
+                                    return new Sfor(null, assagin, comp, increase, body);
+                                } else if (assignObject instanceof SDeclaration declaration
+                                        && comparisonObject instanceof Expression comp
+                                        && incrementObject instanceof Statement increase
+                                        && boddyObject instanceof Statement body) {
+                                    return new Sfor(null, declaration, comp, increase, body);
+                                }
+                            }
+                            case "WHILE" -> {
+                                Object comparisonObject = children.get(1);
+                                Object boddyObject = children.get(2);
+                                if (comparisonObject instanceof Expression comp
+                                        && boddyObject instanceof Statement buddy) {
+                                    return new SWhile(comp, buddy);
+                                }
+                            }
+                            case "BREAK" -> {
+                                Object last = children.getLast();
+                                if (last instanceof Token t
+                                        && t.getType() == TokenType.SEMICOLON) {
+                                    return new SBreak();
+                                }
+
+                            }
+                            case "CONTINUE" -> {
+                                Object last = children.getLast();
+                                if (last instanceof Token t
+                                        && t.getType() == TokenType.SEMICOLON) {
+                                    return new SContinue();
+                                }
+                            }
+                            case "PRINT" -> {
+                                // Checks if print statement is at 0 and if it's a token
+                                // Inserts the expression list into the Sprint
+                                Object printObject = children.get(0);
+                                Object exprObject = children.get(2);
+
+                                if (printObject instanceof Token) {
+                                    return new Sprint((Expression) exprObject);
+                                }
+                            }
+                            case "ID" -> {
+                                Object second = children.get(1);
+                                if (first instanceof Token id &&
+                                        second instanceof InDeCrement inDe) {
+
+                                    return new SInDeCrement(new Identifier(id.getValue()), inDe);
+                                }
+                            }
+                            default -> {
+                                System.err.println("Invalid Statement at: " + firstToken.getType().toString());
                                 throw new RuntimeException();
                             }
                         }
-                        case "OPEN_CURLY_BRACKET" ->{
-                            Object statementListObject = children.get(1);
-                            if(statementListObject instanceof Slist slist){
-                                return slist;
-                            }
-                        }
-                        case "FOR" ->{
-                            Object assignObject = children.get(2);
-                            Object comparisonObject= children.get(3);
-                            Object incrementObject = children.get(5);
-                            Object boddyObject = children.get(7);
-                            if (assignObject instanceof Sassign assagin
-                                    && comparisonObject instanceof Expression comp
-                                    && incrementObject instanceof Statement increase
-                                    && boddyObject instanceof Statement body){
-                                return new Sfor(null,assagin,comp,increase,body);// we need a system fo identifiers
-                            }
-                        }
-                        case "WHILE" ->{
-                            Object comparisonObject= children.get(1);
-                            Object boddyObject = children.get(2);
-                            if(comparisonObject instanceof Expression comp
-                                    && boddyObject instanceof Statement buddy){
-                                return new SWhile(comp,buddy);
-                            }
-                        }
-                        case "BREAK" ->{
-                            Object last = children.getLast();
-                            if(last instanceof Token t
-                                    && t.getType() == TokenType.SEMICOLON){
-                                return new SBreak();
-                            }
 
-                        }
-                        case "CONTINUE" ->{
-                            Object last = children.getLast();
-                            if(last instanceof Token t
-                                    && t.getType() == TokenType.SEMICOLON){
-                                return new SContinue();
+                    } else if (first instanceof Expression firstE) {
+                        if (children.get(1) instanceof Token token) {
+                            if (token.getType() == TokenType.SEMICOLON) {
+                                return new SExpression(firstE);
                             }
-                        }
-                        case "PRINT" -> {
-                            // Checks if print statement is at 0 and if it's a token
-                            // Inserts the expression list into the Sprint
-                            Object printObject = children.get(0);
-                            Object exprObject = children.get(2);
-
-                            if (printObject instanceof Token) {
-                                return new Sprint((Expression) exprObject);
-                            }
-                        }
-                        case "ID" ->{
-                            Object second = children.get(1);
-                            if (first instanceof Token id &&
-                                second instanceof InDeCrement inDe){
-
-                                return new SInDeCrement(new Identifier(id.getValue()), inDe);
-                            }
-                        }
-                        default -> {
-                            System.err.println("Invalid Statement at: " + firstToken.getType().toString());
+                        } else {
+                            System.err.println("Invalid Statement at: " + firstE);
                             throw new RuntimeException();
                         }
-                    }
-
-                } else if (first instanceof Expression firstE) {
-                    if(children.get(1) instanceof Token token){
-                        if (token.getType() == TokenType.SEMICOLON){
-                            return new SExpression(firstE);
+                    } else if (first instanceof Identifier id && children.size() == 4) {
+                        Object assopObject = children.get(1);
+                        Object expressionObject = children.get(2);
+                        Object semiObject = children.get(3);
+                        if (assopObject instanceof AssignmentOperator assop
+                                && expressionObject instanceof Expression e
+                                && semiObject instanceof Token semi) {
+                            if (semi.getType() == TokenType.SEMICOLON) {
+                                if (id.getType() != null) {
+                                    return new SDeclaration(id, assop, e);
+                                } else {
+                                    return new Sassign(id, assop, e);
+                                }
+                            } else {
+                                System.err.println("Invalid Statement at: " + id.getId());
+                                throw new RuntimeException();
+                            }
                         }
-                    } else {
-                        System.err.println("Invalid Statement at: " + firstE);
-                        throw new RuntimeException();
-                    }
-                }else if (first instanceof Identifier id
-                        && children.size() == 4) {
-                    Object assopObject = children.get(1);
-                    Object expressionObject = children.get(2);
-                    Object semiObject = children.get(3);
-                    if(assopObject instanceof AssignmentOperator assop
-                            && expressionObject instanceof Expression e
-                            && semiObject instanceof Token semi){
-                        if(semi.getType() == TokenType.SEMICOLON){
-                            return new Sassign(id,assop,e);
-                        }
-                    }else {
-                        System.err.println("Invalid Statement at: " + id.getId());
-                        throw new RuntimeException();
                     }
                 }
-            }
 
             case "unmatched_stmt" -> {
                 if (children.size() == 3) {

@@ -1,12 +1,1 @@
-
-int x = 0;
-int y = 3;
-int z = 0;
-
-int add (x, y) {
-    print("Yello");
-}
-
-if( x == z ){
-    y+=2;
-}
+Sum(2, 2, id);

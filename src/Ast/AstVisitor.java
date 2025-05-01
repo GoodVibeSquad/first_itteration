@@ -47,4 +47,6 @@ package Ast;
     //Other
     R visitDef(Def d);
     R visitFile(File f);
+
+     R visitSDeclaration(SDeclaration sDeclaration);
  }

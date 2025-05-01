@@ -26,17 +26,6 @@ public class GrammarBuilder {
         grammar.add("binaryoperator","OR");
         grammar.add("binaryoperator","EXPONENT");
 
-        // IDEA FOR FUNCTION CREATION
-
-//        function identifier = myFunc(exprList)
-//        function = function{
-//            statementlist
-//        }
-//        grammar.add("functionIdentifier", "identifier", "OPEN_PARENTHESIS", "expr_list", "CLOSED_PARENTHESIS");
-//        grammar.add("functionIdentifier", "identifier", "OPEN_PARENTHESIS", "CLOSED_PARENTHESIS"); // For functions with no parameters
-//        grammar.add("function", "ex", "OPEN_CURLY_BRACKET", "statementlist", "CLOSED_CURLY_BRACKET");
-//        grammar.add("matched_stmt", "function");
-
 
         // ====== CONSTANTS ======
         grammar.add("expression","BOOL");
@@ -53,7 +42,9 @@ public class GrammarBuilder {
         grammar.add("expression", "unaryOperator", "expression");
         grammar.add("expression", "identifier");
 
+
         grammar.add("expression", "ID", "OPEN_PARENTHESIS", "expr_list", "CLOSED_PARENTHESIS");
+        grammar.add("expression", "ID", "OPEN_PARENTHESIS", "CLOSED_PARENTHESIS");
 
         grammar.add("expression", "SUM", "OPEN_PARENTHESIS", "expression","COMMA", "expression","COMMA", "ID", "CLOSED_PARENTHESIS");
         grammar.add("expression", "SQUARE_ROOT","OPEN_PARENTHESIS","expression","CLOSED_PARENTHESIS");
