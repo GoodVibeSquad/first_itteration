@@ -207,4 +207,153 @@ public class TypeCheckTest {
         TypeCheck result = slist.accept(typeVisitor);
         assertEquals(TypeCheck.ERROR, result, "Declaring a variable with the same name as an outer declaration should give an error");
     }
+
+    @Test
+    public void testOperatorsAndExpressionsValidComputations() {
+        TokenGetter tokenGetter = new TokenGetter("OperatorsAndExpressionsValidComputations.txt",testDir);
+        tokenGetter.initialize();
+        List<Token> tokens = tokenGetter.getTokens();
+        Slist slist = Parser.parse(tokens);
+        TypeCheck result = slist.accept(typeVisitor);
+
+
+        assertEquals(TypeCheck.INT, symbols.lookup("z") );
+        assertEquals(TypeCheck.DOUBLE, symbols.lookup("e") );
+        assertEquals(TypeCheck.BOOL, symbols.lookup("c") );
+        assertEquals(TypeCheck.BOOL, symbols.lookup("f") );
+
+        assertEquals(TypeCheck.VOID, result);
+
+
+    }
+
+    @Test
+    public void testOperatorsAndExpressionsInvalidComputationIntBool(){
+        TokenGetter tokenGetter = new TokenGetter("testOperatorsAndExpressionsInvalidComputationIntBool.txt",testDir);
+        tokenGetter.initialize();
+        List<Token> tokens = tokenGetter.getTokens();
+        Slist slist = Parser.parse(tokens);
+        TypeCheck result = slist.accept(typeVisitor);
+        assertEquals(TypeCheck.ERROR, result, "Computing an int with a bool should result in an error");
+    }
+
+    @Test
+    public void testOperatorsAndExpressionsInvalidComputationLogicOp(){
+        TokenGetter tokenGetter = new TokenGetter("testOperatorsAndExpressionsInvalidComputationLogicOp.txt",testDir);
+        tokenGetter.initialize();
+        List<Token> tokens = tokenGetter.getTokens();
+        Slist slist = Parser.parse(tokens);
+        TypeCheck result = slist.accept(typeVisitor);
+        assertEquals(TypeCheck.ERROR, result, "Using logical operators without booleans should result in an error");
+    }
+
+    @Test
+    public void testOperatorsAndExpressionsInvalidComputationComparison(){
+        TokenGetter tokenGetter = new TokenGetter("testOperatorsAndExpressionsInvalidComputationComparison.txt",testDir);
+        tokenGetter.initialize();
+        List<Token> tokens = tokenGetter.getTokens();
+        Slist slist = Parser.parse(tokens);
+        TypeCheck result = slist.accept(typeVisitor);
+        assertEquals(TypeCheck.ERROR, result, "Comparing different types should result in an error");
+    }
+
+
+    @Test
+    public void testComplexNestedStructure() {
+        TokenGetter tokenGetter = new TokenGetter("ComplexNestedStructure.txt",testDir);
+        tokenGetter.initialize();
+        List<Token> tokens = tokenGetter.getTokens();
+        Slist slist = Parser.parse(tokens);
+        TypeCheck result = slist.accept(typeVisitor);
+        assertEquals(TypeCheck.VOID, result, "Testing a complex nested structure should not give an error");
+    }
+
+    @Test
+    public void testTernaryOperatorSuccess() {
+        TokenGetter tokenGetter = new TokenGetter("TernaryOperatorSuccess.txt",testDir);
+        tokenGetter.initialize();
+        List<Token> tokens = tokenGetter.getTokens();
+        Slist slist = Parser.parse(tokens);
+
+        TypeCheck result = slist.accept(typeVisitor);
+        assertEquals(TypeCheck.INT, symbols.lookup("x") );
+        assertEquals(TypeCheck.INT, symbols.lookup("y") );
+        assertEquals(TypeCheck.BOOL, symbols.lookup("condition") );
+        assertEquals(TypeCheck.INT, symbols.lookup("z") );
+        assertEquals(TypeCheck.DOUBLE, symbols.lookup("d") );
+        assertEquals(TypeCheck.VOID, result, "Computing a ternary operator with compatible types should not give an error, and return void");
+    }
+
+    @Test
+    public void testTernaryOperatorFail() {
+        TokenGetter tokenGetter = new TokenGetter("TernaryOperatorFail.txt",testDir);
+        tokenGetter.initialize();
+        List<Token> tokens = tokenGetter.getTokens();
+        Slist slist = Parser.parse(tokens);
+
+        TypeCheck result = slist.accept(typeVisitor);
+        assertEquals(TypeCheck.ERROR, result, "Computing a ternary operator with incompatible types should result in an error");
+    }
+
+    @Test
+    public void testTypeConversionSuccess() {
+        TokenGetter tokenGetter = new TokenGetter("TypeConversionSuccess.txt",testDir);
+        tokenGetter.initialize();
+        List<Token> tokens = tokenGetter.getTokens();
+        Slist slist = Parser.parse(tokens);
+
+        TypeCheck result = slist.accept(typeVisitor);
+        assertEquals(TypeCheck.INT, symbols.lookup("x") );
+        assertEquals(TypeCheck.DOUBLE, symbols.lookup("d") );
+        assertEquals(TypeCheck.BOOL, symbols.lookup("b") );
+        assertEquals(TypeCheck.STRING, symbols.lookup("s") );
+        assertEquals(TypeCheck.DOUBLE, symbols.lookup("d1") );
+        assertEquals(TypeCheck.INT, symbols.lookup("x1") );
+        assertEquals(TypeCheck.STRING, symbols.lookup("s1") );
+
+        assertEquals(TypeCheck.VOID, result, "Converting a double to an int should not give an error, and return void");
+
+    }
+
+
+    @Test
+    public void testTypeConversionErrorBoolToInt(){
+        TokenGetter tokenGetter = new TokenGetter("testTypeConversionErrorBoolToInt.txt",testDir);
+        tokenGetter.initialize();
+        List<Token> tokens = tokenGetter.getTokens();
+        Slist slist = Parser.parse(tokens);
+        TypeCheck result = slist.accept(typeVisitor);
+        assertEquals(TypeCheck.ERROR, result, "Converting a bool to an int should result in an error");
+    }
+
+    @Test
+    public void testTypeConversionErrorBoolToDouble(){
+        TokenGetter tokenGetter = new TokenGetter("testTypeConversionErrorBoolToDouble.txt",testDir);
+        tokenGetter.initialize();
+        List<Token> tokens = tokenGetter.getTokens();
+        Slist slist = Parser.parse(tokens);
+        TypeCheck result = slist.accept(typeVisitor);
+        assertEquals(TypeCheck.ERROR, result, "Converting a bool to a double should result in an error");
+    }
+
+    @Test
+    public void testTypeConversionErrorStringToInt(){
+        TokenGetter tokenGetter = new TokenGetter("testTypeConversionErrorStringToInt.txt",testDir);
+        tokenGetter.initialize();
+        List<Token> tokens = tokenGetter.getTokens();
+        Slist slist = Parser.parse(tokens);
+        TypeCheck result = slist.accept(typeVisitor);
+        assertEquals(TypeCheck.ERROR, result, "Converting a string to an int should result in an error");
+    }
+
+    @Test
+    public void testTypeConversionErrorStringToDouble(){
+        TokenGetter tokenGetter = new TokenGetter("testTypeConversionErrorStringToDouble.txt",testDir);
+        tokenGetter.initialize();
+        List<Token> tokens = tokenGetter.getTokens();
+        Slist slist = Parser.parse(tokens);
+        TypeCheck result = slist.accept(typeVisitor);
+        assertEquals(TypeCheck.ERROR, result, "Converting a string to a double should result in an error");
+    }
+
 }

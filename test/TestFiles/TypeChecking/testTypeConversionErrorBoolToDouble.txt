@@ -1,0 +1,2 @@
+int x = 5;
+bool error2 = (bool) x;

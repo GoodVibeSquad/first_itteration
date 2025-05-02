@@ -1,0 +1,2 @@
+string s = "2.3";
+double error4 = (double) s;

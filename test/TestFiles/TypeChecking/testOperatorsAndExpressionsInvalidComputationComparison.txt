@@ -1,0 +1,2 @@
+double d = 3.14;
+bool error3 = d > "test";

@@ -153,11 +153,16 @@
     int x = 5;
     double d = 3.14;
     bool b = true;
+    string s = "hi";
     
     double d1 = (double)x;   // Convert int to double
-    int i = (int)d;          // Convert double to int
-    string s = (string)x;    // Convert int to string
+    int x1 = (int)d;          // Convert double to int
+    string s1 = (string)x;    // Convert int to string
     
     int error = (int)b;      // Error: can't convert bool to int
+    bool error2 = (bool) x;
+    int error3 = (int) s;    // Error: can't convert string to int
+    double error4 = (double) s;
+    
 }
 ```
