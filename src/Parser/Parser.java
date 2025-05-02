@@ -55,9 +55,7 @@ public class Parser {
                     stateStack.pop();
                     children.add(objectStack.pop());
                 }
-//                for (Object child : children) {
-//                    System.out.println("Child: " + child.getClass());
-//                }
+
 
                  Object node = astBuilder.buildAst(prod,children.reversed());
                  objectStack.push(node);

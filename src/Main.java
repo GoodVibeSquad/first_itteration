@@ -35,7 +35,7 @@ public class Main {
         }
 
         Slist slist = Parser.parse(tokens);
-
+        System.out.println(slist);
 
         // System.out.println("Total number of tokens: " + tokens.size());
         SymbolTable symbols = new SymbolTable();
