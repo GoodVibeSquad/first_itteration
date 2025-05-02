@@ -37,7 +37,7 @@ public class Parser {
                 int state = Integer.parseInt(action.substring(1));
 
                 stateStack.push(state);
-               System.out.println("Shifted " + stateStack.peek());
+//               System.out.println("Shifted " + stateStack.peek());
                 objectStack.push(token);
                 token = tokenStream.poll();
                 nextSymbol = token.getType().toString();// move to next input symbol
@@ -72,7 +72,7 @@ public class Parser {
                 }
 
                 stateStack.push(nextState);
-                System.out.println("Reduced using: " + lhs + " -> " + String.join(" ", rhs));
+//                System.out.println("Reduced using: " + lhs + " -> " + String.join(" ", rhs));
             } else if (action.equals("ACC")) {
                 System.out.println("Input successfully parsed!");
                 break;
