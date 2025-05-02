@@ -170,6 +170,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
     @Override
     public Void visitEcall(EFuncCall e) {
+
         output.append(e.func().getId()).append("(");
         e.args().accept(this);
         output.append(")");
@@ -203,11 +204,13 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         return null;
     }
 
+
 //Expression topExpression, Expression bottomExpression, Identifier identifier
     @Override
     public Void visitESum(ESum e) {
 
-        //I python siger man : SUM(startRange, endRange, variable)
+        //I python siger man : sum(startRange, endRange, variable)
+        //Ellers siger man : sum(interable, start)???
 
         output.append("sum(");
         e.bottomExpression().accept(this);
@@ -215,45 +218,49 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         e.topExpression().accept(this);
         output.append(", ").append(e.identifier().getId()).append(")");
 
-        //ELLLER?
-
-//@Override
-//public Void visitESum(ESum e) {
-//    output.append("sum([");                  // Start Python list comprehension
-//    e.body().accept(this);                  // What we want to accumulate (e.g., x*x)
-//    output.append(" for ");
-//    output.append(e.identifier().getId());  // Loop variable name (e.g., x)
-//    output.append(" in range(");
-//    e.bottomExpression().accept(this);      // Lower bound
-//    output.append(", ");
-//    e.topExpression().accept(this);         // Upper bound (exclusive)
-//    output.append(" + 1)])");               // Make range inclusive
-//    return null;
-//}
-
-
         return null;
     }
 
     @Override
     public Void visitEMax(EMax e) {
+        output.append("max(");
+        e.e().accept(this);
+        output.append(")");
         return null;
     }
 
     @Override
     public Void visitESqrt(ESqrt e) {
+        output.append("math.sqrt(");
+        e.expression().accept(this);
+        output.append(")");
         return null;
     }
 
+    //math.sqrt(x)
+
     @Override
     public Void visitETypeconversion(ETypeconversion e) {
+        output.append(e.type().getValue()).append("(");
+        e.expression().accept(this);
+        output.append(")\n");
+
+        //type(x)
         return null;
     }
 
     @Override
     public Void visitENewFunc(ENewFunc e) {
+
+        String type = e.type().getTypeName();
+
+        output.append(type).append("(");
+        e.e().accept(this);
+        output.append(")");
+
         return null;
     }
+
 
     @Override
     public Void visitEContainsExpression(EContainsExpression e) {
@@ -263,7 +270,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
     @Override
     public Void visitEMethodCall(EMethodCall e) {
-
+        //Vi har brug for at vide metode navnene for at lave det her
 
         return null;
     }
@@ -315,6 +322,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         return null;
     }
 
+
     @Override
     public Void visitSassign(Sassign s) {
         output.append(s.var().getId()).append(" ").
@@ -338,13 +346,61 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
     @Override
     public Void visitSblock(Sblock s) {
+        enterScope();
+        s.stmts().accept(this);
+        exitScope();
         return null;
     }
 
     @Override
     public Void visitSfor(Sfor s) {
+
+        String varName = s.var().getId();
+
+        // Default range parts hvis man ikke definerer noget andet
+        String start = "0";
+        String stop = "0";
+        String step = "1";  //default til increment
+
+
+        //Start value decleration
+        if (s.init() instanceof SDeclaration decl) {
+            if (decl.var().getId().equals(varName) && decl.expr() instanceof Econstant ec && ec.value() instanceof CInt cint) {
+                start = String.valueOf(cint.value());
+            }
+        }
+
+        // Tjekker om hvilke operator i vores init er stop-value
+        if (s.condition() instanceof Ebinaryoperators bin) {
+            if (bin.right() instanceof Econstant ec && ec.value() instanceof CInt cint && !(bin.right().equals(start))) {
+                stop = String.valueOf(cint.value());
+            } else if (bin.left() instanceof Econstant ec && ec.value() instanceof CInt cint && !(bin.left().equals(start))) {
+                stop = String.valueOf(cint.value());
+            }
+        }
+
+        // Update (step direction). tjekker om det er i-- (dekrement). Default er den til 1 som er increment.
+        if (s.update() instanceof SInDeCrement inc) {
+            if (inc.inDeCrement().toString().equals("DECREMENT")) {
+                step = "-1";
+            }
+        }
+
+        // Code generation
+        output.append(indent())
+                .append("for ").append(varName)
+                .append(" in range(").append(start).append(", ")
+                .append(stop).append(", ").append(step).append("):\n");
+
+        //for i in range(start, stop, step): 1 for i++ og -1 for i--. (step)
+
+        enterScope();
+        s.body().accept(this);
+        exitScope();
+
         return null;
     }
+
 
     @Override
     public Void visitSExpression(SExpression s) {
@@ -360,16 +416,29 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
     @Override
     public Void visitSWhile(SWhile s) {
+        //while betingelse:
+        //    # kodeblok
+
+        output.append("while ");
+        s.expression().accept(this);
+        output.append(":\n");
+
+        enterScope();
+        s.body().accept(this);
+        exitScope();
+
         return null;
     }
 
     @Override
     public Void visitSBreak(SBreak s) {
+        output.append("break");
         return null;
     }
 
     @Override
     public Void visitSContinue(SContinue s) {
+        output.append("continue");
         return null;
     }
 
@@ -383,10 +452,19 @@ public class CodeGenVisitor implements AstVisitor<Void> {
     }
 
     @Override
-    public Void visitSInDeCrement(SInDeCrement sInDeCrement) {
+    public Void visitSInDeCrement(SInDeCrement s) {
+        String varName = s.identifier().getId();
+
+        if (s.inDeCrement() == InDeCrement.INCREMENT) {
+            output.append(indent()).append(varName).append(" += 1\n");
+        } else if (s.inDeCrement() == InDeCrement.DECREMENT) {
+            output.append(indent()).append(varName).append(" -= 1\n");
+        }
+
         return null;
     }
 
+    // VI BRUGER DEN IKKE (DEF)
     @Override
     public Void visitDef(Def d) {
         return null;

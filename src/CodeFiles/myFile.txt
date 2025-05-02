@@ -1,1 +1,7 @@
-Sum(2, 2, id);
+int x;
+int y;
+
+int myFunc(int a, int b) {
+    print(a + b);
+}
+

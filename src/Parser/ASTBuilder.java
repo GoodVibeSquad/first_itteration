@@ -43,7 +43,7 @@ public class ASTBuilder {
 
             case "function" -> {
                 if (children.size() == 4) {
-                    Object functionIdentifier = children.get(0);
+                    Object functionIdentifier = children.get(0); // <-- FEJL! Skal være children.get(0)
                     Object statementList = children.get(2);
 
                     if (functionIdentifier instanceof FunctionIdentifier identifier && statementList instanceof Slist body) {
@@ -51,7 +51,6 @@ public class ASTBuilder {
                     }
                 }
             }
-
             case "binaryoperator" -> {
                 Object operatorValue = children.getFirst();
                 if (operatorValue instanceof Token t) {
@@ -293,15 +292,42 @@ public class ASTBuilder {
                             throw new RuntimeException();
                         }
                 }
-                else if(children.get(1) instanceof Token token && token.getType() == TokenType.TYPE && children.size() == 5){
-                        Object first = children.get(3);
-                        if(first instanceof Elist args){
-                            return new ENewFunc(args);
-                        } else {
-                            System.err.println("Invalid Expression at: " + first);
-                            throw new RuntimeException();
-                        }
+//                else if(children.get(1) instanceof Type type && type.tok == TokenType.TYPE && children.size() == 5){
+////
+////                    //"NEW",TYPE","OPEN_PARENTHESIS","expr_list","CLOSED_PARENTHESIS"
+////
+////                    //first instanceof Token id && second instanceof InDeCrement inDe
+////
+////                        Object first = children.get(1);
+////                        Object second = children.get(3);
+////                        if(second instanceof Elist args){
+////                            return new ENewFunc(Type, args);
+////                        } else {
+////                            System.err.println("Invalid Expression at: " + first);
+////                            throw new RuntimeException();
+////                        }
+//                }
+
+                else if (children.size() == 5 &&
+                        children.get(0) instanceof Token newToken &&
+                        newToken.getType() == TokenType.NEW &&
+                        children.get(1) instanceof Token typeToken &&
+                        children.get(3) instanceof Elist args) {
+
+                    String typeName = typeToken.getValue().toUpperCase();  // e.g., "LAYER"
+
+                    // Try to match based on the value of the token
+                    try {
+                        Type type = Type.valueOf(typeName);  // Match to enum value
+                        return new ENewFunc(type, args);
+                    } catch (IllegalArgumentException e) {
+                        System.err.println("Unknown type: " + typeName);
+                        throw new RuntimeException("Unknown type: " + typeName);
+                    }
                 }
+
+
+
                 else if(expressionValue instanceof Token token && token.getType() == TokenType.ID){
                         Object first = children.getFirst();
                         Object second = children.get(1);
@@ -417,20 +443,22 @@ public class ASTBuilder {
                                 }
                             }
                             case "FOR" -> {
-                                Object assignObject = children.get(2);
+                                Object assignObject = children.get(2);  //for(i=0; expr ; i;){}
                                 Object comparisonObject = children.get(3);
                                 Object incrementObject = children.get(5);
                                 Object boddyObject = children.get(7);
-                                if (assignObject instanceof Sassign assagin
+                                if (assignObject instanceof Sassign assagin //Det her er useless fordi den går aldrig ind i assagin så slet måske?
                                         && comparisonObject instanceof Expression comp
                                         && incrementObject instanceof Statement increase
                                         && boddyObject instanceof Statement body) {
-                                    return new Sfor(null, assagin, comp, increase, body);
+                                    Identifier var = assagin.var();
+                                    return new Sfor(var, assagin, comp, increase, body);
                                 } else if (assignObject instanceof SDeclaration declaration
                                         && comparisonObject instanceof Expression comp
                                         && incrementObject instanceof Statement increase
                                         && boddyObject instanceof Statement body) {
-                                    return new Sfor(null, declaration, comp, increase, body);
+                                    Identifier var = declaration.var();
+                                    return new Sfor(var, declaration, comp, increase, body); //Ændring sp den returnerer en var istedet for null ellers går crasher godeGen når vi går ind i SFor
                                 }
                             }
                             case "WHILE" -> {

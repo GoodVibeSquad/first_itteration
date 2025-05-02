@@ -107,6 +107,8 @@ public class GrammarBuilder {
 
         // ====== IDENTIFIER ======
         grammar.add("identifier", "typed_identifier");
+        grammar.add("expression", "typed_identifier"); //the function's expr list  expects expressions
+
         grammar.add("identifier", "ID");
         grammar.add("typed_identifier", "TYPE", "ID");
 
