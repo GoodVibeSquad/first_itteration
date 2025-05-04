@@ -1,7 +1,10 @@
 {
 
+// We set up a input layer for mnist numbers of size 28x28
+// This means that we must know the size of each image before creating the layers
+// Here the input layer is automatically defined as having
+Layer input = new Layer(28*28);
 
-Layer input = new Layer(6);
 Layer hidden = new Layer(5,2);
 Layer output = new Layer(10);
 

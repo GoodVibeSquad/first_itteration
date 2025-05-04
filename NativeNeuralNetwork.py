@@ -6,13 +6,13 @@ import numpy as np
 class Layer:
     def __init__(self, *args):
         if len(args) == 1:
-            self.rowSize = args[0]
-            self.columnSize = 1
+            self.columnSize = args[0]
+            self.rowSize = 1
         if len(args) == 2:
-            self.rowSize = args[0]
-            self.columnSize = args[1]
+            self.columnSize = args[0]
+            self.rowSize = args[1]
     def __str__(self):
-        return f"Row size: {self.rowSize}\nColumn size: {self.columnSize} "
+        return f"Column size: {self.columnSize}\nRow size: {self.rowSize} "
 
 class NeuralNetwork:
     def __init__(self, input, hidden, output):
