@@ -41,13 +41,13 @@ public class Main {
         SymbolTable symbols = new SymbolTable();
 
 
-        TypeCheckerVisitor typeVisitor = new TypeCheckerVisitor(symbols);
-        TypeCheck result = slist.accept(typeVisitor);
-        System.out.println("type check result: " + result);
-        symbols.clear();
-
-        CodeGenerator generator = new CodeGenerator(slist);
-        generator.generate();
+//        TypeCheckerVisitor typeVisitor = new TypeCheckerVisitor(symbols);
+//        TypeCheck result = slist.accept(typeVisitor);
+//        System.out.println("type check result: " + result);
+//        symbols.clear();
+//
+//        CodeGenerator generator = new CodeGenerator(slist);
+//        generator.generate();
     }
 
 }
