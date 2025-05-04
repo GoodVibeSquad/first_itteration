@@ -49,6 +49,9 @@ numpyData = np.array(img)
 # Divide every value within the numpyData array with 255.0 to normalize it
 normalized_data = numpyData / 255.0
 
+# Ensure full array is printed
+np.set_printoptions(threshold=np.inf)
+
 flattenedData = normalized_data.flatten()
 
 # Print the flattened array
