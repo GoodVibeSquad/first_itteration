@@ -6,13 +6,20 @@ import numpy as np
 class Layer:
     def __init__(self, *args):
         if len(args) == 1:
-            self.columnSize = args[0]
-            self.rowSize = 1
+            self.columns = args[0]
+            self.rows = 1
         if len(args) == 2:
-            self.columnSize = args[0]
-            self.rowSize = args[1]
+            self.columns = args[0]
+            self.rows = args[1]
+        self.weights = self.init_weights();
     def __str__(self):
-        return f"Column size: {self.columnSize}\nRow size: {self.rowSize} "
+        return (f"Columns: {self.columns}\nRows: {self.rows}\n"
+                f"Weights Shape: {self.weights.shape}\n"
+                f"Sample Weights: {self.weights.flatten()[:5]}...")  # Show first 5 weights
+
+    def init_weights(self):
+            # Weights are initialized randomly with a small random number
+            return np.random.randn(self.rows, self.columns) * 0.01
 
 class NeuralNetwork:
     def __init__(self, input, hidden, output):
@@ -24,9 +31,13 @@ class NeuralNetwork:
 
 
 # Layer needs to take the width of a matrix and the height of a matrix
-input = Layer(6, 6)
-hidden = Layer(6,6)
-output = Layer(10)
+# Imaginary situation with 28 * 28 images
+
+input = Layer(28*28, 6)
+
+# Hidden layer is imagined with 50 neurons
+hidden = Layer(50,6)
+output = Layer(10, 6)
 
 nn = NeuralNetwork(input,hidden,output)
 
