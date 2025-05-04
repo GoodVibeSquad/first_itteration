@@ -1,6 +1,8 @@
 
 # REQUIREMENT: Install Numpy
 
+import numpy as np
+
 class Layer:
     def __init__(self, *args):
         if len(args) == 1:
