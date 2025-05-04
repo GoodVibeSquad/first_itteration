@@ -5,4 +5,9 @@ REQUIREMENTS:
 
 Install Python 
 
-Install Numpy
+Install Numpy (Run command)
+pip install numpy
+
+Install PIL
+pip install pillow
+

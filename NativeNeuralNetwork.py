@@ -2,6 +2,7 @@
 # REQUIREMENT: Install Numpy
 
 import numpy as np
+import PIL import Image
 
 class Layer:
     def __init__(self, *args):
