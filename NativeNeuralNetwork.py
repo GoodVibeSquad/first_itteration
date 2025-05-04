@@ -1,4 +1,5 @@
 
+# REQUIREMENT: Install Numpy
 
 class Layer:
     def __init__(self, *args):
