@@ -2,7 +2,9 @@
 # REQUIREMENT: Install Numpy
 
 import numpy as np
-import PIL import Image
+from PIL import Image
+import os
+
 
 class Layer:
     def __init__(self, *args):
@@ -30,6 +32,31 @@ class NeuralNetwork:
     def __str__(self):
         return f"Input Layer:\n{self.input}\n\nHidden Layer:\n{self.hidden}\n\nOutput Layer:\n{self.output} "
 
+#### GETTING THE DATA
+
+# Get the directory for the file we are currently in
+dirname = os.path.dirname(__file__)
+
+# Get path for a given image inr oot
+image_path = os.path.join(dirname, 'TestImage.jpg')
+
+# Open the image
+img = Image.open(image_path)
+
+# Convert to a NumPy array and flatten it
+numpyData = np.array(img)
+
+# Divide every value within the numpyData array with 255.0 to normalize it
+normalized_data = numpyData / 255.0
+
+flattenedData = normalized_data.flatten()
+
+# Print the flattened array
+print(flattenedData)
+
+
+
+##### NEURAL NETWORK STUFF
 
 # Layer needs to take the width of a matrix and the height of a matrix
 # Imaginary situation with 28 * 28 images
@@ -46,4 +73,4 @@ nn = NeuralNetwork(input,hidden,output)
 # inputOneArg = Layer(6)
 # print(str(input) + "\n")
 
-print(nn)
+#print(nn)
