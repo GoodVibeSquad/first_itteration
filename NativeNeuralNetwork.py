@@ -5,6 +5,8 @@ import numpy as np
 from PIL import Image
 import os
 
+from PythonTestCode import activationFunction
+
 
 class Layer:
     def __init__(self, *args):
@@ -14,7 +16,19 @@ class Layer:
         if len(args) == 2:
             self.columns = args[0]
             self.rows = args[1]
-        self.weights = self.init_weights();
+
+        # Initialize weights for a layer
+        # Might be a bit inefficient right now because input layers
+        # Also have weights
+        self.weights = self.init_weights()
+
+        # Initialized data for input layer
+        self.initialized_data = np.zeros((self.columns, self.rows))
+
+        # Neuron output data that is output after an activation function
+        # has been run on a given weighted sum.
+        self.output_data = np.zeros((self.columns, self.rows))
+
     def __str__(self):
         return (f"Columns: {self.columns}\nRows: {self.rows}\n"
                 f"Weights Shape: {self.weights.shape}\n"
@@ -24,6 +38,7 @@ class Layer:
             # Weights are initialized randomly with a small random number
             return np.random.randn(self.rows, self.columns) * 0.01
 
+
 class NeuralNetwork:
     def __init__(self, input, hidden, output):
             self.input = input
@@ -31,6 +46,30 @@ class NeuralNetwork:
             self.output = output
     def __str__(self):
         return f"Input Layer:\n{self.input}\n\nHidden Layer:\n{self.hidden}\n\nOutput Layer:\n{self.output} "
+
+
+    def populateWithData(self, data):
+        # Ensure that the data has the correct shape to match the input layer
+        if data.shape != (self.input.columns, self.input.rows):
+            raise ValueError(f"Input data shape {data.shape} does not match input layer shape "
+                             f"({self.input.columns}, {self.input.rows})")
+
+        # Only works for 1 image right now i think
+        self.input.initialized_data[0] = data
+
+
+    def forwardPass(self, data):
+        self.populateWithData(data)
+
+        #weightedSum = data(entries) * input.dot(weights)
+        #activationFunction(weightedSum)
+
+    def train(self, data):
+        self.forwardPass(data)
+
+        # Prints the initialized data
+        print("Data inserted into input layer:")
+        print(self.input.initialized_data)
 
 #### GETTING THE DATA
 
@@ -40,8 +79,8 @@ dirname = os.path.dirname(__file__)
 # Get path for a given image inr oot
 image_path = os.path.join(dirname, 'TestImage.jpg')
 
-# Open the image
-img = Image.open(image_path)
+# Open the image and convert it to grayscale (L mode is greyscale mode)
+img = Image.open(image_path).convert('L')
 
 # Convert to a NumPy array and flatten it
 numpyData = np.array(img)
@@ -55,7 +94,7 @@ np.set_printoptions(threshold=np.inf)
 flattenedData = normalized_data.flatten()
 
 # Print the flattened array
-print(flattenedData)
+# print(flattenedData)
 
 
 
@@ -63,14 +102,14 @@ print(flattenedData)
 
 # Layer needs to take the width of a matrix and the height of a matrix
 # Imaginary situation with 28 * 28 images
-
-input = Layer(28*28, 6)
+input = Layer(28*28)
 
 # Hidden layer is imagined with 50 neurons
 hidden = Layer(50,6)
 output = Layer(10, 6)
 
 nn = NeuralNetwork(input,hidden,output)
+nn.train(flattenedData)
 
 # If a layer only has one argument. Automatically set column size to 1.
 # inputOneArg = Layer(6)
