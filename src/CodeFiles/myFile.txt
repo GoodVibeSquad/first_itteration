@@ -1,19 +1,2 @@
+7 + 7; //this is a comment
 
-(3);
-7 + 7;
-7 - 7;
-7 * 7;
-7 / 7;
-7 % 7;
--10;
-x = true;
-!x;
-print(x);
-
-Sqrt(7+7);
-Max(1,7,6,7,4,4,4,23,5,64,6,6);
-(double) 7;
-x ? "hej": "nej";
-new NeuralNetwork(7,8,9);
-nn.myFunction(123123);
-Sum(6, 1 , i, i+1);
