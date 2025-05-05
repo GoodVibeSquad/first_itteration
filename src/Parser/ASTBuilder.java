@@ -16,6 +16,40 @@ public class ASTBuilder {
         System.out.println("Children:" + children);
         switch (production.lhs) {
 
+            case "functionIdentifier" -> {
+                if (children.size() == 5) {  // Function af denne form : TYPE ID ( expr_list )
+                    Object type = children.get(0);
+                    Object id = children.get(1);
+                    Object exprList = children.get(3);
+
+                    if (type instanceof Token typeToken && id instanceof Token idToken && exprList instanceof Elist params) {
+                        // Brug to-strengs constructor for at sætte både id og type rigtigt
+                        Identifier name = new Identifier(idToken.getValue());
+                        Identifier var = new Identifier(idToken.getValue(), typeToken.getValue()); // her er type sat korrekt
+                        return new FunctionIdentifier(name, var, params);
+                    }
+                } else if (children.size() == 4) {  // Function af denne form : TYPE ID ( )
+                    Object type = children.get(0);
+                    Object id = children.get(1);
+
+                    if (type instanceof Token typeToken && id instanceof Token idToken) {
+                        Identifier name = new Identifier(idToken.getValue());
+                        Identifier var = new Identifier(idToken.getValue(), typeToken.getValue()); // type gemmes
+                        return new FunctionIdentifier(name, var, new Elist(List.of()));
+                    }
+                }
+            }
+
+            case "function" -> {
+                if (children.size() == 4) {
+                    Object functionIdentifier = children.get(0); // <-- FEJL! Skal være children.get(0)
+                    Object statementList = children.get(2);
+
+                    if (functionIdentifier instanceof FunctionIdentifier identifier && statementList instanceof Slist body) {
+                        return new SFunction(identifier, body);
+                    }
+                }
+            }
             case "binaryoperator" -> {
                 Object operatorValue = children.getFirst();
                 if (operatorValue instanceof Token t) {
@@ -257,15 +291,42 @@ public class ASTBuilder {
                             throw new RuntimeException();
                         }
                 }
-                else if(children.get(1) instanceof Token token && token.getType() == TokenType.TYPE && children.size() == 5){
-                        Object first = children.get(3);
-                        if(first instanceof Elist args){
-                            return new ENewFunc(args);
-                        } else {
-                            System.err.println("Invalid Expression at: " + first);
-                            throw new RuntimeException();
-                        }
+//                else if(children.get(1) instanceof Type type && type.tok == TokenType.TYPE && children.size() == 5){
+////
+////                    //"NEW",TYPE","OPEN_PARENTHESIS","expr_list","CLOSED_PARENTHESIS"
+////
+////                    //first instanceof Token id && second instanceof InDeCrement inDe
+////
+////                        Object first = children.get(1);
+////                        Object second = children.get(3);
+////                        if(second instanceof Elist args){
+////                            return new ENewFunc(Type, args);
+////                        } else {
+////                            System.err.println("Invalid Expression at: " + first);
+////                            throw new RuntimeException();
+////                        }
+//                }
+
+                else if (children.size() == 5 &&
+                        children.get(0) instanceof Token newToken &&
+                        newToken.getType() == TokenType.NEW &&
+                        children.get(1) instanceof Token typeToken &&
+                        children.get(3) instanceof Elist args) {
+
+                    String typeName = typeToken.getValue().toUpperCase();  // e.g., "LAYER"
+
+                    // Try to match based on the value of the token
+                    try {
+                        Type type = Type.valueOf(typeName);  // Match to enum value
+                        return new ENewFunc(type, args);
+                    } catch (IllegalArgumentException e) {
+                        System.err.println("Unknown type: " + typeName);
+                        throw new RuntimeException("Unknown type: " + typeName);
+                    }
                 }
+
+
+
                 else if(expressionValue instanceof Token token && token.getType() == TokenType.ID){
                         Object first = children.getFirst();
                         Object second = children.get(1);
@@ -284,6 +345,9 @@ public class ASTBuilder {
                 else if (children.getFirst() instanceof Token token && token.getType() == TokenType.TYPE){
                         Object first = children.get(2);
                         Object second = children.get(4);
+                        /*
+                        Also needs to save the type
+                         */
 
                         if(first instanceof Token id &&
                            second instanceof Elist args ){
@@ -334,7 +398,10 @@ public class ASTBuilder {
             case "matched_stmt" -> {
                 Object first = children.getFirst();
 
-                // 🌟 New handling for typed variable declarations
+                if (first instanceof SFunction sFunction) {
+                    return sFunction;
+                }
+
                 if (first instanceof Identifier id && children.size() == 2) {
                     Object semiObject = children.getLast();
                     if (semiObject instanceof Token semi && semi.getType() == TokenType.SEMICOLON) {
@@ -405,66 +472,66 @@ public class ASTBuilder {
                                 return new SBreak();
                             }
 
-                        }
-                        case "CONTINUE" -> {
-                            Object last = children.getLast();
-                            if (last instanceof Token t
-                                    && t.getType() == TokenType.SEMICOLON) {
-                                return new SContinue();
                             }
-                        }
-                        case "PRINT" -> {
-                            // Checks if print statement is at 0 and if it's a token
-                            // Inserts the expression list into the Sprint
-                            Object printObject = children.get(0);
-                            Object exprObject = children.get(2);
+                            case "CONTINUE" -> {
+                                Object last = children.getLast();
+                                if (last instanceof Token t
+                                        && t.getType() == TokenType.SEMICOLON) {
+                                    return new SContinue();
+                                }
+                            }
+                            case "PRINT" -> {
+                                // Checks if print statement is at 0 and if it's a token
+                                // Inserts the expression list into the Sprint
+                                Object printObject = children.get(0);
+                                Object exprObject = children.get(2);
 
-                            if (printObject instanceof Token) {
-                                return new Sprint((Expression) exprObject);
+                                if (printObject instanceof Token) {
+                                    return new Sprint((Expression) exprObject);
+                                }
+                            }
+                            case "ID" -> {
+                                Object second = children.get(1);
+                                if (first instanceof Token id &&
+                                        second instanceof InDeCrement inDe) {
+                                    return new SInDeCrement(new Identifier(id.getValue()), inDe);
+                                }
+                            }
+                            default -> {
+                                System.err.println("Invalid Statement at: " + firstToken.getType().toString());
+                                throw new RuntimeException();
                             }
                         }
-                        case "ID" ->{
-                            Object second = children.get(1);
-                            if (first instanceof Token id &&
-                                    second instanceof InDeCrement inDe) {
-                                return new SInDeCrement(new Identifier(id.getValue()), inDe);
-                            }
-                        }
-                        default -> {
-                            System.err.println("Invalid Statement at: " + firstToken.getType().toString());
-                            throw new RuntimeException();
-                        }
-                    }
 
-                } else if (first instanceof Expression firstE) {
-                    if (children.get(1) instanceof Token token) {
-                        if (token.getType() == TokenType.SEMICOLON) {
-                            return new SExpression(firstE);
-                        }
-                    } else {
-                        System.err.println("Invalid Statement at: " + firstE);
-                        throw new RuntimeException();
-                    }
-                } else if (first instanceof Identifier id && children.size() == 4) {
-                    Object assopObject = children.get(1);
-                    Object expressionObject = children.get(2);
-                    Object semiObject = children.get(3);
-                    if (assopObject instanceof AssignmentOperator assop
-                            && expressionObject instanceof Expression e
-                            && semiObject instanceof Token semi) {
-                        if (semi.getType() == TokenType.SEMICOLON) {
-                            if (id.getType() != null) {
-                                return new SDeclaration(id, assop, e);
-                            } else {
-                                return new Sassign(id, assop, e);
+                    } else if (first instanceof Expression firstE) {
+                        if (children.get(1) instanceof Token token) {
+                            if (token.getType() == TokenType.SEMICOLON) {
+                                return new SExpression(firstE);
                             }
                         } else {
-                            System.err.println("Invalid Statement at: " + id.getId());
+                            System.err.println("Invalid Statement at: " + firstE);
                             throw new RuntimeException();
+                        }
+                    } else if (first instanceof Identifier id && children.size() == 4) {
+                        Object assopObject = children.get(1);
+                        Object expressionObject = children.get(2);
+                        Object semiObject = children.get(3);
+                        if (assopObject instanceof AssignmentOperator assop
+                                && expressionObject instanceof Expression e
+                                && semiObject instanceof Token semi) {
+                            if (semi.getType() == TokenType.SEMICOLON) {
+                                if (id.getType() != null) {
+                                    return new SDeclaration(id, assop, e);
+                                } else {
+                                    return new Sassign(id, assop, e);
+                                }
+                            } else {
+                                System.err.println("Invalid Statement at: " + id.getId());
+                                throw new RuntimeException();
+                            }
                         }
                     }
                 }
-            }
 
             case "unmatched_stmt" -> {
                 if (children.size() == 3) {

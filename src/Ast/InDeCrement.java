@@ -26,4 +26,5 @@ public enum InDeCrement {
     public static InDeCrement fromTokenType(TokenType type) {
         return tokenToOperatorMap.get(type);
     }
+
 }
