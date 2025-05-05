@@ -77,7 +77,7 @@ public class TableGenerator {
 //        }
 //        return firstSet;
 //    }
-static Set<String> computeFirst(String symbol, Grammar grammar) {
+public static Set<String> computeFirst(String symbol, Grammar grammar) {
     return computeFirst(symbol, grammar, new HashSet<>());
 }
 
@@ -115,7 +115,7 @@ static Set<String> computeFirst(String symbol, Grammar grammar) {
         return computeFirst(symbol,grammar);
     }
 
-    static Map<String, Set<String>> computeFollowSets(Grammar grammar) {
+    public static Map<String, Set<String>> computeFollowSets(Grammar grammar) {
         Map<String, Set<String>> follow = new HashMap<>();
 
         for (Production p : grammar.getProductions()) {

@@ -23,4 +23,15 @@ public class Production {
     public String toString() {
         return lhs + " -> " + String.join(" ", rhs);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Production that)) return false;
+        return Objects.equals(lhs, that.lhs) && Objects.equals(rhs, that.rhs);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(lhs, rhs);
+    }
 }

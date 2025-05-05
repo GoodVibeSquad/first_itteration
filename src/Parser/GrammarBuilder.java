@@ -27,7 +27,6 @@ public class GrammarBuilder {
         grammar.add("binaryoperator","EXPONENT");
 
 
-
         // ====== CONSTANTS ======
         grammar.add("expression","BOOL");
         grammar.add("expression","INT");
@@ -41,7 +40,8 @@ public class GrammarBuilder {
         grammar.add("expression", "OPEN_PARENTHESIS", "expression" , "CLOSED_PARENTHESIS");
         grammar.add("expression", "expression", "binaryoperator", "expression");
         grammar.add("expression", "unaryOperator", "expression");
-
+        grammar.add("expression", "identifier");
+        grammar.add("expression", "ID", "OPEN_PARENTHESIS", "CLOSED_PARENTHESIS");
         grammar.add("expression", "ID", "OPEN_PARENTHESIS", "expr_list", "CLOSED_PARENTHESIS");
         grammar.add("expression", "SUM", "OPEN_PARENTHESIS", "expression","COMMA", "expression","COMMA", "ID", "COMMA", "expression", "CLOSED_PARENTHESIS");
         grammar.add("expression", "SQUARE_ROOT","OPEN_PARENTHESIS","expression","CLOSED_PARENTHESIS");
@@ -56,7 +56,7 @@ public class GrammarBuilder {
         grammar.add("expression", "In/deCrement", "ID");  // prefix ++i
 
         grammar.add("expression", "identifier");
-        
+
         // Calling methods on TYPE
         grammar.add("expression", "TYPE","DOT","ID","OPEN_PARENTHESIS","expr_list","CLOSED_PARENTHESIS");
 
@@ -80,8 +80,7 @@ public class GrammarBuilder {
         grammar.add("matched_stmt", "CONTINUE", "SEMICOLON");
         grammar.add("matched_stmt", "ID", "In/deCrement", "SEMICOLON");
         grammar.add("matched_stmt", "PRINT", "OPEN_PARENTHESIS","expr_list","CLOSED_PARENTHESIS", "SEMICOLON");
-
-
+        grammar.add("matched_stmt", "function");
 
         // Unmatched: possible dangling else
         grammar.add("unmatched_stmt", "IF", "expression", "statement");
@@ -93,6 +92,13 @@ public class GrammarBuilder {
         grammar.add("statementlist", "statement");
         grammar.add("statementlist", "statement", "statementlist");
 
+
+        // ====== FUNCTIONS ======
+        // En hel funktion: "function" nøgleordet, navnet, og kroppen
+        grammar.add("function", "functionIdentifier", "OPEN_CURLY_BRACKET", "statementlist", "CLOSED_CURLY_BRACKET");
+        // Navn og parametre på en funktion (VI har tilføjet TYPE og ændret identifier til ID)
+        grammar.add("functionIdentifier", "TYPE", "ID", "OPEN_PARENTHESIS", "expr_list", "CLOSED_PARENTHESIS");
+        grammar.add("functionIdentifier", "TYPE", "ID", "OPEN_PARENTHESIS", "CLOSED_PARENTHESIS");
 
 
         // ====== ASSIGNMENT OPS ======
@@ -115,9 +121,6 @@ public class GrammarBuilder {
         // ====== In/deCrement OPERATORS ======
         grammar.add("In/deCrement", "INCREMENT");
         grammar.add("In/deCrement", "DECREMENT");
-
-        System.out.println("Productions in grammar:");
-
 
         return grammar;
     }

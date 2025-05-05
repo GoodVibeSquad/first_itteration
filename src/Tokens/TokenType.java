@@ -62,7 +62,6 @@ public enum TokenType{
     EXPONENT("^"),
     MAX("Max"),
     RELU("Relu"),
-
     EOF("EOF");
 
 
@@ -75,6 +74,7 @@ public enum TokenType{
     public static final Map<String, TokenType> tokenTypeMap = new HashMap<>();
 
     static {
+
         for(final TokenType tokenType : TokenType.values()) {
             if(tokenType.name != null){
                 tokenTypeMap.put(tokenType.name, tokenType);

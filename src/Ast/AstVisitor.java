@@ -41,6 +41,9 @@ package Ast;
     R visitSlist(Slist slist);
     R visitSInDeCrement(EInDeCrement eInDeCrement);
 
+    //function definition
+    R visitSFunction(SFunction sFunction);
+    R visitFunctionIdentifier(FunctionIdentifier functionIdentifier);
 
     //Other
     R visitDef(Def d);
