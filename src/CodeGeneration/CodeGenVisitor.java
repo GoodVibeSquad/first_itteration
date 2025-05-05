@@ -461,6 +461,8 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         return null;
     }
 
+
+
     // VI BRUGER DEN IKKE (DEF)
     @Override
     public Void visitDef(Def d) {
@@ -508,4 +510,16 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         output.append("\n");
         return null;
     }
+
+    @Override
+    public Void visitSReturn(SReturn s) {
+
+        output.append("return ");
+        s.expr().accept(this);
+        output.append("\n");
+
+        return null;
+    }
+
 }
+

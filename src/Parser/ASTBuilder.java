@@ -496,6 +496,12 @@ public class ASTBuilder {
                                         second instanceof InDeCrement inDe) {
                                     return new SInDeCrement(new Identifier(id.getValue()), inDe);
                                 }
+                            } //  grammar.add("matched_stmt", "RETURN", "expression", "SEMICOLON");
+                            case "RETURN" -> {
+                                Object second = children.get(1);
+                                if (firstToken.getType() == TokenType.RETURN && second instanceof Expression) {
+                                    return new SReturn((Expression)second);
+                                }
                             }
                             default -> {
                                 System.err.println("Invalid Statement at: " + firstToken.getType().toString());
