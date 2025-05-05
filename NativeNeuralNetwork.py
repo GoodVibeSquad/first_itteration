@@ -16,45 +16,29 @@ class Layer:
         # Layer(Input data size)
         if len(args) == 1:
             self.input_size = args[0]
-            self.output_size = 0
+            self.initialized_input = 0
 
         # For multiple hidden layers
-        # 5 Hidden layers each of size 2
-        # Layer(5,2, relu)
         elif len(args) == 3:
             self.hidden_layers_amount = args[0]
             self.hidden_layers_size = args[1]
             self.activation_function = "Temp"
 
         # For output layers
-        elif len(args) == 4:
-            self.input_size = args[0]
+        # Loss function is found on the neural network itself
+        elif len(args) == 3:
             self.output_size = args[1]
             self.activation_function = "Temp"
-            self.loss_function = "Temp"
-
-        self.output = None  # Will store output for each layer
-
-    def __str__(self):
-        weight_shape = self.weights.shape if self.weights is not None else "None"
-        return f"Input size: {self.input_size}, Output size: {self.output_size}, Weights: {weight_shape}"
-
-    def init_weights(self):
-        pass
 
 class NeuralNetwork:
     def __init__(self, input, hidden, output):
             self.input = input
             self.hidden = hidden
             self.output = output
-
-    def __str__(self):
-        return f"Input Layer:\n{self.input}\n\nHidden Layer:\n{self.hidden}\n\nOutput Layer:\n{self.output} "
-
+            # self.weightArray = array of weights
 
     def initialize_input_data(self, data):
         self.input.initialized_input = data
-
 
     def forwardPass(self, data):
         self.initialize_input_data(data)
