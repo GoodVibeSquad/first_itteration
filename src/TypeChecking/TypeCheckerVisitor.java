@@ -493,7 +493,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         symbolTable.enterScope();
 
         TypeCheck result = TypeCheck.VOID;
-        for (Statement stmt : s.stmts()) {
+        for (Statement stmt : s.stmts().elements()) {
             TypeCheck stmtResult = stmt.accept(this);
             if (stmtResult == TypeCheck.ERROR) {
                 result = TypeCheck.ERROR;
@@ -625,6 +625,24 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         return TypeCheck.VOID;
     }
 
+    @Override
+    public TypeCheck visitSFunction(SFunction s) {
+
+
+        return TypeCheck.VOID;
+    }
+
+    @Override
+    public TypeCheck visitFunctionIdentifier(FunctionIdentifier functionIdentifier) {
+//        String funcName = name.getId();
+            return TypeCheck.VOID;
+//        if (symbolTable.isFunction(funcName)) {
+//            return symbolTable.getFunction(funcName).returnType;
+//        } else {
+//            System.err.println("Undeclared function: " + funcName);
+//            return TypeCheck.ERROR;
+//        }
+    }
     @Override
     public TypeCheck visitDef(Def d) {
         List<TypeCheck> paramTypes = d.params().stream()
