@@ -13,7 +13,7 @@ public class ASTBuilder {
 
     public Object buildAst(Production production, List<Object> children) {
         int prodSize = production.getRhs().size();
-        System.out.println("Children:" + children);
+//        System.out.println("Children:" + children);
         switch (production.lhs) {
 
             case "functionIdentifier" -> {

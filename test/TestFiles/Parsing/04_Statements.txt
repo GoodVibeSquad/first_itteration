@@ -1,0 +1,14 @@
+int x = 0;
+if(true) {
+  x = 5;
+} else {
+  x = 8;
+}
+for (int x = 0; x < 10; i++;) {
+  x++;
+  break;
+}
+for (int x = 0; x < 10; i++;) {
+  x++;
+  continue;
+}

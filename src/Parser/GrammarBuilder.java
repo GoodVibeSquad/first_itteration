@@ -115,9 +115,6 @@ public class GrammarBuilder {
         grammar.add("In/deCrement", "INCREMENT");
         grammar.add("In/deCrement", "DECREMENT");
 
-        System.out.println("Productions in grammar:");
-
-
         return grammar;
     }
     public static Grammar createSimpleGrammar(){

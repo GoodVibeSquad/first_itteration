@@ -1,0 +1,8 @@
+int x = 5;
+double d = 3.14;
+bool b = true;
+string s = "hi";
+
+double d1 = (double)x;
+int x1 = (int)d;
+string s1 = (string)x;

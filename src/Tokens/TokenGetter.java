@@ -27,6 +27,18 @@ public class TokenGetter {
         }
     }
 
+    public TokenGetter(String filePathName, String sourceCodeDirectory){
+        this.tokens = new ArrayList<Token>();
+        this.sourceCodeDir = new File (sourceCodeDirectory);
+        try {
+            this.basePath = sourceCodeDir.getCanonicalPath();
+            this.reader = new SourceCodeReader2(basePath + "/" + filePathName);
+            this.lexer = new Lexer(reader);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void initialize(){
         Token token;
         while ((token = this.lexer.tokenize()).getType() != TokenType.EOF) {
