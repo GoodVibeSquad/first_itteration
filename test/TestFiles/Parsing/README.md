@@ -14,7 +14,7 @@
 true;
 "test"
 Pi;
-Euler;      
+E;      
 ```
 
 ## 3. Testing Valid Expressions

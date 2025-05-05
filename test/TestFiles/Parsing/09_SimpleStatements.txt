@@ -3,4 +3,4 @@ int y = 10;
 int z;
 x++;
 y--;
-Print("Hello");
+print("Hello");

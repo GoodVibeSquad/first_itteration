@@ -100,7 +100,7 @@ public class ParserTest {
             assertTrue(stmt instanceof SExpression, "Statement should be SExpression, because constants are expressions, got " + stmt.getClass().getSimpleName() + " instead.");
             SExpression sExpr = (SExpression) stmt;
             assertTrue(sExpr.value() instanceof Econstant, 
-                "Expression should be constant, got " + sExpr.value().getClass().getSimpleName());
+                sExpr.value() + " should be constant, got " + sExpr.value().getClass().getSimpleName());
         }
     }
 
@@ -284,6 +284,7 @@ public class ParserTest {
     }
 
     // === If Statement Errors ===
+
 
     @Test
     @DisplayName("18 Missing parentheses around condition\n")
