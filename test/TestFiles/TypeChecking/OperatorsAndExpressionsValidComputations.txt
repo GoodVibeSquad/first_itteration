@@ -1,0 +1,9 @@
+int x = 5;
+int y = 10;
+double d = 3.14;
+bool b = true;
+
+int z = x + y * 2;
+double e = d * x;
+bool c = b && (x > y);
+bool f = !b || (x == y);

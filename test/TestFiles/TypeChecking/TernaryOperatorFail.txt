@@ -1,0 +1,9 @@
+int x = 5;
+int y = 10;
+bool condition = true;
+
+int z = condition ? x : y;
+double d = (x > y) ? 1.5 : 2.5;
+
+int error = condition ? x : true;
+int error2 = x ? 1 : 2;

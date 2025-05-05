@@ -1,0 +1,2 @@
+string s = "hi";
+int error3 = (int) s;
