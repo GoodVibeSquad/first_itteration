@@ -1,4 +1,3 @@
-
 # REQUIREMENT: Install Numpy
 
 import numpy as np
@@ -9,15 +8,24 @@ from PythonTestCode import activationFunction
 
 
 class Layer:
-    def __init__(self, input_size, output_size):
-        self.input_size = input_size
-        self.output_size = output_size
-        self.weights = self.init_weights()
+    def __init__(self, *args):
+        if len(args) == 1:
+            self.input_size = args[0]
+            self.output_size = None
+            self.weights = None
+        elif len(args) == 2:
+            self.input_size = args[0]
+            self.output_size = args[1]
+            self.weights = self.init_weights()
+        else:
+            raise ValueError("Layer must take 1 (input) or 2 (input, output) sizes.")
+
+        self.output = None  # Will store activations or data
+        self.weighted_sum = None  # For the pre-activation values
 
     def __str__(self):
-        return (f"Input size: {self.input_size}\nOutput size: {self.output_size}\n"
-                f"Weights shape: {self.weights.shape}\n"
-                f"Sample weights: {self.weights.flatten()[:5]}...")
+        weight_shape = self.weights.shape if self.weights is not None else "None"
+        return f"Input size: {self.input_size}, Output size: {self.output_size}, Weights: {weight_shape}"
 
     def init_weights(self):
             # Weights are initialized randomly with a small random number
@@ -28,25 +36,20 @@ class NeuralNetwork:
             self.input = input
             self.hidden = hidden
             self.output = output
+
     def __str__(self):
         return f"Input Layer:\n{self.input}\n\nHidden Layer:\n{self.hidden}\n\nOutput Layer:\n{self.output} "
 
 
-    def populateWithData(self, data):
-        pass
-        # Ensure that the data has the correct shape to match the input layer
-
-        # if data.shape != (self.input.columns, self.input.rows):
-        #    raise ValueError(f"Input data shape {data.shape} does not match input layer shape "
-        #                     f"({self.input.rows}, {self.input.columns})")
-
-        # Only works for 1 image right now i think
-        # self.input.initialized_data[0] = data
+    def initialize_input_data(self, data):
+        self.input.initialized_input = data
 
 
     def forwardPass(self, data):
-        pass
-        #self.populateWithData(data)
+        self.initialize_input_data(data)
+
+        current_output = self.input.output
+
 
         #weightedSum = data(entries) * input.dot(weights)
         #activationFunction(weightedSum)
@@ -54,9 +57,6 @@ class NeuralNetwork:
     def train(self, data):
         self.forwardPass(data)
 
-        # Prints the initialized data
-        print("Data inserted into input layer:")
-        print(self.input.initialized_data)
 
 #### GETTING THE DATA
 
@@ -99,15 +99,12 @@ input = Layer(28*28)
 
 # Hidden layer is imagined with 50 neurons
 hidden = Layer(50,100)
-
 hidden = Layer(100,100)
-hidden = Layer(100,100)
-hidden = Layer(100,100)
-
 output = Layer(100, 10)
 
 nn = NeuralNetwork(input,hidden,output)
-# nn.train(flattenedData)
+nn.train(flattenedData)
+print(nn.input.initialized_input)
 
 # If a layer only has one argument. Automatically set column size to 1.
 # inputOneArg = Layer(6)
