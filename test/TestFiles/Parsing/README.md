@@ -28,7 +28,7 @@ E;
 -10;
 x = true;
 !x;
-Print(x);
+print(x);
 Sum(6, 1 , i, i+1);
 Sqrt(7+7);
 Max(1,7,6,7,4,4,4,23,5,64,6,6);
@@ -38,6 +38,7 @@ new NeuralNetwork(7,8,9);
 ------------------------------
 Skal diskuteres
 NeuralNetwork.load(123123);
+x ? "hej": "nej";  // ikke en statement
 ------------------------------
 nn.myFunction(123123);
 
@@ -78,20 +79,20 @@ x ? : "no";          // Missing then branch
 ## 8. Testing Object Construction/Method Calls
 ```
 
-new (7,8,9);         // Invalid new syntax
-new NeuralNetwork(); // Missing constructor arguments:
-nn.();               // Invalid method call syntax
-nn.(123);            // Missing method name
+new (7,8,9);           // Invalid new syntax
+new NeuralNetwork();   // Missing constructor arguments:
+nn.();                 // Invalid method call syntax
+nn.(123);              // Missing method name
 ```
 
 ## 9. Simple Statements
 ```
-x = 5;                          // Assignment
-int y = 10;                     // Declaration with initialization
-int z;                         // Declaration only
-x++;                          // Increment
-y--;                          // Decrement
-Print("Hello");               // Function call as statement
+x = 5;                 // Assignment
+int y = 10;            // Declaration with initialization
+int z;                 // Declaration only
+x++;                   // Increment
+y--;                   // Decrement
+print("Hello");        // Function call as statement
 ```
 
 ## 10. If Statements
@@ -120,11 +121,11 @@ if (x > 0) {
 
 ## 12. For Loops
 ```
-for (int i = 0; i < 10; i++) {
+for (int i = 0; i < 10; i++;) {
     x = i;
 }
-for (i = 0; i < 3; i++) {             // Using existing variable
-    Print(i);
+for (i = 0; i < 3; i++;) {             // Using existing variable
+    print(i);
 }
 ```
 
@@ -134,22 +135,22 @@ for (i = 0; i < 3; i++) {             // Using existing variable
 while (x > 0) {
     x--;
 }
-while (true) { break };              // With break
+while (true) break;                  // With break
 ```
 
 ## 14. Break/Continue
 ```
-for (int i = 0; i < 10; i++) {
-    if (i == 5) { break; }
-    if (i == 2) { continue; }
+for (int i = 0; i < 10; i++;) {
+    if (i == 5) break;
+    if (i == 2) continue;
     x = i;
 }
 ```
 
 ## 15. Nested Loops
 ```
-for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++) {
+for (int i = 0; i < 3; i++;) {
+    for (int j = 0; j < 3; j++;) {
         x = i + j;
     }
 }
@@ -157,7 +158,6 @@ for (int i = 0; i < 3; i++) {
 
 ## 16. Block Statements
 ```
-
 {
     int a = 1;
     int b = 2;
@@ -170,8 +170,8 @@ for (int i = 0; i < 3; i++) {
 int count = 0;
 while (count < 3) {
     if (count == 1) {
-        for (int i = 0; i < 2; i++) {
-            Print(i);
+        for (int i = 0; i < 2; i++;) {
+            print(i);
         }
     } else {
         count++;
@@ -210,8 +210,9 @@ while x < 10 x++;
 for (int x = 0; x < 10; i++;) {
 //should produce an error 
 }
-
 ```
+
+
 
 
 

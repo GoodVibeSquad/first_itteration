@@ -29,6 +29,7 @@ public class Main {
         new TableGenerator(grammar);
 
 
+
         List<Token> tokens = tokenGetter.getTokens();
         for (Token token : tokens) {
             System.out.println(token);
