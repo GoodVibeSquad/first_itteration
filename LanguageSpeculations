@@ -37,8 +37,8 @@ nn.predict(data, dataType)
 
 {
 Layer input = new Layer(6);
-Layer hidden = new Layer(5,2);
-Layer output = new Layer(10);
+Layer hidden = new Layer(5,2, activationFunction);
+Layer output = new Layer(10, activationFunction, lossFunction);
 
 
 
