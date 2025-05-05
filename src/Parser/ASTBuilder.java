@@ -444,7 +444,7 @@ public class ASTBuilder {
                         case "OPEN_CURLY_BRACKET" -> {
                             Object statementListObject = children.get(1);
                             if (statementListObject instanceof Slist slist) {
-                                return new Sblock(slist.elements());  // Create a proper block instead of just returning Slist
+                                return new Sblock(slist);  // Create a proper block instead of just returning Slist
 
                             }
                         }

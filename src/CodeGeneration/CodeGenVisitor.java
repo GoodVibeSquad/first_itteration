@@ -378,7 +378,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         }
 
         // Update (step direction). tjekker om det er i-- (dekrement). Default er den til 1 som er increment.
-        if (s.update() instanceof SInDeCrement inc) {
+        if (s.update() instanceof EInDeCrement inc) {
             if (inc.inDeCrement().toString().equals("DECREMENT")) {
                 step = "-1";
             }
