@@ -3,6 +3,7 @@ package CodeGeneration;
 import Ast.*;
 
 import java.util.*;
+import java.util.logging.SimpleFormatter;
 
 public class CodeGenVisitor implements AstVisitor<Void> {
     private int scopeSize = 0;
@@ -66,6 +67,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         Set<String> currentScope = scopeStack.peek();
         for (String var : currentScope) {
             output.append(indent()).append("del ").append(var).append("\n");
+            //output.append("del ").append(var).append("\n");
         }
 
         scopeStack.pop();
@@ -208,15 +210,24 @@ public class CodeGenVisitor implements AstVisitor<Void> {
     @Override
     public Void visitESum(ESum e) {
 
-        //I python siger man : sum(startRange, endRange, variable)
-        //Ellers siger man : sum(interable, start)???
+//# int sum = Sum(i,n,id,Expression);
+//
+//# RUNS n TIMES FROM i(including i) expression is interchangeable for value k
+//# FIRST K IS WHERE YOU INSERT THE EXPRESSION IN THE SUM VALUE (THe function for the sum)
+//# PYTHON VERSION
+//i = 1
+//n = 2  # Adjust n for a proper range
+//sum_value = sum(k**2 for k in range(i, n+1))  # Summing squares of numbers from i to n-1
+
 
         output.append("sum(");
-        e.bottomExpression().accept(this);
-        output.append(", ");
+        e.body().accept(this);
+        output.append(" for ").append(e.identifier().getId());
+        output.append(" in range( ");
         e.topExpression().accept(this);
-        output.append(", ").append(e.identifier().getId()).append(")");
-
+        output.append(", ");
+        e.bottomExpression().accept(this);
+        output.append(" + 1 ))"); //Skal vi litterally plus med 1?
         return null;
     }
 
@@ -344,56 +355,43 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
     @Override
     public Void visitSblock(Sblock s) {
-        enterScope();
         s.stmts().accept(this);
-        exitScope();
         return null;
     }
 
+
+    //package Ast;
+    //
+    //public record Sfor(Identifier var, Statement init , Expression condition, Statement update, Statement body) implements Statement {
+    //    // accept metode (visitor)
+    //    @Override
+    //    public <R> R accept(AstVisitor<R> visitor) { return visitor.visitSfor(this); }
+    //}
     @Override
     public Void visitSfor(Sfor s) {
 
-        String varName = s.var().getId();
+        //# For loop in python (Based on our interpretation)
+        //i = 0
+        //while i < 10:
+        //    i += 1
 
-        // Default range parts hvis man ikke definerer noget andet
-        String start = "0";
-        String stop = "0";
-        String step = "1";  //default til increment
+        //del i
 
+        s.init().accept(this);
+        output.append("while ");
+        s.condition().accept(this);
+        output.append(":\n");
 
-        //Start value decleration
-        if (s.init() instanceof SDeclaration decl) {
-            if (decl.var().getId().equals(varName) && decl.expr() instanceof Econstant ec && ec.value() instanceof CInt cint) {
-                start = String.valueOf(cint.value());
-            }
-        }
-
-        // Tjekker om hvilke operator i vores init er stop-value
-        if (s.condition() instanceof Ebinaryoperators bin) {
-            if (bin.right() instanceof Econstant ec && ec.value() instanceof CInt cint && !(bin.right().equals(start))) {
-                stop = String.valueOf(cint.value());
-            } else if (bin.left() instanceof Econstant ec && ec.value() instanceof CInt cint && !(bin.left().equals(start))) {
-                stop = String.valueOf(cint.value());
-            }
-        }
-
-        // Update (step direction). tjekker om det er i-- (dekrement). Default er den til 1 som er increment.
-        if (s.update() instanceof SInDeCrement inc) {
-            if (inc.inDeCrement().toString().equals("DECREMENT")) {
-                step = "-1";
-            }
-        }
-
-        // Code generation
-        output.append(indent())
-                .append("for ").append(varName)
-                .append(" in range(").append(start).append(", ")
-                .append(stop).append(", ").append(step).append("):\n");
-
-        //for i in range(start, stop, step): 1 for i++ og -1 for i--. (step)
-
-        enterScope();
+        enterScope(); //enterscope identer
         s.body().accept(this);
+        s.update().accept(this);
+        output.append("\n");
+
+        String initId = null;
+        if (s.init() instanceof SDeclaration decl) {
+            initId = decl.var().getId();  // Får navnet først
+        }
+        output.append(indent()).append("del ").append(initId).append("\n");
         exitScope();
 
         return null;

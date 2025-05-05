@@ -58,7 +58,6 @@ del i
 #   Statement
 # }
 
-
 # While loops in python
 i = 0
 while i < 10:

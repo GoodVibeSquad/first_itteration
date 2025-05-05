@@ -1,4 +1,5 @@
 import math
-a = 2
-b = 3
-return a + b
+x = 3
+
+while x < 10:
+	i += 1

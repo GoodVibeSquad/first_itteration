@@ -441,9 +441,9 @@ public class ASTBuilder {
                             }
                         }
                         case "FOR" -> {
-                            Object assignObject = children.get(2);
-                            Object comparisonObject = children.get(3);
-                            Object incrementObject = children.get(5);
+                            Object assignObject = children.get(2); // int i = 0
+                            Object comparisonObject = children.get(3); // i > 20
+                            Object incrementObject = children.get(5); //i++
                             Object boddyObject = children.get(7);
                             if (assignObject instanceof Sassign assagin
                                     && comparisonObject instanceof Expression comp
@@ -457,14 +457,22 @@ public class ASTBuilder {
                                 return new Sfor(null, declaration, comp, increase, body);
                             }
                         }
-                        case "WHILE" -> {
-                            Object comparisonObject = children.get(1);
-                            Object boddyObject = children.get(2);
-                            if (comparisonObject instanceof Expression comp
-                                    && boddyObject instanceof Statement buddy) {
-                                return new SWhile(comp, buddy);
+//                        case "WHILE" -> {  // GAMLE WHILE just in case
+//                            Object comparisonObject = children.get(1);
+//                            Object boddyObject = children.get(2);
+//                            if (comparisonObject instanceof Expression comp
+//                                    && boddyObject instanceof Statement buddy) {
+//                                return new SWhile(comp, buddy);
+//                            }
+//                        }
+                            case "WHILE" -> {  // Nye while til grammar, så den har parentes fx while(..) : "WHILE", "OPEN_PARENTHESIS", "expression", "CLOSED_PARENTHESIS", "statement");
+                              Object comparisonObject = children.get(2);
+                                Object boddyObject = children.get(4);
+                                if (comparisonObject instanceof Expression comp
+                                        && boddyObject instanceof Statement buddy) {
+                                    return new SWhile(comp, buddy);
+                                }
                             }
-                        }
                         case "BREAK" -> {
                             Object last = children.getLast();
                             if (last instanceof Token t
