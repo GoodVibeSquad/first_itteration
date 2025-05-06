@@ -192,8 +192,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         return null;
     }
 
-    //Expression condition, Expression trueExpr, Expression falseExpr
-    // The Python format: true if condition else false
+
     @Override
     public Void visitEternary(Eternary e) {
         output.append("(");
@@ -206,19 +205,8 @@ public class CodeGenVisitor implements AstVisitor<Void> {
     }
 
 
-//Expression topExpression, Expression bottomExpression, Identifier identifier
     @Override
     public Void visitESum(ESum e) {
-
-//# int sum = Sum(i,n,id,Expression);
-//
-//# RUNS n TIMES FROM i(including i) expression is interchangeable for value k
-//# FIRST K IS WHERE YOU INSERT THE EXPRESSION IN THE SUM VALUE (THe function for the sum)
-//# PYTHON VERSION
-//i = 1
-//n = 2  # Adjust n for a proper range
-//sum_value = sum(k**2 for k in range(i, n+1))  # Summing squares of numbers from i to n-1
-
 
         output.append("sum(");
         e.body().accept(this);
@@ -359,31 +347,20 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         return null;
     }
 
-
-    //package Ast;
-    //
-    //public record Sfor(Identifier var, Statement init , Expression condition, Statement update, Statement body) implements Statement {
-    //    // accept metode (visitor)
-    //    @Override
-    //    public <R> R accept(AstVisitor<R> visitor) { return visitor.visitSfor(this); }
-    //}
     @Override
     public Void visitSfor(Sfor s) {
 
-        //# For loop in python (Based on our interpretation)
-        //i = 0
-        //while i < 10:
-        //    i += 1
-
-        //del i
-
         s.init().accept(this);
-        output.append("while ");
+
+
+        output.append(indent()).append("while ");
         s.condition().accept(this);
         output.append(":\n");
 
         enterScope(); //enterscope identer
         s.body().accept(this);
+
+        output.append(indent());
         s.update().accept(this);
         output.append("\n");
 
@@ -393,6 +370,8 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         }
         output.append(indent()).append("del ").append(initId).append("\n");
         exitScope();
+
+        scopeStack.peek().remove(initId); //Vi skal manuelt slette update værdien fordi vi initialiserer den ikke i den samme scope vi sletter den i
 
         return null;
     }
@@ -451,9 +430,9 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         String varName = s.identifier().getId();
 
         if (s.inDeCrement() == InDeCrement.INCREMENT) {
-            output.append(indent()).append(varName).append(" += 1\n");
+            output.append(varName).append(" += 1\n");
         } else if (s.inDeCrement() == InDeCrement.DECREMENT) {
-            output.append(indent()).append(varName).append(" -= 1\n");
+            output.append(varName).append(" -= 1\n");
         }
 
         return null;
@@ -497,7 +476,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         output.append(s.var().getId()).append(" ")
                 .append(s.assignmentOperator().toSymbol()).append(" ");
 
-        //
+
         if (s.expr() != null) {
             s.expr().accept(this);
         } else {

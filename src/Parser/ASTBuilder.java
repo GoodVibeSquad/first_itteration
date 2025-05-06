@@ -41,11 +41,11 @@ public class ASTBuilder {
             }
 
             case "function" -> {
-                if (children.size() == 4) {
-                    Object functionIdentifier = children.get(0); // <-- FEJL! Skal være children.get(0)
-                    Object statementList = children.get(2);
+                if (children.size() == 2) {
+                    Object functionIdentifier = children.get(0);
+                    Object statement = children.get(1);
 
-                    if (functionIdentifier instanceof FunctionIdentifier identifier && statementList instanceof Slist body) {
+                    if (functionIdentifier instanceof FunctionIdentifier identifier && statement instanceof Statement body) {
                         return new SFunction(identifier, body);
                     }
                 }
