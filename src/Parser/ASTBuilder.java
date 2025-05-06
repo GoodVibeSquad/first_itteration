@@ -13,7 +13,7 @@ public class ASTBuilder {
 
     public Object buildAst(Production production, List<Object> children) {
         int prodSize = production.getRhs().size();
-//        System.out.println("Children:" + children);
+        System.out.println("Children:" + children);
         switch (production.lhs) {
 
             case "functionIdentifier" -> {
@@ -177,9 +177,6 @@ public class ASTBuilder {
                             second instanceof BinaryOperators op &&
                             third instanceof Expression expr2) {
 
-
-
-
                         return Precedence(op,expr1,expr2);
                     } else {
                         System.err.println("Invalid Expression at: " + second);
@@ -208,7 +205,11 @@ public class ASTBuilder {
                     }
 
                 }
-                else if (children.size() == 4 && expressionValue instanceof Identifier) {
+                else if (children.size() == 4 && expressionValue instanceof Identifier
+                        && children.get(1) instanceof Token openParen && openParen.getType() == TokenType.OPEN_PARENTHESIS
+                        && children.get(2) instanceof Elist
+                        && children.get(3) instanceof Token closeParen && closeParen.getType() == TokenType.CLOSED_PARENTHESIS) {
+
                     Object first = children.getFirst();
                     Object second = children.get(1);
                     Object third = children.get(2);
@@ -324,10 +325,13 @@ public class ASTBuilder {
                         throw new RuntimeException("Unknown type: " + typeName);
                     }
                 }
-                
+
 //                grammar.add("expression", "ID","DOT","ID","OPEN_PARENTHESIS","expr_list","CLOSED_PARENTHESIS");
 //                grammar.add("expression", "TYPE","DOT","ID","OPEN_PARENTHESIS","expr_list","CLOSED_PARENTHESIS");
-                else if(expressionValue instanceof Token token && token.getType() == TokenType.ID){
+                //Tilføjet ekstra checking fordi tror den conflicter med funcCall ??
+                else if(expressionValue instanceof Token token && token.getType() == TokenType.ID
+                        && children.get(1) instanceof Token token1 && token1.getType() == TokenType.DOT
+                        &&children.get(4) instanceof Elist){
                         Object first = children.getFirst();
                         Object second = children.get(2); //ændret til 2, ellers for den bare en dot som metode navn
                         Object third = children.get(4);

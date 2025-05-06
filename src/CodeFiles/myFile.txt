@@ -1,8 +1,2 @@
 int x = 3;
-int c = 3;
-
-int function(int k){
-print(k);
-}
-
 function(x);
