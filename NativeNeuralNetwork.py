@@ -18,7 +18,6 @@ class Relu(activationFunction):
 
 class Layer:
     def __init__(self, *args):
-
         # For input layer
         # Layer(Input data size)
         if len(args) == 1:
@@ -42,10 +41,10 @@ class Layer:
 # ADDING LOSS FUNCTION TO NEURAL NETWORK
 class NeuralNetwork:
     def __init__(self, input, hidden, output):
-            self.input = input
-            self.hidden = hidden
-            self.output = output
-            self.weights_array = self.init_weights()
+        self.input = input
+        self.hidden = hidden
+        self.output = output
+        self.weights_array = self.init_weights()
 
     def initialize_input_data(self, data):
         self.input.initialized_input = data
@@ -53,7 +52,7 @@ class NeuralNetwork:
     def init_weights(self):
         weights = []
 
-        input_weights = np.random.rand(input.input_size, hidden.hidden_layers_size)
+        input_weights = np.random.rand(self.input.input_size, self.hidden.hidden_layers_size)
         print("Input weights: ", input_weights.shape)
         weights.append(input_weights)
 
@@ -65,7 +64,7 @@ class NeuralNetwork:
             weights.append(hidden_weights)
 
 
-        output_weights = np.random.rand(hidden.hidden_layers_size, output.output_size)
+        output_weights = np.random.rand(self.hidden.hidden_layers_size, self.output.output_size)
         print("Output weights: ", output_weights.shape)
         weights.append(output_weights)
 
@@ -135,7 +134,7 @@ hidden_layers = Layer(3, 50, Relu)
 
 # 10 Classifications (0-9) Output size is 10
 # Activation function is a given activation function such as Relu
-output = Layer(10, "Activation Function")
+output = Layer(10, Relu)
 
 nn = NeuralNetwork(input,hidden_layers,output)
 
