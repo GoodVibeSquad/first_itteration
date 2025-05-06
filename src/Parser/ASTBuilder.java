@@ -130,6 +130,7 @@ public class ASTBuilder {
             }
 
             case "expression" -> {
+                System.out.println("Expression children " + children);
                 Object expressionValue = children.getFirst();
                 if (children.size() == 1 && expressionValue instanceof Token) {
                     Token type = (Token) expressionValue;
@@ -205,22 +206,21 @@ public class ASTBuilder {
                     }
 
                 }
-                else if (children.size() == 4 && expressionValue instanceof Identifier
+                else if (children.size() == 4 && expressionValue instanceof Token t && t.getType() == TokenType.ID
                         && children.get(1) instanceof Token openParen && openParen.getType() == TokenType.OPEN_PARENTHESIS
                         && children.get(2) instanceof Elist
                         && children.get(3) instanceof Token closeParen && closeParen.getType() == TokenType.CLOSED_PARENTHESIS) {
-
                     Object first = children.getFirst();
                     Object second = children.get(1);
                     Object third = children.get(2);
                     Object fourth = children.getLast();
 
-                    if (first instanceof Identifier id &&
+                    if (first instanceof Token &&
                             second instanceof Token &&
                             third instanceof Elist exprList &&
                             fourth instanceof Token) {
 
-                        return new EFuncCall(id, exprList);
+                        return new EFuncCall(new Identifier(((Token) first).getValue()), exprList);
 
                     } else {
                         System.err.println("Invalid Expression at: " + third);

@@ -172,11 +172,9 @@ public class CodeGenVisitor implements AstVisitor<Void> {
     @Override
     public Void visitEcall(EFuncCall e) {
 
-        output.append(e.func().getId()).append("(");
+        output.append("def ").append(e.func().getId()).append("(");
         e.args().accept(this);
-        output.append(")");
-
-        //PROBELM MED PARSRSER WTF???!!
+        output.append(")\n");
         return null;
     }
 

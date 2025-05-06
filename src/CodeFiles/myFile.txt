@@ -1,2 +1,5 @@
 int x = 3;
-function(x);
+
+function(x, 4+3);
+
+int s = 3;
