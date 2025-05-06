@@ -31,7 +31,8 @@ public class Lexer {
             }
 
             if (reader.currentChar() == '/' && (reader.peek() == '/' || reader.peek() == '*')) {
-                return scanComment();
+                scanComment();
+                continue;
             }
 
 
@@ -73,29 +74,22 @@ public class Lexer {
         }
     }
 
-    private Token scanComment() {
-        StringBuilder comment = new StringBuilder();
-
+    private void scanComment() {
         if (reader.currentChar() == '/' && reader.peek() == '/') { // Single-line comment
             reader.advance(); // Skip '/'
             reader.advance(); // Skip '/'
             while (reader.currentChar() != '\n' && reader.currentChar() != '\0') {
-                comment.append(reader.currentChar());
                 reader.advance();
             }
-            return new Token(TokenType.COMMENT, comment.toString().trim());
         } else if (reader.currentChar() == '/' && reader.peek() == '*') { // Multi-line comment
             reader.advance(); // Skip '/'
             reader.advance(); // Skip '*'
             while (!(reader.currentChar() == '*' && reader.peek() == '/') && reader.currentChar() != '\0') {
-                comment.append(reader.currentChar());
                 reader.advance();
             }
             reader.advance(); // Skip '*'
             reader.advance(); // Skip '/'
-            return new Token(TokenType.MULTI_LINE_COMMENT, comment.toString().trim());
         }
-        return null;
     }
 
     private Token scanIdentifier() {
