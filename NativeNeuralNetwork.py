@@ -22,6 +22,10 @@ class Layer:
         # Layer(Input data size)
         if len(args) == 1:
             self.input_size = args[0]
+
+            # Determined later when making hidden layers
+            self.output_size = 0
+
             self.initialized_input = 0
 
         # For output layers
@@ -48,6 +52,9 @@ class Layer:
 
 
 # ADDING LOSS FUNCTION TO NEURAL NETWORK
+
+
+
 class NeuralNetwork:
     def __init__(self, input, hidden_layers, output):
         self.input = input
@@ -67,7 +74,7 @@ class NeuralNetwork:
 
         # LOOP FOR GENERATING WEIGHTS FOR HIDDEN LAYERS
         # Hidden layer to hidden layer connections
-        for _ in range(self.hidden_layers.amount - 1):
+        for i in range(self.hidden_layers.amount - 1):
             hidden_weights = np.random.rand(self.hidden_layers.size, self.hidden_layers.size)
             print("Hidden weight: ", hidden_weights.shape)
             weights.append(hidden_weights)
@@ -79,20 +86,37 @@ class NeuralNetwork:
 
         return weights
 
+
+    def weighted_sum(self, data, weight_matrix):
+        return np.dot(data, weight_matrix)
+
+
+
     def forwardPass(self, data):
-        self.initialize_input_data(data)
-        self.input.output_size = self.hidden_layers.size
+        weighted_sums = []
+        activated_functions = []
 
-        # INITIALIZE THE WEIGHTS FOR ALL LAYERS HIDDEN LAYERS + 1 WEIGHTS
-        # This implies that there are weight matrices for:
-        # The step between input and hidden (1)
-        # A weight matrix for all the hidden layers
-        # A weight matrix for the output layer
+        # Initialize the current input to be the initialized data
+        current_input = data
 
-        # Set output of input to be the same as hidden layer
-        #current_output = self.input.output
-        #weightedSum = data(entries) * input.dot(weights)
-        #activationFunction(weightedSum)
+        input_w_sum_test = self.weighted_sum(data, self.weights_array[0])
+
+        for i in range(len(self.weights_array)):
+            # Calculates weighted sum and adds it to weighted sum array
+            current_weighted_sum = np.dot(current_input, self.weights_array[i])
+            weighted_sums.append(current_weighted_sum)
+
+            # Applies activation function and adds it to activations array
+            #current_activation = self.apply_activation(current_weighted_sum)
+            #activated_functions.append(current_activation)
+
+            # Updates the current input and moves forward in neural network
+            #current_input = current_activation
+            current_input = current_weighted_sum
+
+        print("Length of weighted sums: ", len(weighted_sums))
+        print("Example of a weighted sum: ", weighted_sums[2])
+
 
     def train(self, data):
         self.forwardPass(data)
@@ -126,7 +150,7 @@ print("Flattened data: ", flattenedData.shape)
 
 
 ##### NEURAL NETWORK STUFF
-# Layer needs to take the width of a matrix and the height of a matrix
+# Layer needs to take the width- of a matrix and the height of a matrix
 # We imagine the images to be 28px * 28px images such as Mnist dataset
 # This creates a vector with 784 columns and 1 row
 
@@ -150,5 +174,5 @@ nn = NeuralNetwork(input,hidden_layers,output)
 nn.train(flattenedData)
 
 #print(nn.input.initialized_input)
-print(len(nn.weights_array))
+print("Length of weights array: ",len(nn.weights_array))
 print("Activation function for hidden layers: ", nn.hidden_layers.activation_function)
