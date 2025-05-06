@@ -18,28 +18,51 @@ class Layer:
             self.input_size = args[0]
             self.initialized_input = 0
 
+        # For output layers
+        # Loss function is found on the neural network itself
+        # For output layer
+        elif len(args) == 2:
+            self.output_size = args[0]
+            self.activation_function = args[1]
+
         # For multiple hidden layers
         elif len(args) == 3:
             self.hidden_layers_amount = args[0]
             self.hidden_layers_size = args[1]
             self.activation_function = "Temp"
 
-        # For output layers
-        # Loss function is found on the neural network itself
-        elif len(args) == 3:
-            self.activation_function = "Temp"
 
-        self.output_size = 0
-
+# ADDING LOSS FUNCTION TO NEURAL NETWORK
 class NeuralNetwork:
     def __init__(self, input, hidden, output):
             self.input = input
             self.hidden = hidden
             self.output = output
-            # self.weightArray = array of weights
+            self.weights_array = self.init_weights()
 
     def initialize_input_data(self, data):
         self.input.initialized_input = data
+
+    def init_weights(self):
+        weights = []
+
+        input_weights = np.random.rand(input.input_size, hidden.hidden_layers_size)
+        print("Input weights: ", input_weights.shape)
+        weights.append(input_weights)
+
+        # LOOP FOR GENERATING WEIGHTS FOR HIDDEN LAYERS
+        # Hidden layer to hidden layer connections
+        for _ in range(self.hidden.hidden_layers_amount - 1):
+            hidden_weights = np.random.rand(self.hidden.hidden_layers_size, self.hidden.hidden_layers_size)
+            print("Hidden weight: ", hidden_weights.shape)
+            weights.append(hidden_weights)
+
+
+        output_weights = np.random.rand(hidden.hidden_layers_size, output.output_size)
+        print("Input weights: ", output_weights.shape)
+        weights.append(output_weights)
+
+        return weights
 
     def forwardPass(self, data):
         self.initialize_input_data(data)
@@ -100,7 +123,7 @@ input = Layer(28*28)
 # 50 Neurons on each row
 # 5 Hidden layers
 # Activation function is a given activation function such as Relu
-hidden = Layer(50, 5, "Activation function")
+hidden = Layer(3, 50, "Activation function")
 
 # 10 Classifications (0-9) Output size is 10
 # Activation function is a given activation function such as Relu
@@ -109,4 +132,6 @@ output = Layer(10, "Activation Function")
 nn = NeuralNetwork(input,hidden,output)
 
 nn.train(flattenedData)
-print(nn.input.initialized_input)
+
+#print(nn.input.initialized_input)
+print(len(nn.weights_array))
