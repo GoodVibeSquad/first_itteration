@@ -59,7 +59,7 @@ class NeuralNetwork:
 
 
         output_weights = np.random.rand(hidden.hidden_layers_size, output.output_size)
-        print("Input weights: ", output_weights.shape)
+        print("Output weights: ", output_weights.shape)
         weights.append(output_weights)
 
         return weights
