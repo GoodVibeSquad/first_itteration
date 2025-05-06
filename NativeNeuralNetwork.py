@@ -27,8 +27,9 @@ class Layer:
         # For output layers
         # Loss function is found on the neural network itself
         elif len(args) == 3:
-            self.output_size = args[1]
             self.activation_function = "Temp"
+
+        self.output_size = 0
 
 class NeuralNetwork:
     def __init__(self, input, hidden, output):
@@ -44,8 +45,14 @@ class NeuralNetwork:
         self.initialize_input_data(data)
         self.input.output_size = self.hidden.hidden_layers_size
 
+        # INITIALIZE THE WEIGHTS FOR ALL LAYERS HIDDEN LAYERS + 1 WEIGHTS
+        # This implies that there are weight matrices for:
+        # The step between input and hidden (1)
+        # A weight matrix for all the hidden layers
+        # A weight matrix for the output layer
+
         # Set output of input to be the same as hidden layer
-        current_output = self.input.output
+        #current_output = self.input.output
         #weightedSum = data(entries) * input.dot(weights)
         #activationFunction(weightedSum)
 
