@@ -33,16 +33,25 @@ class Layer:
 
         # For multiple hidden layers
         elif len(args) == 3:
-            self.hidden_layers_amount = args[0]
-            self.hidden_layers_size = args[1]
+            self.amount = args[0]
+            self.size = args[1]
             self.activation_function = args[2]
+
+        else:
+            raise ValueError(
+                f"Layer() takes 1, 2, or 3 arguments, but {len(args)} were given: {args}. "
+                "Expected usage:\n"
+                " - Layer(input_size)\n"
+                " - Layer(output_size, activation_function)\n"
+                " - Layer(num_hidden_layers, layer_size, activation_function)"
+            )
 
 
 # ADDING LOSS FUNCTION TO NEURAL NETWORK
 class NeuralNetwork:
-    def __init__(self, input, hidden, output):
+    def __init__(self, input, hidden_layers, output):
         self.input = input
-        self.hidden = hidden
+        self.hidden_layers = hidden_layers
         self.output = output
         self.weights_array = self.init_weights()
 
@@ -52,19 +61,19 @@ class NeuralNetwork:
     def init_weights(self):
         weights = []
 
-        input_weights = np.random.rand(self.input.input_size, self.hidden.hidden_layers_size)
+        input_weights = np.random.rand(self.input.input_size, self.hidden_layers.size)
         print("Input weights: ", input_weights.shape)
         weights.append(input_weights)
 
         # LOOP FOR GENERATING WEIGHTS FOR HIDDEN LAYERS
         # Hidden layer to hidden layer connections
-        for _ in range(self.hidden.hidden_layers_amount - 1):
-            hidden_weights = np.random.rand(self.hidden.hidden_layers_size, self.hidden.hidden_layers_size)
+        for _ in range(self.hidden_layers.amount - 1):
+            hidden_weights = np.random.rand(self.hidden_layers.size, self.hidden_layers.size)
             print("Hidden weight: ", hidden_weights.shape)
             weights.append(hidden_weights)
 
 
-        output_weights = np.random.rand(self.hidden.hidden_layers_size, self.output.output_size)
+        output_weights = np.random.rand(self.hidden_layers.size, self.output.output_size)
         print("Output weights: ", output_weights.shape)
         weights.append(output_weights)
 
@@ -72,7 +81,7 @@ class NeuralNetwork:
 
     def forwardPass(self, data):
         self.initialize_input_data(data)
-        self.input.output_size = self.hidden.hidden_layers_size
+        self.input.output_size = self.hidden_layers.size
 
         # INITIALIZE THE WEIGHTS FOR ALL LAYERS HIDDEN LAYERS + 1 WEIGHTS
         # This implies that there are weight matrices for:
@@ -142,4 +151,4 @@ nn.train(flattenedData)
 
 #print(nn.input.initialized_input)
 print(len(nn.weights_array))
-print("Activation function for hidden layers: ", nn.hidden.activation_function)
+print("Activation function for hidden layers: ", nn.hidden_layers.activation_function)
