@@ -5,9 +5,16 @@ from PIL import Image
 import os
 
 
-#Temp activation function
-def activationFunction(x, name='none'):
-    return x  # Just returns input unchanged for now
+# ACTIVATION FUNCTION INFO
+class activationFunction:
+    def run(x):
+        return x
+
+# Relu can use the amazingMethod!
+class Relu(activationFunction):
+    def run(x):
+        return max(0,x)
+
 
 class Layer:
     def __init__(self, *args):
@@ -29,7 +36,7 @@ class Layer:
         elif len(args) == 3:
             self.hidden_layers_amount = args[0]
             self.hidden_layers_size = args[1]
-            self.activation_function = "Temp"
+            self.activation_function = args[2]
 
 
 # ADDING LOSS FUNCTION TO NEURAL NETWORK
@@ -119,19 +126,21 @@ print("Flattened data: ", flattenedData.shape)
 # The output is automatically matched with the neuron size of the hidden layers
 input = Layer(28*28)
 
-# 50 Rows and 5 columns basically
-# 50 Neurons on each row
-# 5 Hidden layers
+# 3 Hidden layers (3 Columns)
+# Each layer has 50 neurons (Rows)
 # Activation function is a given activation function such as Relu
-hidden = Layer(3, 50, "Activation function")
+hidden_layers = Layer(3, 50, Relu)
+
+
 
 # 10 Classifications (0-9) Output size is 10
 # Activation function is a given activation function such as Relu
 output = Layer(10, "Activation Function")
 
-nn = NeuralNetwork(input,hidden,output)
+nn = NeuralNetwork(input,hidden_layers,output)
 
 nn.train(flattenedData)
 
 #print(nn.input.initialized_input)
 print(len(nn.weights_array))
+print("Activation function for hidden layers: ", nn.hidden.activation_function)
