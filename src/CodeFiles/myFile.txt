@@ -1,14 +1,8 @@
 int x = 3;
+int c = 3;
 
 int function(int k){
-
-    if ( x < 10){
-
-        int j = 10;
-
-        for (int i = 0; i < 10; i++;){
-            print(x);
-        }
-    }
+print(k);
 }
 
+function(x);

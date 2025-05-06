@@ -1,5 +1,6 @@
 import math
 x = 3
+c = 3
 def function(k): 
 	if x < 10:
 		j = 10
@@ -11,3 +12,4 @@ def function(k):
 			del i
 		del j
 
+p.function(x, c)

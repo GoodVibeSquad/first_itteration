@@ -292,19 +292,19 @@ public class ASTBuilder {
                         }
                 }
 //                else if(children.get(1) instanceof Type type && type.tok == TokenType.TYPE && children.size() == 5){
-////
-////                    //"NEW",TYPE","OPEN_PARENTHESIS","expr_list","CLOSED_PARENTHESIS"
-////
-////                    //first instanceof Token id && second instanceof InDeCrement inDe
-////
-////                        Object first = children.get(1);
-////                        Object second = children.get(3);
-////                        if(second instanceof Elist args){
-////                            return new ENewFunc(Type, args);
-////                        } else {
-////                            System.err.println("Invalid Expression at: " + first);
-////                            throw new RuntimeException();
-////                        }
+//
+//                    //"NEW",TYPE","OPEN_PARENTHESIS","expr_list","CLOSED_PARENTHESIS"
+//
+//                    //first instanceof Token id && second instanceof InDeCrement inDe
+//
+//                        Object first = children.get(1);
+//                        Object second = children.get(3);
+//                        if(second instanceof Elist args){
+//                            return new ENewFunc(Type, args);
+//                        } else {
+//                            System.err.println("Invalid Expression at: " + first);
+//                            throw new RuntimeException();
+//                        }
 //                }
 
                 else if (children.size() == 5 &&
@@ -324,12 +324,12 @@ public class ASTBuilder {
                         throw new RuntimeException("Unknown type: " + typeName);
                     }
                 }
-
-
-
+                
+//                grammar.add("expression", "ID","DOT","ID","OPEN_PARENTHESIS","expr_list","CLOSED_PARENTHESIS");
+//                grammar.add("expression", "TYPE","DOT","ID","OPEN_PARENTHESIS","expr_list","CLOSED_PARENTHESIS");
                 else if(expressionValue instanceof Token token && token.getType() == TokenType.ID){
                         Object first = children.getFirst();
-                        Object second = children.get(1);
+                        Object second = children.get(2); //ændret til 2, ellers for den bare en dot som metode navn
                         Object third = children.get(4);
 
                         if(first instanceof Token object &&
@@ -348,7 +348,6 @@ public class ASTBuilder {
                         /*
                         Also needs to save the type
                          */
-
                         if(first instanceof Token id &&
                            second instanceof Elist args ){
                             return new EFuncCall(new Identifier(id.getValue()),args);
