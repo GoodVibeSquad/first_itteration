@@ -5,6 +5,7 @@ from PIL import Image
 import os
 
 
+
 # ACTIVATION FUNCTION INFO
 class activationFunction:
     def run(x):
@@ -17,7 +18,7 @@ class Relu(activationFunction):
 
 class Softmax(activationFunction):
     def run(x):
-        e_x = np.exp(x - np.max(x))  # for numerical stability
+        e_x = np.exp(x)
         return e_x / e_x.sum(axis=1, keepdims=True)
 
 class Layer:
@@ -82,29 +83,26 @@ class NeuralNetwork:
     def init_weights(self):
         weights = []
 
-        # Generating weights between first layer(input) and first hidden layer
-        input_weights = np.random.rand(self.input.input_size, self.hidden_layers.size)
-        print("Input weights: ", input_weights.shape)
+
+        # HE initilization used because of RELU and exploding rand weight values
+
+        # Calculate first weights between input and hidden
+        input_weights = np.random.randn(self.input.input_size, self.hidden_layers.size) * np.sqrt(2. / self.input.input_size)
+        # Rounding to improve readability
+        input_weights = np.round(input_weights, decimals=10)
         weights.append(input_weights)
 
-        # LOOP FOR GENERATING WEIGHTS FOR HIDDEN LAYERS
-        # Hidden layer to hidden layer connections
+        # Generate weights between hidden layers
         for i in range(self.hidden_layers.amount - 1):
-            hidden_weights = np.random.rand(self.hidden_layers.size, self.hidden_layers.size)
-            print("Hidden weight: ", hidden_weights.shape)
+            hidden_weights = np.random.randn(self.hidden_layers.size, self.hidden_layers.size) * np.sqrt(2. / self.hidden_layers.size)
             weights.append(hidden_weights)
 
-        # Generating weights between last layer(output) and last hidden layer
+        # Generating weights between last layer(output) and
+        # the second to last layer, which is a hidden layer.
         output_weights = np.random.rand(self.hidden_layers.size, self.output.output_size)
-        print("Output weights: ", output_weights.shape)
         weights.append(output_weights)
 
         return weights
-
-
-    def weighted_sum(self, data, weight_matrix):
-        return np.dot(data, weight_matrix)
-
 
 
     def forwardPass(self, data):
@@ -113,26 +111,31 @@ class NeuralNetwork:
 
         # Initialize the current input to be the initialized data
         current_input = data
+        # print("Input current data: ", data)
 
         # Calculates weighted sum for everything except output
-        for i in range(self.hidden_layers.amount):
+        for i in range(self.hidden_layers.amount + 1):
+            # Add positive bias (Number between 0 and 1) after the weighted sum
+            # BEFORE THE ACTIVATION
+
             # Calculates weighted sum and adds it to weighted sum array
+            # print("Weight ", i, ": ", self.weights_array[i])
             current_weighted_sum = np.dot(current_input, self.weights_array[i])
+
+            # print(self.weights_array[i])
+            # print("Current weight sum: ", current_weighted_sum, "\nShape", current_weighted_sum.shape)
             weighted_sums.append(current_weighted_sum)
 
-            # Runs the activation function for Hidden layers on the 0th index
-            # of the activation functions array
+            # Runs the activation function for Hidden layers (Found at 0th index)
             current_activation = self.activation_functions[0].run(current_weighted_sum)
             activations.append(current_activation)
 
+            # print("Relu activated: ", current_activation)
             # Updates the current input and moves forward in neural network
             current_input = current_activation
 
-        # Calculates final weighted sum from last hidden layer to output
-        # Applies output activation (softmax) and finishes forward pass
-        final_weighted_sum = np.dot(current_input, self.weights_array[-1])
-        weighted_sums.append(final_weighted_sum)
-        output_activation = self.activation_functions[1].run(final_weighted_sum)
+        # Applies output activation function after weighted sum is finished (1st index)
+        output_activation = self.activation_functions[1].run(current_input)
         activations.append(output_activation)
         print("Output activation: ", output_activation)
 
