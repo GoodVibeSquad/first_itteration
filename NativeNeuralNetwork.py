@@ -82,6 +82,7 @@ class NeuralNetwork:
     def init_weights(self):
         weights = []
 
+        # Generating weights between first layer(input) and first hidden layer
         input_weights = np.random.rand(self.input.input_size, self.hidden_layers.size)
         print("Input weights: ", input_weights.shape)
         weights.append(input_weights)
@@ -93,7 +94,7 @@ class NeuralNetwork:
             print("Hidden weight: ", hidden_weights.shape)
             weights.append(hidden_weights)
 
-
+        # Generating weights between last layer(output) and last hidden layer
         output_weights = np.random.rand(self.hidden_layers.size, self.output.output_size)
         print("Output weights: ", output_weights.shape)
         weights.append(output_weights)
