@@ -41,6 +41,8 @@ class Layer:
             self.activation_function = args[1]
 
         # For multiple hidden layers
+        # Amount is how many hidden layers there are
+        # Size is neuron amount
         elif len(args) == 3:
             self.amount = args[0]
             self.size = args[1]
@@ -67,6 +69,20 @@ class NeuralNetwork:
         self.output = output
         self.weights_array = self.init_weights()
         self.activation_functions = self.init_activation_functions()
+        self.bias = self.init_bias()
+
+
+    def init_bias(self):
+        bias = []
+
+
+        for i in range(self.hidden_layers.amount):
+            bias.append(np.random.rand(1, self.hidden_layers.size))
+
+        output_bias = np.random.rand(1, self.output.output_size)
+        bias.append(output_bias)
+
+        return bias
 
     def initialize_input_data(self, data):
         self.input.initialized_input = data
@@ -111,7 +127,6 @@ class NeuralNetwork:
 
         # Initialize the current input to be the initialized data
         current_input = data
-        # print("Input current data: ", data)
 
         # Calculates weighted sum for everything except output
         for i in range(self.hidden_layers.amount + 1):
@@ -120,23 +135,20 @@ class NeuralNetwork:
 
             # Calculates weighted sum and adds it to weighted sum array
             # print("Weight ", i, ": ", self.weights_array[i])
-            current_weighted_sum = np.dot(current_input, self.weights_array[i])
-
-            # print(self.weights_array[i])
-            # print("Current weight sum: ", current_weighted_sum, "\nShape", current_weighted_sum.shape)
+            current_weighted_sum = np.dot(current_input, self.weights_array[i]) + self.bias[i]
             weighted_sums.append(current_weighted_sum)
 
             # Runs the activation function for Hidden layers (Found at 0th index)
             current_activation = self.activation_functions[0].run(current_weighted_sum)
             activations.append(current_activation)
 
-            # print("Relu activated: ", current_activation)
             # Updates the current input and moves forward in neural network
             current_input = current_activation
 
         # Applies output activation function after weighted sum is finished (1st index)
         output_activation = self.activation_functions[1].run(current_input)
         activations.append(output_activation)
+
         print("Output activation: ", output_activation)
 
 
