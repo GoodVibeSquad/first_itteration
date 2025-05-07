@@ -13,8 +13,12 @@ class activationFunction:
 # Relu can use the amazingMethod!
 class Relu(activationFunction):
     def run(x):
-        return max(0,x)
+        return np.maximum(0,x)
 
+class Softmax(activationFunction):
+    def run(x):
+        e_x = np.exp(x - np.max(x))  # for numerical stability
+        return e_x / e_x.sum(axis=1, keepdims=True)
 
 class Layer:
     def __init__(self, *args):
@@ -61,9 +65,19 @@ class NeuralNetwork:
         self.hidden_layers = hidden_layers
         self.output = output
         self.weights_array = self.init_weights()
+        self.activation_functions = self.init_activation_functions()
 
     def initialize_input_data(self, data):
         self.input.initialized_input = data
+
+    # Get activations for every layer except for input
+    def init_activation_functions(self):
+        activation_functions = [
+            self.hidden_layers.activation_function,
+            self.output.activation_function
+        ]
+        return activation_functions
+
 
     def init_weights(self):
         weights = []
@@ -94,31 +108,36 @@ class NeuralNetwork:
 
     def forwardPass(self, data):
         weighted_sums = []
-        activated_functions = []
+        activations = []
 
         # Initialize the current input to be the initialized data
         current_input = data
 
-        input_w_sum_test = self.weighted_sum(data, self.weights_array[0])
-
-        for i in range(len(self.weights_array)):
+        # Calculates weighted sum for everything except output
+        for i in range(self.hidden_layers.amount):
             # Calculates weighted sum and adds it to weighted sum array
             current_weighted_sum = np.dot(current_input, self.weights_array[i])
             weighted_sums.append(current_weighted_sum)
 
-            # Applies activation function and adds it to activations array
-            #current_activation = self.apply_activation(current_weighted_sum)
-            #activated_functions.append(current_activation)
+            # Runs the activation function for Hidden layers on the 0th index
+            # of the activation functions array
+            current_activation = self.activation_functions[0].run(current_weighted_sum)
+            activations.append(current_activation)
 
             # Updates the current input and moves forward in neural network
-            #current_input = current_activation
-            current_input = current_weighted_sum
+            current_input = current_activation
 
-        print("Length of weighted sums: ", len(weighted_sums))
-        print("Example of a weighted sum: ", weighted_sums[2])
+        # Calculates final weighted sum from last hidden layer to output
+        # Applies output activation (softmax) and finishes forward pass
+        final_weighted_sum = np.dot(current_input, self.weights_array[-1])
+        weighted_sums.append(final_weighted_sum)
+        output_activation = self.activation_functions[1].run(final_weighted_sum)
+        activations.append(output_activation)
+        print("Output activation: ", output_activation)
 
 
     def train(self, data):
+        # Call forward pass n times for neural network
         self.forwardPass(data)
 
 
@@ -167,7 +186,7 @@ hidden_layers = Layer(3, 50, Relu)
 
 # 10 Classifications (0-9) Output size is 10
 # Activation function is a given activation function such as Relu
-output = Layer(10, Relu)
+output = Layer(10, Softmax)
 
 nn = NeuralNetwork(input,hidden_layers,output)
 
