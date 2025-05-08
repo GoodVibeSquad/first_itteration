@@ -190,7 +190,7 @@ class NeuralNetwork:
 
         return images_array
 
-    def backPropagate(activations,correct_label, learningRate):
+    def backPropagate(self, activations,correct_label, learningRate):
         correct_answer = np.zeros(10)
         correct_answer[correct_label] = 1
 
@@ -202,7 +202,7 @@ class NeuralNetwork:
         error.append(correct_answer - activations[-1])
         delta.append(error[-1]*Relu.derivative(activations[-1]))
 
-        for i in reversed(range(len(activations)-1))
+        for i in reversed(range(len(activations)-1)):
             error.append(np.dot(delta[-1],activations[i].T)
             delta.append(error[-1],Relu.derivative(activations[i]))
 
@@ -234,8 +234,8 @@ class NeuralNetwork:
         # Second parameter is the subfolders in this example (0th subfolder)
         # Third parameter is the index of a given image in the subfolder
 
-        for _ in range(epochs)
-            for x in range(len(training_set))
+        for _ in range(epochs):
+            for x in range(len(training_set)):
                 activations = self.forwardPass(images_array,training_set[x][0], training_set[x][1])
                 backPropagate(activations, training_set[x][0],learningRate)
 
