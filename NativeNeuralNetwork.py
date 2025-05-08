@@ -16,6 +16,9 @@ class Relu(activationFunction):
     def run(x):
         return np.maximum(0,x)
 
+   def derivative(x):
+       return (x > 0) * 1
+
 class Softmax(activationFunction):
     def run(x):
         e_x = np.exp(x)
