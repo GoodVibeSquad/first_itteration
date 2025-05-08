@@ -207,7 +207,7 @@ class NeuralNetwork:
             delta.append(error[-1],Relu.derivative(activations[i]))
 
 
-    def train(self, path, datatype, epochs, bach_percentage, learningRate):
+    def train(self, path, datatype, epochs, batch_percentage, learningRate):
         # Call forward pass n times for neural network
         images_array = self.init_data(path,datatype)
         training_set = []
@@ -216,7 +216,7 @@ class NeuralNetwork:
         # random selction of images
         for i in range(len(images_array)):
             # Takes 70 percent of images (Rest will be used for validation)
-            training_amount = int(len(images_array[i])/100 * bach_percentage)
+            training_amount = int(len(images_array[i])/100 * batch_percentage)
             print("the ", i, "Training set amount", training_amount)
 
             validation_amount = len(images_array[i]) - training_amount
@@ -282,8 +282,8 @@ dirname = os.path.dirname(__file__)
 # Get path for a given image in root
 mnist_directory = os.path.join(dirname, 'Mnist')
 
-train(self, path, datatype, epochs, bach_percentage, learningRate):
-nn.train(mnist_directory, ".png", 2lea)
+
+nn.train(mnist_directory, ".png", 2, 70, 0.01)
 
 #print(nn.input.initialized_input)
 print("Length of weights array: ",len(nn.weights_array))
