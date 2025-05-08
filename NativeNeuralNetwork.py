@@ -16,8 +16,8 @@ class Relu(activationFunction):
     def run(x):
         return np.maximum(0,x)
 
-   def derivative(x):
-       return (x > 0) * 1
+    def derivative(x):
+        return (x > 0) * 1
 
 class Softmax(activationFunction):
     def run(x):
@@ -159,6 +159,7 @@ class NeuralNetwork:
             case ".png" | ".jpg" | ".jpeg" :
                 return load_image_data(path, datatype)
             case _:
+                pass
 
     def load_image_data(path,datatype):
         subfolders = [ f.path for f in os.scandir(path) if f.is_dir() ]
