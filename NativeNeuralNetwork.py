@@ -151,8 +151,9 @@ class NeuralNetwork:
         # Applies output activation function after weighted sum is finished (1st index)
         output_activation = self.activation_functions[1].run(current_input)
         activations.append(output_activation)
+        return activations
 
-        print("Output activation: ", output_activation)
+#        print("Output activation: ", output_activation)
 
     def init_data(self, path, datatype):
         match datatype:
@@ -192,13 +193,34 @@ class NeuralNetwork:
     def train(self, path, datatype):
         # Call forward pass n times for neural network
         images_array = self.init_data(path,datatype)
+        training_set = []
+        validation_set = []
+        # random selction of images
+        for i in range(len(images_array)):
+            # Takes 70 percent of images (Rest will be used for validation)
+            training_amount = int(len((images_array[i])/100) * 70)
+            validation_amount = len(images_array[i]) - training_amount
+            for x in range(training_amount):
+                training_set.append([i,x])
+            for x in range(validation_amount):
+                training_set.append([i,x+training_amount])
+
+        np.random.shuffle(training_set)
+
+
+        # Second parameter is the subfolders in this example (0th subfolder)
+        # Third parameter is the index of a given image in the subfolder
+
+        for i in range(something epoch)
+            activations = self.forwardPass(images_array,0, 0)
+            backPropagate(activations, 0)
 
         for i in range(len(images_array)):
             print("Contents images array for ", i, ": ", len(images_array[i]))
 
         print("Length of images array: ", len(images_array))
 
-        self.forwardPass(images_array,0, 0)
+        # self.forwardPass(images_array,0, 0)
 
 
 ##### NEURAL NETWORK STUFF
