@@ -199,11 +199,11 @@ class NeuralNetwork:
         for i in range(len(images_array)):
             # Takes 70 percent of images (Rest will be used for validation)
             training_amount = int(len(images_array[i])/100 * 70)
-            print("Training set length", len(training_amount))
+            print("Training set length", training_amount)
 
             validation_amount = len(images_array[i]) - training_amount
-            print("Validation set length", len(validation_amount))
-            
+            print("Validation set length", validation_amount)
+
             for x in range(training_amount):
                 training_set.append([i,x])
             for x in range(validation_amount):
