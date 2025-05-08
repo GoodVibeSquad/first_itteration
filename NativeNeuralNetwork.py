@@ -124,12 +124,12 @@ class NeuralNetwork:
         return weights
 
 
-    def forwardPass(self, data, i):
+    def forwardPass(self, data, i, x):
         weighted_sums = []
         activations = []
 
         # Initialize the current input to be the initialized data
-        current_input = (data[i])[i]
+        current_input = (data[i])[x]
 
         # Calculates weighted sum for everything except output
         for i in range(self.hidden_layers.amount + 1):
@@ -198,7 +198,7 @@ class NeuralNetwork:
 
         print("Length of images array: ", len(images_array))
 
-        #self.forwardPass(data)
+        self.forwardPass(images_array,0, 0)
 
 
 #### GETTING THE DATA
