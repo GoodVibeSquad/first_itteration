@@ -160,11 +160,12 @@ class NeuralNetwork:
 #### GETTING THE DATA
 
 # Get the directory for the file we are currently in
-dirname = os.path.dirname(__file__)
+# dirname = os.path.dirname(__file__)
 
-# Get path for a given image inr oot
-directory = os.path.join(dirname, 'TestImage.jpg')
+# Get path for a given image in root
+# mnist_directory = os.path.join(dirname, 'Mnist')
 
+# print(mnist_directory)
 
 ############ INSERT BASED ON DIRECTORY
 # get the path/directory
