@@ -190,7 +190,7 @@ class NeuralNetwork:
 
         return images_array
 
-    def backPropagate(activations,correct_label, learningRate)
+    def backPropagate(activations,correct_label, learningRate):
         correct_answer = np.zeros(10)
         correct_answer[correct_label] = 1
 
