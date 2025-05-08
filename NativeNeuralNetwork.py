@@ -153,9 +153,7 @@ class NeuralNetwork:
 
     def init_data(path, datatype):
         match datatype:
-            case ".png":
-            case ".jpg":
-            case ".jpeg":
+            case ".png" | ".jpg" | ".jpeg" :
                 return load_image_data(path, datatype)
             case _:
 
