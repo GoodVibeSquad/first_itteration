@@ -166,6 +166,7 @@ dirname = os.path.dirname(__file__)
 mnist_directory = os.path.join(dirname, 'Mnist')
 
 zero_directory = os.path.join(mnist_directory, '0')
+
 subfolders = [ f.path for f in os.scandir(mnist_directory) if f.is_dir() ]
 
 for i in range(len(subfolders)):
@@ -179,27 +180,34 @@ images_array = []
 
 # Instead of folder dir insert the directory of desired number
 # Currently this is a test for the 0th subfolder (with images of 0s)
-for images in os.listdir(subfolders[0]):
-    # check if the image ends with png
-    if (images.endswith(".png")):
-        zero_subfolder = subfolders[0]
+for i in range(len(subfolders)):
+    numbered_image_array = []
+    for images in os.listdir(subfolders[i]):
+        # check if the image ends with png
+        if (images.endswith(".png")):
+            image = os.path.join(subfolders[i], images)
+            # Ensures greyscale mode
+            img = Image.open(image).convert('L')
 
-        image = os.path.join(zero_subfolder, images)
+            # Convert to a NumPy array and flatten it
+            numpyData = np.array(img)
+            normalized_data = numpyData / 255.0
+            np.set_printoptions(threshold=np.inf)
+            flattenedData = normalized_data.flatten(order='C').reshape(1, -1)
+            numbered_image_array.append(flattenedData)
 
-        # Ensures greyscale mode
-        img = Image.open(image).convert('L')
+    images_array.append(numbered_image_array)
 
-        # Convert to a NumPy array and flatten it
-        numpyData = np.array(img)
-        normalized_data = numpyData / 255.0
-        np.set_printoptions(threshold=np.inf)
-        flattenedData = normalized_data.flatten(order='C').reshape(1, -1)
-        images_array.append([flattenedData, 0])
+#for i in range(len(images_array)):
+#    print("Shape: ", images_array[i][0].shape, "Number class: ", images_array[i][1])
 
 for i in range(len(images_array)):
-    print(images_array[i][0].shape)
+    print("Contents images array for ", i, ": ", len(images_array[i]))
 
-print("Mnist dir", mnist_directory)
+
+print("Length of images array: ", len(images_array))
+
+#print("Mnist dir", mnist_directory)
 
 
 # For now we are using sample image
