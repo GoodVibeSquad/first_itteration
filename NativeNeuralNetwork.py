@@ -124,12 +124,12 @@ class NeuralNetwork:
         return weights
 
 
-    def forwardPass(self, data):
+    def forwardPass(self, data, i):
         weighted_sums = []
         activations = []
 
         # Initialize the current input to be the initialized data
-        current_input = data
+        current_input = (data[i])[i]
 
         # Calculates weighted sum for everything except output
         for i in range(self.hidden_layers.amount + 1):
@@ -208,54 +208,8 @@ dirname = os.path.dirname(__file__)
 
 # Get path for a given image in root
 mnist_directory = os.path.join(dirname, 'Mnist')
-
 zero_directory = os.path.join(mnist_directory, '0')
-
-#subfolders = [ f.path for f in os.scandir(mnist_directory) if f.is_dir() ]
-
-#for i in range(len(subfolders)):
-#    print("Subfolder:", subfolders[i])
-
 first_0_image = os.path.join(zero_directory, '3.png')
-
-#print(zero_directory)
-
-#images_array = []
-
-# Instead of folder dir insert the directory of desired number
-# Currently this is a test for the 0th subfolder (with images of 0s)
-#for i in range(len(subfolders)):
-#    numbered_image_array = []
-#    for images in os.listdir(subfolders[i]):
-#        # check if the image ends with png
-#        if (images.endswith(".png")):
-#            image = os.path.join(subfolders[i], images)
-#            # Ensures greyscale mode
-#            img = Image.open(image).convert('L')
-
-#            # Convert to a NumPy array and flatten it
-#            numpyData = np.array(img)
-#            normalized_data = numpyData / 255.0
-#            np.set_printoptions(threshold=np.inf)
-#            flattenedData = normalized_data.flatten(order='C').reshape(1, -1)
-#            numbered_image_array.append(flattenedData)
-
-#    images_array.append(numbered_image_array)
-
-#for i in range(len(images_array)):
-#    print("Shape: ", images_array[i][0].shape, "Number class: ", images_array[i][1])
-
-#for i in range(len(images_array)):
-#    print("Contents images array for ", i, ": ", len(images_array[i]))
-
-
-#print("Length of images array: ", len(images_array))
-
-#print("Mnist dir", mnist_directory)
-
-
-# For now we are using sample image
-# Open the image and convert it to grayscale (L mode is greyscale mode)
 img = Image.open(first_0_image).convert('L')
 
 # Convert to a NumPy array and flatten it
