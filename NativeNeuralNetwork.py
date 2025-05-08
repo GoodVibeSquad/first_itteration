@@ -166,7 +166,6 @@ dirname = os.path.dirname(__file__)
 mnist_directory = os.path.join(dirname, 'Mnist')
 
 zero_directory = os.path.join(mnist_directory, '0')
-
 subfolders = [ f.path for f in os.scandir(mnist_directory) if f.is_dir() ]
 
 for i in range(len(subfolders)):
@@ -176,15 +175,31 @@ first_0_image = os.path.join(zero_directory, '3.png')
 
 print(zero_directory)
 
+images_array = []
+
 # Instead of folder dir insert the directory of desired number
-#for images in os.listdir(folder_dir):
-#
-#    # check if the image ends with png
-#    if (images.endswith(".png")):
-#        print(images)
+# Currently this is a test for the 0th subfolder (with images of 0s)
+for images in os.listdir(subfolders[0]):
+    # check if the image ends with png
+    if (images.endswith(".png")):
+        zero_subfolder = subfolders[0]
+
+        image = os.path.join(zero_subfolder, images)
+
+        # Ensures greyscale mode
+        img = Image.open(image).convert('L')
+
+        # Convert to a NumPy array and flatten it
+        numpyData = np.array(img)
+        normalized_data = numpyData / 255.0
+        np.set_printoptions(threshold=np.inf)
+        flattenedData = normalized_data.flatten(order='C').reshape(1, -1)
+        images_array.append([flattenedData, 0])
+
+for i in range(len(images_array)):
+    print(images_array[i][0].shape)
 
 print("Mnist dir", mnist_directory)
-
 
 
 # For now we are using sample image
