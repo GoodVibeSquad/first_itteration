@@ -201,33 +201,6 @@ class NeuralNetwork:
         self.forwardPass(images_array,0, 0)
 
 
-#### GETTING THE DATA
-
-# Source directory
-dirname = os.path.dirname(__file__)
-
-# Get path for a given image in root
-mnist_directory = os.path.join(dirname, 'Mnist')
-zero_directory = os.path.join(mnist_directory, '0')
-first_0_image = os.path.join(zero_directory, '3.png')
-img = Image.open(first_0_image).convert('L')
-
-# Convert to a NumPy array and flatten it
-numpyData = np.array(img)
-
-# Divide every value within the numpyData array with 255.0 to normalize it
-normalized_data = numpyData / 255.0
-
-
-# Ensure full array is printed
-np.set_printoptions(threshold=np.inf)
-
-flattenedData = normalized_data.flatten(order='C').reshape(1, -1)
-
-# Print the flattened array
-print("Flattened data: ", flattenedData.shape)
-
-
 ##### NEURAL NETWORK STUFF
 # Layer needs to take the width- of a matrix and the height of a matrix
 # We imagine the images to be 28px * 28px images such as Mnist dataset
@@ -252,6 +225,10 @@ nn = NeuralNetwork(input,hidden_layers,output)
 
 # Source directory
 dirname = os.path.dirname(__file__)
+
+#### TODO:
+# When we get further make it so users can manually insert filepath as a string
+# In the native code
 
 # Get path for a given image in root
 mnist_directory = os.path.join(dirname, 'Mnist')
