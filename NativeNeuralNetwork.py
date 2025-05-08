@@ -151,9 +151,51 @@ class NeuralNetwork:
 
         print("Output activation: ", output_activation)
 
+    def init_data(path, datatype)
+        match datatype:
+            case ".png":
+            case ".jpg":
+            case ".jpeg":
+                return load_image_data(path, datatype)
+            case _:
 
-    def train(self, data):
+    def load_image_data(path,datatype)
+        subfolders = [ f.path for f in os.scandir(path) if f.is_dir() ]
+
+        #for i in range(len(subfolders)):
+            #print("Subfolder:", subfolders[i])
+        images_array = []
+
+        # Insert flattened images based on all subfolders
+        for i in range(len(subfolders)):
+            numbered_image_array = []
+            for images in os.listdir(subfolders[i]):
+                # check if the image ends with png
+                if (images.endswith(datatype)):
+                    image = os.path.join(subfolders[i], images)
+                    # Ensures greyscale mode
+                    img = Image.open(image).convert('L')
+
+                    # Convert to a NumPy array and flatten it
+                    numpyData = np.array(img)
+                    normalized_data = numpyData / 255.0
+                    np.set_printoptions(threshold=np.inf)
+                    flattenedData = normalized_data.flatten(order='C').reshape(1, -1)
+                    numbered_image_array.append(flattenedData)
+
+            images_array.append(numbered_image_array)
+
+        return images_array
+
+    def train(self, path, datatype):
         # Call forward pass n times for neural network
+        images_array = init_data(path,datatype)
+
+        for i in range(len(images_array)):
+            print("Contents images array for ", i, ": ", len(images_array[i]))
+
+        print("Length of images array: ", len(images_array))
+
         self.forwardPass(data)
 
 
