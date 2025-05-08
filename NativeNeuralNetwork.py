@@ -154,14 +154,14 @@ class NeuralNetwork:
 
         print("Output activation: ", output_activation)
 
-    def init_data(path, datatype):
+    def init_data(self, path, datatype):
         match datatype:
             case ".png" | ".jpg" | ".jpeg" :
-                return load_image_data(path, datatype)
+                return self.load_image_data(path, datatype)
             case _:
                 pass
 
-    def load_image_data(path,datatype):
+    def load_image_data(self, path,datatype):
         subfolders = [ f.path for f in os.scandir(path) if f.is_dir() ]
 
         #for i in range(len(subfolders)):
@@ -191,7 +191,7 @@ class NeuralNetwork:
 
     def train(self, path, datatype):
         # Call forward pass n times for neural network
-        images_array = init_data(path,datatype)
+        images_array = self.init_data(path,datatype)
 
         for i in range(len(images_array)):
             print("Contents images array for ", i, ": ", len(images_array[i]))
