@@ -207,7 +207,7 @@ class NeuralNetwork:
             delta.append(error[-1],Relu.derivative(activations[i]))
 
 
-    def train(self, path, datatype, epochs, bach_percentage):
+    def train(self, path, datatype, epochs, bach_percentage, learningRate):
         # Call forward pass n times for neural network
         images_array = self.init_data(path,datatype)
         training_set = []
@@ -237,7 +237,7 @@ class NeuralNetwork:
         for _ in range(epochs)
             for x in range(len(training_set))
                 activations = self.forwardPass(images_array,training_set[x][0], training_set[x][1])
-                backPropagate(activations, training_set[x][0])
+                backPropagate(activations, training_set[x][0],learningRate)
 
 
 
@@ -281,7 +281,9 @@ dirname = os.path.dirname(__file__)
 
 # Get path for a given image in root
 mnist_directory = os.path.join(dirname, 'Mnist')
-nn.train(mnist_directory, ".png")
+
+train(self, path, datatype, epochs, bach_percentage, learningRate):
+nn.train(mnist_directory, ".png", 2lea)
 
 #print(nn.input.initialized_input)
 print("Length of weights array: ",len(nn.weights_array))
