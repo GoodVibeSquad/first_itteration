@@ -190,15 +190,33 @@ class NeuralNetwork:
 
         return images_array
 
-    def train(self, path, datatype):
+    def backPropagate(activations,correct_label, learningRate)
+        correct_answer = np.zeros(10)
+        correct_answer[correct_label] = 1
+
+        #softmax stuff
+
+        # predicted_output = self.activations[-1]
+        error = []
+        delta = []
+        error.append(correct_answer - activations[-1])
+        delta.append(error[-1]*Relu.derivative(activations[-1]))
+
+        for i in reversed(range(len(activations)-1))
+            error.append(np.dot(delta[-1],activations[i].T)
+            delta.append(error[-1],Relu.derivative(activations[i]))
+
+
+    def train(self, path, datatype, epochs, bach_percentage):
         # Call forward pass n times for neural network
         images_array = self.init_data(path,datatype)
         training_set = []
         validation_set = []
+
         # random selction of images
         for i in range(len(images_array)):
             # Takes 70 percent of images (Rest will be used for validation)
-            training_amount = int(len(images_array[i])/100 * 70)
+            training_amount = int(len(images_array[i])/100 * bach_percentage)
             print("the ", i, "Training set amount", training_amount)
 
             validation_amount = len(images_array[i]) - training_amount
@@ -211,16 +229,20 @@ class NeuralNetwork:
 
         np.random.shuffle(training_set)
 
-        print("Training set length: ", len(training_set))
-        print("validation set length: ", len(validation_set))
+        #print("Training set length: ", len(training_set))
+        #print("validation set length: ", len(validation_set))
         # Second parameter is the subfolders in this example (0th subfolder)
         # Third parameter is the index of a given image in the subfolder
 
-        #for i in range(something epoch)
-            #activations = self.forwardPass(images_array,0, 0)
-            #backPropagate(activations, 0)
+        for _ in range(epochs)
+            for x in range(len(training_set))
+                activations = self.forwardPass(images_array,training_set[x][0], training_set[x][1])
+                backPropagate(activations, training_set[x][0])
 
-        #for i in range(len(images_array)):
+
+
+
+       #for i in range(len(images_array)):
             #print("Contents images array for ", i, ": ", len(images_array[i]))
 
         #print("Length of images array: ", len(images_array))
