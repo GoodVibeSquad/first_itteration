@@ -163,7 +163,17 @@ class NeuralNetwork:
 dirname = os.path.dirname(__file__)
 
 # Get path for a given image inr oot
-image_path = os.path.join(dirname, 'TestImage.jpg')
+directory = os.path.join(dirname, 'TestImage.jpg')
+
+
+############ INSERT BASED ON DIRECTORY
+# get the path/directory
+#folder_dir = "C:/Users/RIJUSHREE/Desktop/Gfg images"
+#for images in os.listdir(folder_dir):
+#
+#    # check if the image ends with png
+#    if (images.endswith(".png")):
+#        print(images)
 
 # Open the image and convert it to grayscale (L mode is greyscale mode)
 img = Image.open(image_path).convert('L')
