@@ -159,25 +159,37 @@ class NeuralNetwork:
 
 #### GETTING THE DATA
 
-# Get the directory for the file we are currently in
-# dirname = os.path.dirname(__file__)
+# Source directory
+dirname = os.path.dirname(__file__)
 
 # Get path for a given image in root
-# mnist_directory = os.path.join(dirname, 'Mnist')
+mnist_directory = os.path.join(dirname, 'Mnist')
 
-# print(mnist_directory)
+zero_directory = os.path.join(mnist_directory, '0')
 
-############ INSERT BASED ON DIRECTORY
-# get the path/directory
-#folder_dir = "C:/Users/RIJUSHREE/Desktop/Gfg images"
+subfolders = [ f.path for f in os.scandir(mnist_directory) if f.is_dir() ]
+
+for i in range(len(subfolders)):
+    print("Subfolder:", subfolders[i])
+
+first_0_image = os.path.join(zero_directory, '3.png')
+
+print(zero_directory)
+
+# Instead of folder dir insert the directory of desired number
 #for images in os.listdir(folder_dir):
 #
 #    # check if the image ends with png
 #    if (images.endswith(".png")):
 #        print(images)
 
+print("Mnist dir", mnist_directory)
+
+
+
+# For now we are using sample image
 # Open the image and convert it to grayscale (L mode is greyscale mode)
-img = Image.open(image_path).convert('L')
+img = Image.open(first_0_image).convert('L')
 
 # Convert to a NumPy array and flatten it
 numpyData = np.array(img)
