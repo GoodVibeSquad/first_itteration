@@ -198,7 +198,7 @@ class NeuralNetwork:
         # random selction of images
         for i in range(len(images_array)):
             # Takes 70 percent of images (Rest will be used for validation)
-            training_amount = int(len((images_array[i])/100) * 70)
+            training_amount = int(len(images_array[i])/100 * 70)
             validation_amount = len(images_array[i]) - training_amount
             for x in range(training_amount):
                 training_set.append([i,x])
@@ -209,7 +209,7 @@ class NeuralNetwork:
 
         print("Training set: ", training_set)
         print("Training set length: ", len(training_set))
-        
+
         # Second parameter is the subfolders in this example (0th subfolder)
         # Third parameter is the index of a given image in the subfolder
 
