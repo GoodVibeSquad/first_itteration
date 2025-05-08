@@ -207,18 +207,20 @@ class NeuralNetwork:
 
         np.random.shuffle(training_set)
 
-
+        print("Training set: ", training_set)
+        print("Training set length: ", len(training_set))
+        
         # Second parameter is the subfolders in this example (0th subfolder)
         # Third parameter is the index of a given image in the subfolder
 
-        for i in range(something epoch)
-            activations = self.forwardPass(images_array,0, 0)
-            backPropagate(activations, 0)
+        #for i in range(something epoch)
+            #activations = self.forwardPass(images_array,0, 0)
+            #backPropagate(activations, 0)
 
-        for i in range(len(images_array)):
-            print("Contents images array for ", i, ": ", len(images_array[i]))
+        #for i in range(len(images_array)):
+            #print("Contents images array for ", i, ": ", len(images_array[i]))
 
-        print("Length of images array: ", len(images_array))
+        #print("Length of images array: ", len(images_array))
 
         # self.forwardPass(images_array,0, 0)
 
