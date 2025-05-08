@@ -151,7 +151,7 @@ class NeuralNetwork:
 
         print("Output activation: ", output_activation)
 
-    def init_data(path, datatype)
+    def init_data(path, datatype):
         match datatype:
             case ".png":
             case ".jpg":
@@ -159,7 +159,7 @@ class NeuralNetwork:
                 return load_image_data(path, datatype)
             case _:
 
-    def load_image_data(path,datatype)
+    def load_image_data(path,datatype):
         subfolders = [ f.path for f in os.scandir(path) if f.is_dir() ]
 
         #for i in range(len(subfolders)):
@@ -294,7 +294,12 @@ output = Layer(10, Softmax)
 
 nn = NeuralNetwork(input,hidden_layers,output)
 
-nn.train(flattenedData)
+# Source directory
+dirname = os.path.dirname(__file__)
+
+# Get path for a given image in root
+mnist_directory = os.path.join(dirname, 'Mnist')
+nn.train(mnist_directory, ".png")
 
 #print(nn.input.initialized_input)
 print("Length of weights array: ",len(nn.weights_array))
