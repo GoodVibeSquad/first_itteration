@@ -194,17 +194,22 @@ class NeuralNetwork:
         correct_answer = np.zeros(10)
         correct_answer[correct_label] = 1
 
-        #softmax stuff
-
-        # predicted_output = self.activations[-1]
         error = []
         delta = []
-        error.append(correct_answer - activations[-1])
-        delta.append(error[-1]*Relu.derivative(activations[-1]))
+
+        #softmax stuff
+        error_output = correct_answer - activations[-1]
+        error.append(error_output)
+        delta.append(error_output)
 
         for i in reversed(range(len(activations)-1)):
-            error.append(np.dot(delta[-1],activations[i].T)
-            delta.append(error[-1],Relu.derivative(activations[i]))
+            error.append(np.dot(delta[-1],activations[i].T))
+            delta.append(error[-1] * Relu.derivative(activations[i]))
+        #delta is created from end to start
+        flip(delta)
+        for i in range(len(self.weights_array)):
+                self.weights_array[i] += learningRate * np.dot(activations[i].T, delta[i])
+                self.bias[i] += learningRate * delta[i]
 
 
     def train(self, path, datatype, epochs, batch_percentage, learningRate):
@@ -238,6 +243,8 @@ class NeuralNetwork:
             for x in range(len(training_set)):
                 activations = self.forwardPass(images_array,training_set[x][0], training_set[x][1])
                 backPropagate(activations, training_set[x][0],learningRate)
+
+
 
 
 
