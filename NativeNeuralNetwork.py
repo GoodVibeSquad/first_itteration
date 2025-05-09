@@ -193,7 +193,6 @@ class NeuralNetwork:
     def backPropagate(self, activations,correct_label, learningRate):
         correct_answer = np.zeros(10)
         correct_answer[correct_label] = 1
-
         error = []
         delta = []
 
@@ -201,14 +200,14 @@ class NeuralNetwork:
         error_output = correct_answer - activations[-1]
         error.append(error_output)
         delta.append(error_output)
-
-        for i in reversed(range(len(activations)-1)):
-            error.append(np.dot(delta[-1],activations[i].T))
+        
+        for i in reversed(range(len(activations)-2)):
+            error.append(np.dot(delta[-1],self.weights_array[i+1].T))
             delta.append(error[-1] * Relu.derivative(activations[i]))
         #delta is created from end to start
-        flip(delta)
+        delta.reverse()
         for i in range(len(self.weights_array)):
-                self.weights_array[i] += learningRate * np.dot(activations[i].T, delta[i])
+                self.weights_array[i] += learningRate * np.dot(self.weights_array[i], delta[i].T)
                 self.bias[i] += learningRate * delta[i]
 
 
@@ -242,7 +241,7 @@ class NeuralNetwork:
         for _ in range(epochs):
             for x in range(len(training_set)):
                 activations = self.forwardPass(images_array,training_set[x][0], training_set[x][1])
-                backPropagate(activations, training_set[x][0],learningRate)
+                self.backPropagate(activations, training_set[x][0],learningRate)
 
 
 
