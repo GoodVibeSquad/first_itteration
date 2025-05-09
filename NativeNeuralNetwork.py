@@ -218,13 +218,13 @@ class NeuralNetwork:
             current_picture = (images_array[validationSet[i][0]])[validationSet[i][1]]
             print("image ", validationSet[i][0], ", ", validationSet[i][1])
             activations = []
-            for i in range(self.hidden_layers.amount + 1):
+            for j in range(self.hidden_layers.amount + 1):
                 # Add positive bias (Number between 0 and 1) after the weighted sum
                 # BEFORE THE ACTIVATION
 
                 # Calculates weighted sum and adds it to weighted sum array
                 # print("Weight ", i, ": ", self.weights_array[i])
-                current_weighted_sum = np.dot(current_picture, self.weights_array[i]) + self.bias[i]
+                current_weighted_sum = np.dot(current_picture, self.weights_array[j]) + self.bias[j]
 
                 # Runs the activation function for Hidden layers (Found at 0th index)
                 current_activation = self.activation_functions[0].run(current_weighted_sum)
@@ -238,9 +238,7 @@ class NeuralNetwork:
             correct_answer = np.zeros(10)
             correct_answer[validationSet[i][0]] = 1
             print("image 2", validationSet[i][0], ", ", validationSet[i][1])
-            procent_dif = (correct_answer-output_activation)[validationSet[i][0]]
-            estimate_and_result.append(procent_dif*100)
-            print(procent_dif, "\n")
+            
 
 
 
