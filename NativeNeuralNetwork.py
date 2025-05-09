@@ -211,24 +211,36 @@ class NeuralNetwork:
                 self.bias[i] += learningRate * delta[i]
 
 
-    def printPredictions(self, validationSet,):
+    def printPredictions(self, validationSet,images_array):
         estimate_and_result = []
 
-        for i in range(self.hidden_layers.amount + 1):
-            current_weighted_sum = np.dot(current_input, self.weights_array[i]) + self.bias[i]
-            weighted_sums.append(current_weighted_sum)
+        for i in range(len(validationSet)):
+            current_picture = (images_array[validationSet[i][0])[validationSet[i][1]]
+            activations = []
+            for i in range(self.hidden_layers.amount + 1):
+                # Add positive bias (Number between 0 and 1) after the weighted sum
+                # BEFORE THE ACTIVATION
 
-            # Runs the activation function for Hidden layers (Found at 0th index)
-            current_activation = self.activation_functions[0].run(current_weighted_sum)
-            activations.append(current_activation)
+                # Calculates weighted sum and adds it to weighted sum array
+                # print("Weight ", i, ": ", self.weights_array[i])
+                current_weighted_sum = np.dot(current_input, self.weights_array[i]) + self.bias[i]
+                weighted_sums.append(current_weighted_sum)
 
-            # Updates the current input and moves forward in neural network
-            current_input = current_activation
+                # Runs the activation function for Hidden layers (Found at 0th index)
+                current_activation = self.activation_functions[0].run(current_weighted_sum)
+                activations.append(current_activation)
 
-            # Applies output activation function after weighted sum is finished (1st index)
+                # Updates the current input and moves forward in neural network
+                current_input = current_activation
+
+             # Applies output activation function after weighted sum is finished (1st index)
             output_activation = self.activation_functions[1].run(current_input)
-            activations.append(output_activation)
-            return activations
+            correct_answer = np.zeros(10)
+            correct_answer[validationSet[i][0]] = 1
+            estimate_and_result.append(output_activation,correct_answer)
+            print(estimate_and_result[-1], "\n")
+
+
 
     def train(self, path, datatype, epochs, batch_percentage, learningRate):
         # Call forward pass n times for neural network
@@ -262,7 +274,7 @@ class NeuralNetwork:
                 activations = self.forwardPass(images_array,training_set[x][0], training_set[x][1])
                 self.backPropagate(activations, training_set[x][0],learningRate)
 
-        #self.printPredictions()
+        self.printPredictions(validation_set,images_array)
 
 
 ##### NEURAL NETWORK STUFF
