@@ -216,6 +216,7 @@ class NeuralNetwork:
 
         for i in range(len(validationSet)):
             current_picture = (images_array[validationSet[i][0]])[validationSet[i][1]]
+            print(current_picture.shape)
             activations = []
             for i in range(self.hidden_layers.amount + 1):
                 # Add positive bias (Number between 0 and 1) after the weighted sum
@@ -224,20 +225,19 @@ class NeuralNetwork:
                 # Calculates weighted sum and adds it to weighted sum array
                 # print("Weight ", i, ": ", self.weights_array[i])
                 current_weighted_sum = np.dot(current_picture, self.weights_array[i]) + self.bias[i]
-                weighted_sums.append(current_weighted_sum)
 
                 # Runs the activation function for Hidden layers (Found at 0th index)
                 current_activation = self.activation_functions[0].run(current_weighted_sum)
                 activations.append(current_activation)
 
                 # Updates the current input and moves forward in neural network
-                current_input = current_activation
+                current_picture = current_activation
 
              # Applies output activation function after weighted sum is finished (1st index)
-            output_activation = self.activation_functions[1].run(current_input)
+            output_activation = self.activation_functions[1].run(current_picture)
             correct_answer = np.zeros(10)
             correct_answer[validationSet[i][0]] = 1
-            estimate_and_result.append(output_activation,correct_answer)
+            estimate_and_result.append([output_activation,correct_answer])
             print(estimate_and_result[-1], "\n")
 
 
