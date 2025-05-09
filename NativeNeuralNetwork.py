@@ -207,7 +207,7 @@ class NeuralNetwork:
         #delta is created from end to start
         delta.reverse()
         for i in range(len(self.weights_array)):
-                self.weights_array[i] += learningRate * np.dot(self.activations[i].T, delta[i])
+                self.weights_array[i] += learningRate * np.dot(activations[i].T, delta[i])
                 self.bias[i] += learningRate * delta[i]
 
 
