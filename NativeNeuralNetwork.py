@@ -291,7 +291,7 @@ input = Layer(28*28)
 # 3 Hidden layers (3 Columns)
 # Each layer has 50 neurons (Rows)
 # Activation function is a given activation function such as Relu
-hidden_layers = Layer(15, 50, Relu)
+hidden_layers = Layer(5, 50, Relu)
 
 
 
