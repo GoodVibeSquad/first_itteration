@@ -211,6 +211,25 @@ class NeuralNetwork:
                 self.bias[i] += learningRate * delta[i]
 
 
+    def printPredictions(self, validationSet,):
+        estimate_and_result = []
+
+        for i in range(self.hidden_layers.amount + 1):
+            current_weighted_sum = np.dot(current_input, self.weights_array[i]) + self.bias[i]
+            weighted_sums.append(current_weighted_sum)
+
+            # Runs the activation function for Hidden layers (Found at 0th index)
+            current_activation = self.activation_functions[0].run(current_weighted_sum)
+            activations.append(current_activation)
+
+            # Updates the current input and moves forward in neural network
+            current_input = current_activation
+
+            # Applies output activation function after weighted sum is finished (1st index)
+            output_activation = self.activation_functions[1].run(current_input)
+            activations.append(output_activation)
+            return activations
+
     def train(self, path, datatype, epochs, batch_percentage, learningRate):
         # Call forward pass n times for neural network
         images_array = self.init_data(path,datatype)
@@ -243,17 +262,7 @@ class NeuralNetwork:
                 activations = self.forwardPass(images_array,training_set[x][0], training_set[x][1])
                 self.backPropagate(activations, training_set[x][0],learningRate)
 
-
-
-
-
-
-       #for i in range(len(images_array)):
-            #print("Contents images array for ", i, ": ", len(images_array[i]))
-
-        #print("Length of images array: ", len(images_array))
-
-        # self.forwardPass(images_array,0, 0)
+        #self.printPredictions()
 
 
 ##### NEURAL NETWORK STUFF
