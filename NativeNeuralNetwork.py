@@ -207,10 +207,16 @@ class NeuralNetwork:
         #delta is created from end to start
         delta.reverse()
         for i in range(len(self.weights_array)):
+
+            ## NOTE. NOT CURRENTLY WORKING
+            # THE SHAPE WON'T UPDATE CORRECTLY
             print("Learning rate", learningRate)
             print("Activations shape", activations[i].shape)
             print("Delta", delta[i].shape)
+
+            # FOR SOME REASON THIS DOT PRODUCT WON'T WORK
             tempVar = np.dot(activations[i].T, delta[i])
+
             print("TEMPVAR shape: ", tempVar.shape)
 
             self.weights_array[i] += learningRate * tempVar
