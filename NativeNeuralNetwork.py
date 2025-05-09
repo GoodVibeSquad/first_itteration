@@ -216,7 +216,7 @@ class NeuralNetwork:
 
         for i in range(len(validationSet)):
             current_picture = (images_array[validationSet[i][0]])[validationSet[i][1]]
-            print(current_picture.shape)
+            print("image ", validationSet[i][0], ", ", validationSet[i][1])
             activations = []
             for i in range(self.hidden_layers.amount + 1):
                 # Add positive bias (Number between 0 and 1) after the weighted sum
@@ -233,12 +233,15 @@ class NeuralNetwork:
                 # Updates the current input and moves forward in neural network
                 current_picture = current_activation
 
-             # Applies output activation function after weighted sum is finished (1st index)
+            # Applies output activation function after weighted sum is finished (1st index)
             output_activation = self.activation_functions[1].run(current_picture)
             correct_answer = np.zeros(10)
             correct_answer[validationSet[i][0]] = 1
-            estimate_and_result.append([output_activation,correct_answer])
-            print(estimate_and_result[-1], "\n")
+            print("image 2", validationSet[i][0], ", ", validationSet[i][1])
+            procent_dif = (correct_answer-output_activation)[validationSet[i][0]]
+            estimate_and_result.append(procent_dif*100)
+            print(procent_dif, "\n")
+
 
 
 
@@ -252,10 +255,10 @@ class NeuralNetwork:
         for i in range(len(images_array)):
             # Takes 70 percent of images (Rest will be used for validation)
             training_amount = int(len(images_array[i])/100 * batch_percentage)
-            print("the ", i, "Training set amount", training_amount)
+            #print("the ", i, "Training set amount", training_amount)
 
             validation_amount = len(images_array[i]) - training_amount
-            print("the ", i, "Validation set amount", validation_amount)
+            #print("the ", i, "Validation set amount", validation_amount)
 
             for x in range(training_amount):
                 training_set.append([i,x])
