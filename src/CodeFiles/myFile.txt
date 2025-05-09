@@ -1,5 +1,9 @@
 int x = 3;
 
-function(x, 4+3);
 
+
+int func(x){
 int s = 3;
+}
+
+int func(x);

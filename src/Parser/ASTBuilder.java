@@ -206,28 +206,30 @@ public class ASTBuilder {
                     }
 
                 }
-                else if (children.size() == 4 && expressionValue instanceof Token t && t.getType() == TokenType.ID
-                        && children.get(1) instanceof Token openParen && openParen.getType() == TokenType.OPEN_PARENTHESIS
-                        && children.get(2) instanceof Elist
-                        && children.get(3) instanceof Token closeParen && closeParen.getType() == TokenType.CLOSED_PARENTHESIS) {
+                else if (children.size() == 5 && expressionValue instanceof Token t && t.getType() == TokenType.TYPE
+                        && children.get(1) instanceof Token id && id.getType() == TokenType.ID
+                        && children.get(2) instanceof Token openParen && openParen.getType() == TokenType.OPEN_PARENTHESIS
+                        && children.get(3) instanceof Elist
+                        && children.get(4) instanceof Token closeParen && closeParen.getType() == TokenType.CLOSED_PARENTHESIS) {
                     Object first = children.getFirst();
                     Object second = children.get(1);
                     Object third = children.get(2);
-                    Object fourth = children.getLast();
+                    Object fourth = children.get(3);
+                    Object fifth = children.getLast();
 
                     if (first instanceof Token &&
                             second instanceof Token &&
-                            third instanceof Elist exprList &&
-                            fourth instanceof Token) {
+                            third instanceof Token &&
+                            fourth instanceof Elist exprList &&
+                            fifth instanceof Token) {
 
-                        return new EFuncCall(new Identifier(((Token) first).getValue()), exprList);
+                        return new EFuncCall(new Identifier(((Token) second).getValue(), ((Token) first).getValue()), exprList);
 
                     } else {
                         System.err.println("Invalid Expression at: " + third);
                         throw new RuntimeException();
                     }
-                }
-                else if (expressionValue instanceof Token token && token.getType() == TokenType.SUM) {
+                } else if (expressionValue instanceof Token token && token.getType() == TokenType.SUM) {
 
                     Object first = children.get(2);
                     Object second = children.get(4);
@@ -346,22 +348,29 @@ public class ASTBuilder {
                             throw new RuntimeException();
                         }
                 }
-                else if (children.getFirst() instanceof Token token && token.getType() == TokenType.TYPE){
-                        Object first = children.get(2);
-                        Object second = children.get(4);
-                        /*
-                        Also needs to save the type
-                         */
-                        if(first instanceof Token id &&
-                           second instanceof Elist args ){
-                            return new EFuncCall(new Identifier(id.getValue()),args);
-                        } else {
-                            System.err.println("Invalid Expression at: " + first);
-                            throw new RuntimeException();
-                        }
-                }
+//                DENNE CASE VIRKER IKKE HVORFOR ER DER 2 CASES??? SKAL VI SLETTE DEN????
+//                else if (children.getFirst() instanceof Token token && token.getType() == TokenType.TYPE){
+//                        Object first = children.get(2);
+//                        Object second = children.get(4);
+//
+//                        /*
+//                        Also needs to save the type
+//                         */
+//
+//                   //int add();
+//                        if(first instanceof Token id &&
+//                           second instanceof Elist args ){
+//
+//                            System.out.println("E funccall YYEEEESSS: " + id.getValue() + " " + token.getValue());
+//                           // return new EFuncCall(new Identifier(id.getValue(), String.valueOf(token.getType()) ),args);
+//
+//                            return new EFuncCall(new Identifier(id.getValue(), token.getValue()),args);
+//                        } else {
+//                            System.err.println("Invalid Expression at: " + first);
+//                            throw new RuntimeException();
+//                        }
+//                }
             }
-
             case "expr_list" -> {
                 if(children.size() == 1){
                     Object first = children.getFirst();

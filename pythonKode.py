@@ -1,4 +1,7 @@
 import math
 x = 3
-def function(x, 4 + 3)
-s = 3
+def func(x): 
+	s = 3
+	del s
+
+def func(x)
