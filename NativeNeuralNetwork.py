@@ -275,7 +275,6 @@ class NeuralNetwork:
             for x in range(len(training_set)):
                 activations = self.forwardPass(images_array,training_set[x][0], training_set[x][1])
                 self.backPropagate(activations, training_set[x][0],learningRate)
-                print(self.weights_array)
 
         self.printPredictions(validation_set,images_array)
 
@@ -292,7 +291,7 @@ input = Layer(28*28)
 # 3 Hidden layers (3 Columns)
 # Each layer has 50 neurons (Rows)
 # Activation function is a given activation function such as Relu
-hidden_layers = Layer(3, 50, Relu)
+hidden_layers = Layer(15, 50, Relu)
 
 
 
@@ -313,7 +312,7 @@ dirname = os.path.dirname(__file__)
 mnist_directory = os.path.join(dirname, 'Mnist')
 
 
-nn.train(mnist_directory, ".png", 2, 70, 0.01)
+nn.train(mnist_directory, ".png", 3000, 70, 0.01)
 
 #print(nn.input.initialized_input)
 print("Length of weights array: ",len(nn.weights_array))
