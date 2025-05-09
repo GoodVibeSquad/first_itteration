@@ -207,8 +207,14 @@ class NeuralNetwork:
         #delta is created from end to start
         delta.reverse()
         for i in range(len(self.weights_array)):
-                self.weights_array[i] += learningRate * np.dot(activations[i].T, delta[i])
-                self.bias[i] += learningRate * delta[i]
+            print("Learning rate", learningRate)
+            print("Activations shape", activations[i].shape)
+            print("Delta", delta[i].shape)
+            tempVar = np.dot(activations[i].T, delta[i])
+            print("TEMPVAR shape: ", tempVar.shape)
+
+            self.weights_array[i] += learningRate * tempVar
+            self.bias[i] += learningRate * delta[i]
 
 
     def printPredictions(self, validationSet,images_array):
