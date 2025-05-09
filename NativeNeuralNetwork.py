@@ -207,7 +207,7 @@ class NeuralNetwork:
         #delta is created from end to start
         delta.reverse()
         for i in range(len(self.weights_array)):
-                self.weights_array[i] += learningRate * np.dot(self.weights_array[i], delta[i].T)
+                self.weights_array[i] += learningRate * np.dot(self.activations[i].T, delta[i])
                 self.bias[i] += learningRate * delta[i]
 
 
@@ -312,7 +312,7 @@ dirname = os.path.dirname(__file__)
 mnist_directory = os.path.join(dirname, 'Mnist')
 
 
-nn.train(mnist_directory, ".png", 3000, 70, 0.01)
+nn.train(mnist_directory, ".png", 5, 70, 0.01)
 
 #print(nn.input.initialized_input)
 print("Length of weights array: ",len(nn.weights_array))
