@@ -216,7 +216,6 @@ class NeuralNetwork:
 
         for i in range(len(validationSet)):
             current_picture = (images_array[validationSet[i][0]])[validationSet[i][1]]
-            print("image ", validationSet[i][0], ", ", validationSet[i][1])
             activations = []
             for j in range(self.hidden_layers.amount + 1):
                 # Add positive bias (Number between 0 and 1) after the weighted sum
@@ -234,11 +233,13 @@ class NeuralNetwork:
                 current_picture = current_activation
 
             # Applies output activation function after weighted sum is finished (1st index)
+            number = validationSet[i][0]
             output_activation = self.activation_functions[1].run(current_picture)
             correct_answer = np.zeros(10)
-            correct_answer[validationSet[i][0]] = 1
-            print("image 2", validationSet[i][0], ", ", validationSet[i][1])
-            
+            correct_answer[number] = 1
+            dif =  correct_answer - output_activation
+            procent = (1 - dif[0,number])*100
+            print(procent)
 
 
 
@@ -274,6 +275,7 @@ class NeuralNetwork:
             for x in range(len(training_set)):
                 activations = self.forwardPass(images_array,training_set[x][0], training_set[x][1])
                 self.backPropagate(activations, training_set[x][0],learningRate)
+                print(self.weights_array)
 
         self.printPredictions(validation_set,images_array)
 
