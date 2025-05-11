@@ -190,7 +190,7 @@ class NeuralNetwork:
 
         return images_array
 
-    def backPropagate(self, activations,correct_label, learningRate):
+    def backPropagate(self, activations,correct_label, learningRate, image):
         correct_answer = np.zeros(10)
         correct_answer[correct_label] = 1
         error = []
@@ -207,18 +207,12 @@ class NeuralNetwork:
         #delta is created from end to start
         delta.reverse()
         for i in range(len(self.weights_array)):
-
-            ## NOTE. NOT CURRENTLY WORKING
-            # THE SHAPE WON'T UPDATE CORRECTLY
-            print("Learning rate", learningRate)
-            print("Activations shape", activations[i].shape)
-            print("Delta", delta[i].shape)
-
-            # FOR SOME REASON THIS DOT PRODUCT WON'T WORK
+            if(i<=0):
+                tempVar = np.dot(image.T, delta[i])
+                self.weights_array[i] += learningRate * tempVar
+                self.bias[i] += learningRate * delta[i]
+                break
             tempVar = np.dot(activations[i].T, delta[i])
-
-            print("TEMPVAR shape: ", tempVar.shape)
-
             self.weights_array[i] += learningRate * tempVar
             self.bias[i] += learningRate * delta[i]
 
@@ -286,7 +280,7 @@ class NeuralNetwork:
         for _ in range(epochs):
             for x in range(len(training_set)):
                 activations = self.forwardPass(images_array,training_set[x][0], training_set[x][1])
-                self.backPropagate(activations, training_set[x][0],learningRate)
+                self.backPropagate(activations, training_set[x][0],learningRate, images_array[training_set[x][0]][training_set[x][1]])
 
         self.printPredictions(validation_set,images_array)
 
