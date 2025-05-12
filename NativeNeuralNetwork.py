@@ -2,6 +2,7 @@
 
 import numpy as np
 from PIL import Image
+from collections import defaultdict
 import os
 
 
@@ -219,10 +220,11 @@ class NeuralNetwork:
 
     def printPredictions(self, validationSet,images_array):
         avrage = []
-
+        grouped_data = defaultdict(list)
         for i in range(len(validationSet)):
             current_picture = (images_array[validationSet[i][0]])[validationSet[i][1]]
             activations = []
+
             for j in range(self.hidden_layers.amount + 1):
                 # Add positive bias (Number between 0 and 1) after the weighted sum
                 # BEFORE THE ACTIVATION
@@ -246,9 +248,12 @@ class NeuralNetwork:
             dif =  correct_answer - output_activation
             procent = (1 - dif[0,number])*100
             avrage.append(procent)
+            grouped_data[number].append(procent)
             #print(procent)
-
         print("avrage %: ", np.sum(avrage)/len(avrage))
+        avrageprocent = {number: sum(percentages) / len(percentages) for number, percentages in grouped_data.items()}
+        for number in avrageprocent:
+            print("classification: ", number, "procentage: ", avrageprocent[number])
 
 
 
@@ -321,7 +326,7 @@ dirname = os.path.dirname(__file__)
 mnist_directory = os.path.join(dirname, 'Mnist')
 
 
-nn.train(mnist_directory, ".png", 160, 70, 0.01)
+nn.train(mnist_directory, ".png", 10, 70, 0.01)
 
 #print(nn.input.initialized_input)
 print("Length of weights array: ",len(nn.weights_array))
