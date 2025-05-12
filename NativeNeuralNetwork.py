@@ -218,7 +218,7 @@ class NeuralNetwork:
 
 
     def printPredictions(self, validationSet,images_array):
-        estimate_and_result = []
+        avrage = []
 
         for i in range(len(validationSet)):
             current_picture = (images_array[validationSet[i][0]])[validationSet[i][1]]
@@ -245,9 +245,10 @@ class NeuralNetwork:
             correct_answer[number] = 1
             dif =  correct_answer - output_activation
             procent = (1 - dif[0,number])*100
-            estimate_and_result.append(procent)
+            avrage.append(procent)
             #print(procent)
-        print("avrage %: ", np.sum(estimate_and_result)/len(estimate_and_result))
+
+        print("avrage %: ", np.sum(avrage)/len(avrage))
 
 
 
