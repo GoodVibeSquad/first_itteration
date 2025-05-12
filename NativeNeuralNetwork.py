@@ -11,6 +11,8 @@ import os
 class activationFunction:
     def run(x):
         return x
+    def derivative(x):
+        return x
 
 # Relu can use the amazingMethod!
 class Relu(activationFunction):
