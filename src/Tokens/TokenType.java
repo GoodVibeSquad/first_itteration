@@ -55,7 +55,7 @@ public enum TokenType{
     SUM("Sum"),
     SQUARE_ROOT("Sqrt"),
     EULER("E"),
-    PI("Pi"),
+    PI("PI"),
     EXPONENT("^"),
     MAX("Max"),
     RELU("Relu"),
