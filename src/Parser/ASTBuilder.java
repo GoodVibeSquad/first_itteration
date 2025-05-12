@@ -13,7 +13,7 @@ public class ASTBuilder {
 
     public Object buildAst(Production production, List<Object> children) {
         int prodSize = production.getRhs().size();
-//        System.out.println("Children:" + children);
+        System.out.println("Children:" + children);
         switch (production.lhs) {
 
             case "functionIdentifier" -> {
@@ -41,11 +41,11 @@ public class ASTBuilder {
             }
 
             case "function" -> {
-                if (children.size() == 4) {
-                    Object functionIdentifier = children.get(0); // <-- FEJL! Skal være children.get(0)
-                    Object statementList = children.get(2);
+                if (children.size() == 2) {
+                    Object functionIdentifier = children.get(0);
+                    Object statement = children.get(1);
 
-                    if (functionIdentifier instanceof FunctionIdentifier identifier && statementList instanceof Slist body) {
+                    if (functionIdentifier instanceof FunctionIdentifier identifier && statement instanceof Statement body) {
                         return new SFunction(identifier, body);
                     }
                 }
@@ -130,6 +130,7 @@ public class ASTBuilder {
             }
 
             case "expression" -> {
+                System.out.println("Expression children " + children);
                 Object expressionValue = children.getFirst();
                 if (children.size() == 1 && expressionValue instanceof Token) {
                     Token type = (Token) expressionValue;
@@ -177,9 +178,6 @@ public class ASTBuilder {
                             second instanceof BinaryOperators op &&
                             third instanceof Expression expr2) {
 
-
-
-
                         return Precedence(op,expr1,expr2);
                     } else {
                         System.err.println("Invalid Expression at: " + second);
@@ -208,25 +206,30 @@ public class ASTBuilder {
                     }
 
                 }
-                else if (children.size() == 4 && expressionValue instanceof Identifier) {
+                else if (children.size() == 5 && expressionValue instanceof Token t && t.getType() == TokenType.TYPE
+                        && children.get(1) instanceof Token id && id.getType() == TokenType.ID
+                        && children.get(2) instanceof Token openParen && openParen.getType() == TokenType.OPEN_PARENTHESIS
+                        && children.get(3) instanceof Elist
+                        && children.get(4) instanceof Token closeParen && closeParen.getType() == TokenType.CLOSED_PARENTHESIS) {
                     Object first = children.getFirst();
                     Object second = children.get(1);
                     Object third = children.get(2);
-                    Object fourth = children.getLast();
+                    Object fourth = children.get(3);
+                    Object fifth = children.getLast();
 
-                    if (first instanceof Identifier id &&
+                    if (first instanceof Token &&
                             second instanceof Token &&
-                            third instanceof Elist exprList &&
-                            fourth instanceof Token) {
+                            third instanceof Token &&
+                            fourth instanceof Elist exprList &&
+                            fifth instanceof Token) {
 
-                        return new EFuncCall(id, exprList);
+                        return new EFuncCall(new Identifier(((Token) second).getValue(), ((Token) first).getValue()), exprList);
 
                     } else {
                         System.err.println("Invalid Expression at: " + third);
                         throw new RuntimeException();
                     }
-                }
-                else if (expressionValue instanceof Token token && token.getType() == TokenType.SUM) {
+                } else if (expressionValue instanceof Token token && token.getType() == TokenType.SUM) {
 
                     Object first = children.get(2);
                     Object second = children.get(4);
@@ -292,19 +295,19 @@ public class ASTBuilder {
                         }
                 }
 //                else if(children.get(1) instanceof Type type && type.tok == TokenType.TYPE && children.size() == 5){
-////
-////                    //"NEW",TYPE","OPEN_PARENTHESIS","expr_list","CLOSED_PARENTHESIS"
-////
-////                    //first instanceof Token id && second instanceof InDeCrement inDe
-////
-////                        Object first = children.get(1);
-////                        Object second = children.get(3);
-////                        if(second instanceof Elist args){
-////                            return new ENewFunc(Type, args);
-////                        } else {
-////                            System.err.println("Invalid Expression at: " + first);
-////                            throw new RuntimeException();
-////                        }
+//
+//                    //"NEW",TYPE","OPEN_PARENTHESIS","expr_list","CLOSED_PARENTHESIS"
+//
+//                    //first instanceof Token id && second instanceof InDeCrement inDe
+//
+//                        Object first = children.get(1);
+//                        Object second = children.get(3);
+//                        if(second instanceof Elist args){
+//                            return new ENewFunc(Type, args);
+//                        } else {
+//                            System.err.println("Invalid Expression at: " + first);
+//                            throw new RuntimeException();
+//                        }
 //                }
 
                 else if (children.size() == 5 &&
@@ -325,11 +328,14 @@ public class ASTBuilder {
                     }
                 }
 
-
-
-                else if(expressionValue instanceof Token token && token.getType() == TokenType.ID){
+//                grammar.add("expression", "ID","DOT","ID","OPEN_PARENTHESIS","expr_list","CLOSED_PARENTHESIS");
+//                grammar.add("expression", "TYPE","DOT","ID","OPEN_PARENTHESIS","expr_list","CLOSED_PARENTHESIS");
+                //Tilføjet ekstra checking fordi tror den conflicter med funcCall ??
+                else if(expressionValue instanceof Token token && token.getType() == TokenType.ID
+                        && children.get(1) instanceof Token token1 && token1.getType() == TokenType.DOT
+                        &&children.get(4) instanceof Elist){
                         Object first = children.getFirst();
-                        Object second = children.get(1);
+                        Object second = children.get(2); //ændret til 2, ellers for den bare en dot som metode navn
                         Object third = children.get(4);
 
                         if(first instanceof Token object &&
@@ -342,23 +348,29 @@ public class ASTBuilder {
                             throw new RuntimeException();
                         }
                 }
-                else if (children.getFirst() instanceof Token token && token.getType() == TokenType.TYPE){
-                        Object first = children.get(2);
-                        Object second = children.get(4);
-                        /*
-                        Also needs to save the type
-                         */
-
-                        if(first instanceof Token id &&
-                           second instanceof Elist args ){
-                            return new EFuncCall(new Identifier(id.getValue()),args);
-                        } else {
-                            System.err.println("Invalid Expression at: " + first);
-                            throw new RuntimeException();
-                        }
-                }
+//                DENNE CASE VIRKER IKKE HVORFOR ER DER 2 CASES??? SKAL VI SLETTE DEN????
+//                else if (children.getFirst() instanceof Token token && token.getType() == TokenType.TYPE){
+//                        Object first = children.get(2);
+//                        Object second = children.get(4);
+//
+//                        /*
+//                        Also needs to save the type
+//                         */
+//
+//                   //int add();
+//                        if(first instanceof Token id &&
+//                           second instanceof Elist args ){
+//
+//                            System.out.println("E funccall YYEEEESSS: " + id.getValue() + " " + token.getValue());
+//                           // return new EFuncCall(new Identifier(id.getValue(), String.valueOf(token.getType()) ),args);
+//
+//                            return new EFuncCall(new Identifier(id.getValue(), token.getValue()),args);
+//                        } else {
+//                            System.err.println("Invalid Expression at: " + first);
+//                            throw new RuntimeException();
+//                        }
+//                }
             }
-
             case "expr_list" -> {
                 if(children.size() == 1){
                     Object first = children.getFirst();
@@ -441,9 +453,9 @@ public class ASTBuilder {
                             }
                         }
                         case "FOR" -> {
-                            Object assignObject = children.get(2);
-                            Object comparisonObject = children.get(3);
-                            Object incrementObject = children.get(5);
+                            Object assignObject = children.get(2); // int i = 0
+                            Object comparisonObject = children.get(3); // i > 20
+                            Object incrementObject = children.get(5); //i++
                             Object boddyObject = children.get(7);
                             if (assignObject instanceof Sassign assagin
                                     && comparisonObject instanceof Expression comp
@@ -457,14 +469,22 @@ public class ASTBuilder {
                                 return new Sfor(null, declaration, comp, increase, body);
                             }
                         }
-                        case "WHILE" -> {
-                            Object comparisonObject = children.get(1);
-                            Object boddyObject = children.get(2);
-                            if (comparisonObject instanceof Expression comp
-                                    && boddyObject instanceof Statement buddy) {
-                                return new SWhile(comp, buddy);
+//                        case "WHILE" -> {  // GAMLE WHILE just in case
+//                            Object comparisonObject = children.get(1);
+//                            Object boddyObject = children.get(2);
+//                            if (comparisonObject instanceof Expression comp
+//                                    && boddyObject instanceof Statement buddy) {
+//                                return new SWhile(comp, buddy);
+//                            }
+//                        }
+                            case "WHILE" -> {  // Nye while til grammar, så den har parentes fx while(..) : "WHILE", "OPEN_PARENTHESIS", "expression", "CLOSED_PARENTHESIS", "statement");
+                              Object comparisonObject = children.get(2);
+                                Object boddyObject = children.get(4);
+                                if (comparisonObject instanceof Expression comp
+                                        && boddyObject instanceof Statement buddy) {
+                                    return new SWhile(comp, buddy);
+                                }
                             }
-                        }
                         case "BREAK" -> {
                             Object last = children.getLast();
                             if (last instanceof Token t
@@ -495,6 +515,12 @@ public class ASTBuilder {
                                 if (first instanceof Token id &&
                                         second instanceof InDeCrement inDe) {
                                     return new SInDeCrement(new Identifier(id.getValue()), inDe);
+                                }
+                            } //  grammar.add("matched_stmt", "RETURN", "expression", "SEMICOLON");
+                            case "RETURN" -> {
+                                Object second = children.get(1);
+                                if (firstToken.getType() == TokenType.RETURN && second instanceof Expression) {
+                                    return new SReturn((Expression)second);
                                 }
                             }
                             default -> {
