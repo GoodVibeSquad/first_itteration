@@ -57,7 +57,6 @@ public enum TokenType{
     PI("PI"),
     EXPONENT("^"),
     MAX("Max"),
-    RELU("Relu"),
     EOF("EOF");
 
 

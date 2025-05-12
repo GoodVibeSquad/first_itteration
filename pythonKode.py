@@ -1,2 +1,2 @@
 import math
-7 + 7
+ActivationFunc.Relu(8)

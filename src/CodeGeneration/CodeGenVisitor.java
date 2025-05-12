@@ -3,6 +3,7 @@ package CodeGeneration;
 import Ast.*;
 
 import java.util.*;
+import java.util.logging.SimpleFormatter;
 
 public class CodeGenVisitor implements AstVisitor<Void> {
     private int scopeSize = 0;
@@ -66,6 +67,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         Set<String> currentScope = scopeStack.peek();
         for (String var : currentScope) {
             output.append(indent()).append("del ").append(var).append("\n");
+            //output.append("del ").append(var).append("\n");
         }
 
         scopeStack.pop();
@@ -170,12 +172,9 @@ public class CodeGenVisitor implements AstVisitor<Void> {
     @Override
     public Void visitEcall(EFuncCall e) {
 
-        output.append(e.func().getId()).append("(");
+        output.append("def ").append(e.func().getId()).append("(");
         e.args().accept(this);
-        output.append(")");
-
-        //PROBELM MED PARSRSER WTF???!!
-
+        output.append(")\n");
         return null;
     }
 
@@ -190,8 +189,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         return null;
     }
 
-    //Expression condition, Expression trueExpr, Expression falseExpr
-    // The Python format: true if condition else false
+
     @Override
     public Void visitEternary(Eternary e) {
         output.append("(");
@@ -204,19 +202,17 @@ public class CodeGenVisitor implements AstVisitor<Void> {
     }
 
 
-//Expression topExpression, Expression bottomExpression, Identifier identifier
     @Override
     public Void visitESum(ESum e) {
 
-        //I python siger man : sum(startRange, endRange, variable)
-        //Ellers siger man : sum(interable, start)???
-
         output.append("sum(");
-        e.bottomExpression().accept(this);
-        output.append(", ");
+        e.body().accept(this);
+        output.append(" for ").append(e.identifier().getId());
+        output.append(" in range( ");
         e.topExpression().accept(this);
-        output.append(", ").append(e.identifier().getId()).append(")");
-
+        output.append(", ");
+        e.bottomExpression().accept(this);
+        output.append(" + 1 ))"); //Skal vi litterally plus med 1?
         return null;
     }
 
@@ -268,8 +264,9 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
     @Override
     public Void visitEMethodCall(EMethodCall e) {
-        //Vi har brug for at vide metode navnene for at lave det her
-
+        output.append(e.object().getId()).append(".").append(e.method().getId()).append("(");
+        e.args().accept(this);
+        output.append(")");
         return null;
     }
 
@@ -344,57 +341,35 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
     @Override
     public Void visitSblock(Sblock s) {
-        enterScope();
         s.stmts().accept(this);
-        exitScope();
         return null;
     }
 
     @Override
     public Void visitSfor(Sfor s) {
 
-        String varName = s.var().getId();
-
-        // Default range parts hvis man ikke definerer noget andet
-        String start = "0";
-        String stop = "0";
-        String step = "1";  //default til increment
+        s.init().accept(this);
 
 
-        //Start value decleration
-        if (s.init() instanceof SDeclaration decl) {
-            if (decl.var().getId().equals(varName) && decl.expr() instanceof Econstant ec && ec.value() instanceof CInt cint) {
-                start = String.valueOf(cint.value());
-            }
-        }
+        output.append(indent()).append("while ");
+        s.condition().accept(this);
+        output.append(":\n");
 
-        // Tjekker om hvilke operator i vores init er stop-value
-        if (s.condition() instanceof Ebinaryoperators bin) {
-            if (bin.right() instanceof Econstant ec && ec.value() instanceof CInt cint && !(bin.right().equals(start))) {
-                stop = String.valueOf(cint.value());
-            } else if (bin.left() instanceof Econstant ec && ec.value() instanceof CInt cint && !(bin.left().equals(start))) {
-                stop = String.valueOf(cint.value());
-            }
-        }
-
-        // Update (step direction). tjekker om det er i-- (dekrement). Default er den til 1 som er increment.
-        if (s.update() instanceof SInDeCrement inc) {
-            if (inc.inDeCrement().toString().equals("DECREMENT")) {
-                step = "-1";
-            }
-        }
-
-        // Code generation
-        output.append(indent())
-                .append("for ").append(varName)
-                .append(" in range(").append(start).append(", ")
-                .append(stop).append(", ").append(step).append("):\n");
-
-        //for i in range(start, stop, step): 1 for i++ og -1 for i--. (step)
-
-        enterScope();
+        enterScope(); //enterscope identer
         s.body().accept(this);
+
+        output.append(indent());
+        s.update().accept(this);
+        output.append("\n");
+
+        String initId = null;
+        if (s.init() instanceof SDeclaration decl) {
+            initId = decl.var().getId();  // Får navnet først
+        }
+        output.append(indent()).append("del ").append(initId).append("\n");
         exitScope();
+
+        scopeStack.peek().remove(initId); //Vi skal manuelt slette update værdien fordi vi initialiserer den ikke i den samme scope vi sletter den i
 
         return null;
     }
@@ -453,13 +428,15 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         String varName = s.identifier().getId();
 
         if (s.inDeCrement() == InDeCrement.INCREMENT) {
-            output.append(indent()).append(varName).append(" += 1\n");
+            output.append(varName).append(" += 1\n");
         } else if (s.inDeCrement() == InDeCrement.DECREMENT) {
-            output.append(indent()).append(varName).append(" -= 1\n");
+            output.append(varName).append(" -= 1\n");
         }
 
         return null;
     }
+
+
 
     // VI BRUGER DEN IKKE (DEF)
     @Override
@@ -497,7 +474,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         output.append(s.var().getId()).append(" ")
                 .append(s.assignmentOperator().toSymbol()).append(" ");
 
-        //
+
         if (s.expr() != null) {
             s.expr().accept(this);
         } else {
@@ -508,4 +485,16 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         output.append("\n");
         return null;
     }
+
+    @Override
+    public Void visitSReturn(SReturn s) {
+
+        output.append("return ");
+        s.expr().accept(this);
+        output.append("\n");
+
+        return null;
+    }
+
 }
+

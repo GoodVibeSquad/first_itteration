@@ -626,6 +626,11 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     }
 
     @Override
+    public TypeCheck visitSReturn(SReturn s) {
+        return null;
+    }
+
+    @Override
     public TypeCheck visitSFunction(SFunction s) {
 
 

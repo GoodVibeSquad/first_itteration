@@ -8,7 +8,6 @@ public enum Type {
     ACTIVATIONFUNC(TokenType.TYPE, "ActivationFunc"),
     ARRAY(TokenType.TYPE, "Array"),
     STRING(TokenType.STRING, "String"),
-    //Hvorfor er int, double og bool her?
     INT(TokenType.INT, "int"),
     DOUBLE(TokenType.DOUBLE, "double"),
     BOOL(TokenType.BOOL, "boolean");
@@ -25,12 +24,4 @@ public enum Type {
         return typeName;
     }
 
-    public static Type fromTokenType(TokenType tokenType) {
-        for (Type type : Type.values()) {
-            if (type.token == tokenType) {
-                return type;
-            }
-        }
-        return null;
-    }
 }
