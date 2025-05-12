@@ -74,8 +74,8 @@ class NeuralNetwork:
 
         if(len(args) == 3):
             self.input = args[0]
-            self.hidden_layers = [1]
-            self.output = [2]
+            self.hidden_layers = args[1]
+            self.output = args[2]
             self.weights_array = self.init_weights()
             self.activation_functions = self.init_activation_functions()
             self.bias = self.init_bias()
