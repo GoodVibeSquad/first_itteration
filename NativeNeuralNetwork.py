@@ -69,13 +69,26 @@ class Layer:
 
 
 class NeuralNetwork:
-    def __init__(self, input, hidden_layers, output):
-        self.input = input
-        self.hidden_layers = hidden_layers
-        self.output = output
-        self.weights_array = self.init_weights()
-        self.activation_functions = self.init_activation_functions()
-        self.bias = self.init_bias()
+    def __init__(self, *args):
+
+
+        if(len(args) == 3):
+            self.input = args[0]
+            self.hidden_layers = [1]
+            self.output = [2]
+            self.weights_array = self.init_weights()
+            self.activation_functions = self.init_activation_functions()
+            self.bias = self.init_bias()
+        elif(len(args) == 1):
+
+
+
+    def load_model(self, filepath):
+        ar = numpy.load(filepath)
+        self.weights_array = ar[0]
+        self.bias = ar[1]
+
+
 
 
     def init_bias(self):
