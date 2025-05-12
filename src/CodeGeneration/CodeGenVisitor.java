@@ -267,7 +267,6 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         output.append(e.object().getId()).append(".").append(e.method().getId()).append("(");
         e.args().accept(this);
         output.append(")");
-
         return null;
     }
 

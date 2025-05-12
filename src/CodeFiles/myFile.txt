@@ -1,3 +1,2 @@
-
-7 + 7; //this is a comment
+ActivationFunc.Relu(8);
 
