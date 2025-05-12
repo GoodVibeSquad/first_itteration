@@ -111,7 +111,6 @@ public class Lexer {
         types.add("string");
         types.add("double");
         types.add("bool");
-        types.add("Array");
         types.add("Layer");
         types.add("NeuralNetwork");
         types.add("ActivationFunction");
