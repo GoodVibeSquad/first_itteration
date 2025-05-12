@@ -270,15 +270,16 @@ class NeuralNetwork:
             avrage.append(procent)
             grouped_data[number].append(procent)
             #print(procent)
-        print("avrage %: ", np.sum(avrage)/len(avrage))
+        print("average %: ", np.sum(avrage)/len(avrage))
         avrageprocent = {number: sum(percentages) / len(percentages) for number, percentages in grouped_data.items()}
         for number in avrageprocent:
-            print("classification: ", self.classification[number], "procentage: ", avrageprocent[number])
+            print("classification: ", self.classification[number], "percentage: ", avrageprocent[number])
 
 
 
 
-    def train(self, path, datatype, epochs, batch_percentage, learningRate):
+
+    def train(self, path, datatype, epochs, test_percentage, learningRate):
         # Call forward pass n times for neural network
         images_array = self.init_data(path,datatype)
         training_set = []
@@ -286,7 +287,7 @@ class NeuralNetwork:
         # random selction of images
         for i in range(len(images_array)):
             # Takes 70 percent of images (Rest will be used for validation)
-            training_amount = int(len(images_array[i])/100 * batch_percentage)
+            training_amount = int(len(images_array[i])/100 * test_percentage)
             #print("the ", i, "Training set amount", training_amount)
 
             validation_amount = len(images_array[i]) - training_amount
@@ -347,6 +348,3 @@ mnist_directory = os.path.join(dirname, 'Mnist')
 
 nn.train(mnist_directory, ".png", 20, 70, 0.01)
 
-#print(nn.input.initialized_input)
-print("Length of weights array: ",len(nn.weights_array))
-print("Activation function for hidden layers: ", nn.hidden_layers.activation_function)
