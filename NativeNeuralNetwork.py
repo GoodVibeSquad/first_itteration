@@ -79,14 +79,18 @@ class NeuralNetwork:
             self.weights_array = self.init_weights()
             self.activation_functions = self.init_activation_functions()
             self.bias = self.init_bias()
+            self.classification = []
         elif(len(args) == 1):
             self.load_model(args[0])
+
+
 
 
     def load_model(self, filepath):
         ar = numpy.load(filepath)
         self.weights_array = ar[0]
         self.bias = ar[1]
+        self.classification = ar[2]
 
 
 
@@ -188,6 +192,7 @@ class NeuralNetwork:
         # Insert flattened images based on all subfolders
         for i in range(len(subfolders)):
             numbered_image_array = []
+            self.classification.append(os.path.basename(subfolders[i]))
             for images in os.listdir(subfolders[i]):
                 # check if the image ends with png
                 if (images.endswith(datatype)):
@@ -268,7 +273,7 @@ class NeuralNetwork:
         print("avrage %: ", np.sum(avrage)/len(avrage))
         avrageprocent = {number: sum(percentages) / len(percentages) for number, percentages in grouped_data.items()}
         for number in avrageprocent:
-            print("classification: ", number, "procentage: ", avrageprocent[number])
+            print("classification: ", self.classification[number], "procentage: ", avrageprocent[number])
 
 
 
@@ -278,7 +283,6 @@ class NeuralNetwork:
         images_array = self.init_data(path,datatype)
         training_set = []
         validation_set = []
-
         # random selction of images
         for i in range(len(images_array)):
             # Takes 70 percent of images (Rest will be used for validation)
@@ -320,7 +324,7 @@ input = Layer(28*28)
 # 3 Hidden layers (3 Columns)
 # Each layer has 50 neurons (Rows)
 # Activation function is a given activation function such as Relu
-hidden_layers = Layer(5, 50, Relu)
+hidden_layers = Layer(5, 120, Relu)
 
 
 
@@ -341,7 +345,7 @@ dirname = os.path.dirname(__file__)
 mnist_directory = os.path.join(dirname, 'Mnist')
 
 
-nn.train(mnist_directory, ".png", 10, 70, 0.01)
+nn.train(mnist_directory, ".png", 20, 70, 0.01)
 
 #print(nn.input.initialized_input)
 print("Length of weights array: ",len(nn.weights_array))
