@@ -245,7 +245,9 @@ class NeuralNetwork:
             correct_answer[number] = 1
             dif =  correct_answer - output_activation
             procent = (1 - dif[0,number])*100
-            print(procent)
+            estimate_and_result.append(procent)
+            #print(procent)
+        print("avrage %: ", np.sum(estimate_and_result)/len(estimate_and_result))
 
 
 
@@ -318,7 +320,7 @@ dirname = os.path.dirname(__file__)
 mnist_directory = os.path.join(dirname, 'Mnist')
 
 
-nn.train(mnist_directory, ".png", 5, 70, 0.01)
+nn.train(mnist_directory, ".png", 160, 70, 0.01)
 
 #print(nn.input.initialized_input)
 print("Length of weights array: ",len(nn.weights_array))
