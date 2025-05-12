@@ -80,7 +80,7 @@ class NeuralNetwork:
             self.activation_functions = self.init_activation_functions()
             self.bias = self.init_bias()
         elif(len(args) == 1):
-
+            self.load_model(args[0])
 
 
     def load_model(self, filepath):
