@@ -256,8 +256,9 @@ class NeuralNetwork:
 
 
     def printPredictions(self, validationSet,images_array):
-        avrage = []
-        grouped_data = defaultdict(list)
+        y_true = []
+        y_pred = []
+
         failed = defaultdict(list)
         for i in range(len(validationSet)):
             current_picture = (images_array[validationSet[i][0]])[validationSet[i][1]]
@@ -282,22 +283,30 @@ class NeuralNetwork:
             number = validationSet[i][0]
             output_activation = self.activation_functions[1].run(current_picture)
             predicted_index = np.argmax(output_activation)
-            correct_answer = np.zeros(10)
-            correct_answer[number] = 1
-            dif =  correct_answer - output_activation
-            procent = (1 - dif[0,number])*100
-            avrage.append(procent)
-            grouped_data[number].append(procent)
+
+            y_true.append(number)
+            y_pred.append(predicted_index)
+
             if not (predicted_index == number):
                 failed[number].append(procent)
-            #print(procent)
-        print("average %: ", np.sum(avrage)/len(avrage))
-        avrageprocent = {number: sum(percentages) / len(percentages) for number, percentages in grouped_data.items()}
-        for number in avrageprocent:
-            print("classification: ", self.classification[number], "percentage: ", avrageprocent[number])
-        print("\nfailed: ", sum(len(v) for v in failed.values()), " out of", len(avrage))
+
+        acc = accuracy_score(y_true, y_pred)
+        precision = precision_score(y_true, y_pred, average='macro', zero_division=0)
+        recall = recall_score(y_true, y_pred, average='macro', zero_division=0)
+        f1 = f1_score(y_true, y_pred, average='macro', zero_division=0)
+
+        print(f"\n--- Classification Metrics ---")
+        print(f"Accuracy:  {acc * 100:.2f}%")
+        print(f"Precision: {precision * 100:.2f}%")
+        print(f"Recall:    {recall * 100:.2f}%")
+
+        print("\nfailed: ", sum(len(v) for v in failed.values()), " out of", len(y_true))
         for number in failed:
             print("classification: ", self.classification[number], "\n \t", len(failed[number]), " out of ", len(grouped_data[number]))
+
+
+
+
     def init_one_data(self, path, datatype):
                 match datatype:
                     case ".png" | ".jpg" | ".jpeg" :
