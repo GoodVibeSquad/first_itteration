@@ -268,9 +268,11 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
     @Override
     public Void visitEMethodCall(EMethodCall e) {
-        //Vi har brug for at vide metode navnene for at lave det her
-
+        output.append(e.object().getId()).append(".").append(e.method().getId()).append("(");
+        e.args().accept(this);
+        output.append(")");
         return null;
+
     }
 
 

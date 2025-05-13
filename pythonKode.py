@@ -1,2 +1,7 @@
 import math
-7 + 7
+input = "1"
+hidden = "1"
+output = "1"
+nn = NeuralNetwork(input, hidden, output)
+path = "hej"
+nn.save(path)

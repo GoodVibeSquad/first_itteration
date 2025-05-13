@@ -310,9 +310,11 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     }
     @Override
     public TypeCheck visitENewFunc(ENewFunc e) {
-        TypeCheck expressionType = e.e().accept(this);
+        String typeName = e.type().getTypeName();
+        TypeCheck expressionType = resolveType(typeName);
+        TypeCheck argumentType = e.e().accept(this);
 
-        if (expressionType == TypeCheck.ERROR){
+        if (argumentType == TypeCheck.ERROR){
             System.err.println("Constructor call inside New Func failed to type check");
         }
 
@@ -334,7 +336,8 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
 
     @Override
     public TypeCheck visitEMethodCall(EMethodCall e) {
-        String objectName = e.object().getId();
+        String objectName = e.object().getId(); //nn
+        String methodName = e.method().getId(); //native neural network method fx train
         TypeCheck objectType;
 
         if (symbolTable.contains(objectName)) {
@@ -344,7 +347,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
             return TypeCheck.ERROR;
         }
 
-        SymbolTable.MethodSignature sig = symbolTable.getMethod(objectType, objectName);
+        SymbolTable.MethodSignature sig = symbolTable.getMethod(objectType, methodName);
         List<Expression> actualArgs = e.args().elements();
 
         if (sig.paramTypes.size() != actualArgs.size()) {

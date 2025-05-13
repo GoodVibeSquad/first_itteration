@@ -327,20 +327,22 @@ public class ASTBuilder {
 
 
 
-                else if(expressionValue instanceof Token token && token.getType() == TokenType.ID){
-                        Object first = children.getFirst();
-                        Object second = children.get(1);
-                        Object third = children.get(4);
+                else if(expressionValue instanceof Token token && token.getType() == TokenType.ID
+                        && children.get(1) instanceof Token token1 && token1.getType() == TokenType.DOT
+                        &&children.get(4) instanceof Elist){
+                    Object first = children.getFirst();
+                    Object second = children.get(2); //ændret til 2, ellers for den bare en dot som metode navn
+                    Object third = children.get(4);
 
-                        if(first instanceof Token object &&
-                           second instanceof Token method &&
-                           third instanceof Elist args ){
+                    if(first instanceof Token object &&
+                            second instanceof Token method &&
+                            third instanceof Elist args ){
 
-                            return new EMethodCall(new Identifier(object.getValue()), new Identifier(method.getValue()), args);
-                        }else {
-                            System.err.println("Invalid Expression at: " + first);
-                            throw new RuntimeException();
-                        }
+                        return new EMethodCall(new Identifier(object.getValue()), new Identifier(method.getValue()), args);
+                    }else {
+                        System.err.println("Invalid Expression at: " + first);
+                        throw new RuntimeException();
+                    }
                 }
                 else if (children.getFirst() instanceof Token token && token.getType() == TokenType.TYPE){
                         Object first = children.get(2);

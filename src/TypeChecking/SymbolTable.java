@@ -14,9 +14,11 @@ public class SymbolTable {
     private final Map<String, FunctionSignature> functions = new HashMap<>();
     private final Map<TypeCheck, Map<String, MethodSignature>> methods = new HashMap<>();
 
+
     public SymbolTable() {
         // Always start with a global scope
         enterScope();
+        registerNativeMethods();
     }
 
     // Scope handling
@@ -107,6 +109,7 @@ public class SymbolTable {
         }
     }
 
+
     public void declareMethod(TypeCheck type, String methodName, List<TypeCheck> paramTypes, TypeCheck returnType) {
         methods.putIfAbsent(type, new HashMap<>());
         methods.get(type).put(methodName, new MethodSignature(paramTypes, returnType));
@@ -118,5 +121,29 @@ public class SymbolTable {
 
     public MethodSignature getMethod(TypeCheck type, String methodName) {
         return methods.get(type).get(methodName);
+    }
+
+    private void registerNativeMethods() {
+
+        declareMethod(TypeCheck.NEURALNETWORK, "train",
+                List.of(TypeCheck.STRING, TypeCheck.STRING, TypeCheck.INT, TypeCheck.INT, TypeCheck.DOUBLE),
+                TypeCheck.VOID
+        );
+
+        declareMethod(TypeCheck.NEURALNETWORK, "save",
+                List.of(TypeCheck.STRING),
+                TypeCheck.VOID
+        );
+
+        declareMethod(TypeCheck.NEURALNETWORK, "predict",
+                List.of(TypeCheck.STRING, TypeCheck.STRING),
+                TypeCheck.STRING
+        );
+
+        declareMethod(TypeCheck.NEURALNETWORK, "load",
+                List.of(TypeCheck.STRING),
+                TypeCheck.VOID
+        );
+
     }
 }
