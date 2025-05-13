@@ -288,7 +288,7 @@ class NeuralNetwork:
             procent = (1 - dif[0,number])*100
             avrage.append(procent)
             grouped_data[number].append(procent)
-            if (predicted_index == number):
+            if not (predicted_index == number):
                 failed[number].append(procent)
             #print(procent)
         print("average %: ", np.sum(avrage)/len(avrage))
