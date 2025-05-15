@@ -1,10 +1,6 @@
 package TypeChecking;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.util.*;
 
 public class SymbolTable {
     // Stack of scopes (innermost scope is on top)
@@ -14,11 +10,16 @@ public class SymbolTable {
     private final Map<String, FunctionSignature> functions = new HashMap<>();
     private final Map<TypeCheck, Map<String, MethodSignature>> methods = new HashMap<>();
 
+    private final Map<String, TypeCheck> classes = new HashMap<>();
+    private final Map<TypeCheck, List<List<TypeCheck>>> constructors = new HashMap<>();
+
+
 
     public SymbolTable() {
         // Always start with a global scope
         enterScope();
         registerNativeMethods();
+        registerNativeClasses();
     }
 
     // Scope handling
@@ -90,6 +91,8 @@ public class SymbolTable {
         functions.put(name, new FunctionSignature(paramTypes, returnType));
     }
 
+
+
     public boolean isFunction(String name) {
         return functions.containsKey(name);
     }
@@ -123,6 +126,54 @@ public class SymbolTable {
         return methods.get(type).get(methodName);
     }
 
+
+
+    public void declareClass(String className, TypeCheck type) {
+        classes.put(className, type);
+    }
+
+    public void declareConstructor(TypeCheck classType, List<TypeCheck> paramTypes) {
+        constructors.putIfAbsent(classType, new ArrayList<>());
+        constructors.get(classType).add(paramTypes);
+    }
+
+
+
+    public List<List<TypeCheck>> getAllConstructors(TypeCheck classType) {
+        return constructors.getOrDefault(classType, List.of());
+    }
+
+    public Map<String, TypeCheck> getClasses() {
+        return classes;
+    }
+
+    public Boolean hasClass(String key){
+        return classes.containsKey(key);
+    }
+
+
+    private void registerNativeClasses() {
+        declareClass("NeuralNetwork", TypeCheck.NEURALNETWORK);
+        declareClass("Layer", TypeCheck.LAYER);
+        declareClass("ActivationFunction", TypeCheck.ACTIVATIONFUNC);
+
+
+        declareConstructor(TypeCheck.NEURALNETWORK,
+                List.of(TypeCheck.STRING));
+
+        declareConstructor(TypeCheck.NEURALNETWORK,
+                List.of(TypeCheck.LAYER, TypeCheck.LAYER, TypeCheck.LAYER));
+
+        declareConstructor(TypeCheck.LAYER,
+                List.of(TypeCheck.INT));
+
+        declareConstructor(TypeCheck.LAYER,
+                List.of(TypeCheck.INT, TypeCheck.ACTIVATIONFUNC));
+        declareConstructor(TypeCheck.LAYER,
+                List.of(TypeCheck.INT, TypeCheck.INT, TypeCheck.ACTIVATIONFUNC));
+    }
+
+
     private void registerNativeMethods() {
 
         declareMethod(TypeCheck.NEURALNETWORK, "train",
@@ -145,5 +196,14 @@ public class SymbolTable {
                 TypeCheck.VOID
         );
 
+        declareMethod(TypeCheck.ACTIVATIONFUNC,"Relu",
+                List.of(TypeCheck.DOUBLE),
+                TypeCheck.DOUBLE
+        );
+
+        declareMethod(TypeCheck.ACTIVATIONFUNC,"Softmax",
+                List.of(TypeCheck.DOUBLE),
+                TypeCheck.DOUBLE
+        );
     }
 }

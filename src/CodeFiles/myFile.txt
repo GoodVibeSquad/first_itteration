@@ -3,7 +3,7 @@ string input = "1";
 string hidden = "1";
 string output = "1";
 
-NeuralNetwork nn = new NeuralNetwork(input, hidden, output);
+Shabab nn = new Shabab(input, hidden, output);
 
 string path = "hej";
 

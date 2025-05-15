@@ -318,10 +318,11 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
             System.err.println("Constructor call inside New Func failed to type check");
         }
 
-        if(!isConstructableType(expressionType)){
-            System.err.println("New Func does not result in a constructable object type: " + expressionType);
+        if (!symbolTable.hasClass(typeName)){
+            System.err.println("Not a valid class");
             return TypeCheck.ERROR;
         }
+
 
         return expressionType;
     }
