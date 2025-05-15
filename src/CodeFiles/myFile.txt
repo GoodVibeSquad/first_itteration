@@ -1,9 +1,5 @@
-
-
-ActivationFunction activation = new ActivationFunction();
-
 Layer input = new Layer(784);
-Layer hidden = new Layer(5, 130, activation.relu(123));
+Layer hidden = new Layer(5, 130);
 Layer output = new Layer(10);
 
 NeuralNetwork nn = new NeuralNetwork(input, hidden, output);
@@ -11,7 +7,6 @@ NeuralNetwork nn = new NeuralNetwork(input, hidden, output);
 string path = "hej";
 
 nn.save(path);
-=======
-ActivationFunc.Relu(8);
+
 
 
