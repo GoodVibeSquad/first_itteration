@@ -382,39 +382,9 @@ class NeuralNetwork:
         self.printPredictions(validation_set,images_array)
 
 
+
+
 ##### NEURAL NETWORK STUFF
-# Layer needs to take the width- of a matrix and the height of a matrix
-# We imagine the images to be 28px * 28px images such as Mnist dataset
-# This creates a vector with 784 columns and 1 row
 
-# The input layer contains the data
-# The output is automatically matched with the neuron size of the hidden layers
-input = Layer(28*28)
-
-# 5 Hidden layers (5 Columns)
-# Each layer has 130 neurons (Rows)
-# Activation function is a given activation function such as Relu
-hidden_layers = Layer(5, 130, Relu)
-
-
-
-# 10 Classifications (0-9) Output size is 10
-# Activation function is a given activation function such as Relu
-output = Layer(10, Softmax)
-
-nn = NeuralNetwork(input,hidden_layers,output)
-
-# Source directory
-dirname = os.path.dirname(__file__)
-
-#### TODO:
-# When we get further make it so users can manually insert filepath as a string
-# In the native code
-
-# Get path for a given image in root
-mnist_directory = os.path.join(dirname, 'Mnist')
-
-
-nn.train(mnist_directory, ".png", 20, 70, 0.01)
-
-nn.save("saved_model.pkl")
+nn = NeuralNetwork("saved_model.pkl")
+prediction = nn.predict(r"D:\SW4\P4\first_itteration\Mnist\5\23.png",".png")

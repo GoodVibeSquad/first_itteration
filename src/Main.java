@@ -65,6 +65,7 @@ public class Main {
         symbols.clear();
 
         CodeGenerator generator = new CodeGenerator(slist);
+
         generator.generate();
     }
 
