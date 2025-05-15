@@ -3,6 +3,7 @@ package TypeChecking;
 import Ast.*;
 import Tokens.Token;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
@@ -313,9 +314,31 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         String typeName = e.type().getTypeName();
         TypeCheck expressionType = resolveType(typeName);
         TypeCheck argumentType = e.e().accept(this);
+        List<Expression> args = e.e().elements();
+        List<TypeCheck> argTypes = new ArrayList<>();
 
         if (argumentType == TypeCheck.ERROR){
             System.err.println("Constructor call inside New Func failed to type check");
+        }
+
+        for (List<TypeCheck> expected : symbolTable.getAllConstructors(expressionType)){
+            if (expected.size() != argTypes.size()) continue;
+
+            boolean match = true;
+            for (int i = 0; i < expected.size(); i++) {
+                if (expected.get(i) != argTypes.get(i)) {
+                    match = false;
+                    break;
+                }
+            }
+
+            if (match) {
+                return expressionType;
+            }else {
+                System.err.println("Constructor for " + typeName + " does not match arguments: " + expressionType);
+                return TypeCheck.ERROR;
+            }
+
         }
 
         if (!symbolTable.hasClass(typeName)){

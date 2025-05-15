@@ -91,8 +91,6 @@ public class SymbolTable {
         functions.put(name, new FunctionSignature(paramTypes, returnType));
     }
 
-
-
     public boolean isFunction(String name) {
         return functions.containsKey(name);
     }
@@ -126,8 +124,6 @@ public class SymbolTable {
         return methods.get(type).get(methodName);
     }
 
-
-
     public void declareClass(String className, TypeCheck type) {
         classes.put(className, type);
     }
@@ -136,8 +132,6 @@ public class SymbolTable {
         constructors.putIfAbsent(classType, new ArrayList<>());
         constructors.get(classType).add(paramTypes);
     }
-
-
 
     public List<List<TypeCheck>> getAllConstructors(TypeCheck classType) {
         return constructors.getOrDefault(classType, List.of());
@@ -151,12 +145,10 @@ public class SymbolTable {
         return classes.containsKey(key);
     }
 
-
     private void registerNativeClasses() {
         declareClass("NeuralNetwork", TypeCheck.NEURALNETWORK);
         declareClass("Layer", TypeCheck.LAYER);
         declareClass("ActivationFunction", TypeCheck.ACTIVATIONFUNC);
-
 
         declareConstructor(TypeCheck.NEURALNETWORK,
                 List.of(TypeCheck.STRING));
@@ -169,10 +161,10 @@ public class SymbolTable {
 
         declareConstructor(TypeCheck.LAYER,
                 List.of(TypeCheck.INT, TypeCheck.ACTIVATIONFUNC));
+
         declareConstructor(TypeCheck.LAYER,
                 List.of(TypeCheck.INT, TypeCheck.INT, TypeCheck.ACTIVATIONFUNC));
     }
-
 
     private void registerNativeMethods() {
 

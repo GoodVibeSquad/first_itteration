@@ -1,9 +1,11 @@
 
-string input = "1";
-string hidden = "1";
-string output = "1";
+ActivationFunction activation = new ActivationFunction();
 
-Shabab nn = new Shabab(input, hidden, output);
+Layer input = new Layer(784);
+Layer hidden = new Layer(5, 130, activation.relu(123));
+Layer output = new Layer(10);
+
+NeuralNetwork nn = new NeuralNetwork(input, hidden, output);
 
 string path = "hej";
 
