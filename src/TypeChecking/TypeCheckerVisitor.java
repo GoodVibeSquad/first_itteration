@@ -312,42 +312,41 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     @Override
     public TypeCheck visitENewFunc(ENewFunc e) {
         String typeName = e.type().getTypeName();
-        TypeCheck expressionType = resolveType(typeName);
-        TypeCheck argumentType = e.e().accept(this);
-        List<Expression> args = e.e().elements();
-        List<TypeCheck> argTypes = new ArrayList<>();
+        TypeCheck classType = resolveType(typeName);
 
-        if (argumentType == TypeCheck.ERROR){
-            System.err.println("Constructor call inside New Func failed to type check");
+
+        if (!symbolTable.hasClass(typeName)) {
+            System.err.println("Type '" + typeName + "' is not a valid class.");
+            return TypeCheck.ERROR;
         }
 
-        for (List<TypeCheck> expected : symbolTable.getAllConstructors(expressionType)){
-            if (expected.size() != argTypes.size()) continue;
+        // Get argument expressions and resolve their types
+        List<TypeCheck> argTypes = new ArrayList<>();
+        for (Expression argExpr : e.e().elements()) {
+            TypeCheck argType = argExpr.accept(this);
+            argTypes.add(argType);
+        }
+
+        // Try to match against any declared constructor
+        for (List<TypeCheck> expectedTypes : symbolTable.getAllConstructors(classType)) {
+            if (expectedTypes.size() != argTypes.size()) continue;
 
             boolean match = true;
-            for (int i = 0; i < expected.size(); i++) {
-                if (expected.get(i) != argTypes.get(i)) {
+            for (int i = 0; i < expectedTypes.size(); i++) {
+                if (expectedTypes.get(i) != argTypes.get(i)) {
                     match = false;
                     break;
                 }
             }
 
             if (match) {
-                return expressionType;
-            }else {
-                System.err.println("Constructor for " + typeName + " does not match arguments: " + expressionType);
-                return TypeCheck.ERROR;
+                return classType;
             }
-
         }
 
-        if (!symbolTable.hasClass(typeName)){
-            System.err.println("Not a valid class");
-            return TypeCheck.ERROR;
-        }
-
-
-        return expressionType;
+        System.err.println("No matching constructor for class '" + typeName +
+                "' with argument types: " + argTypes);
+        return TypeCheck.ERROR;
     }
 
 
@@ -491,7 +490,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
             if (declaredType != exprType) {
                 // Allow INT -> DOUBLE assignment
                 if (declaredType == TypeCheck.DOUBLE && exprType == TypeCheck.INT) {
-                    return TypeCheck.VOID; // allowed promotion ✅
+                    return TypeCheck.VOID;
                 }
 
                 System.err.println("Type mismatch in assignment to " + varName +
@@ -559,7 +558,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         if (s.update() != null) {
             TypeCheck iterateType = s.update().accept(this);
             if (iterateType == TypeCheck.ERROR) {
-                System.err.println("Error in for loop update: " + s.var().getId() + " 😒");
+                System.err.println("Error in for loop update: " + s.var().getId());
                 return TypeCheck.ERROR;
             }
         }
@@ -683,7 +682,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
 
         symbolTable.declareFunction(d.name().getId(), paramTypes, TypeCheck.VOID);
 
-        symbolTable.enterScope(); // 🔥 enter function scope
+        symbolTable.enterScope();
 
         for (Parameter param : d.params()) {
             String paramName = param.name().getId();
@@ -697,7 +696,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
 
         TypeCheck bodyType = d.body().accept(this);
 
-        symbolTable.exitScope(); // 🔥 exit function scope
+        symbolTable.exitScope();
 
         if (bodyType == TypeCheck.ERROR) {
             System.err.println("Error in body of function: " + d.name().getId());

@@ -1,0 +1,8 @@
+{
+    Layer l1 = new Layer(10);
+    Layer l2 = new Layer(10, 3, "Relu");
+    Layer l3 = new Layer(10, "Softmax");
+    NeuralNetwork nn = new NeuralNetwork(l1, l2, l3);
+    print("constructed");
+}
+

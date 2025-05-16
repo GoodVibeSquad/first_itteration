@@ -58,15 +58,18 @@ public class Main {
         // System.out.println("Total number of tokens: " + tokens.size());
         SymbolTable symbols = new SymbolTable();
 
-
         TypeCheckerVisitor typeVisitor = new TypeCheckerVisitor(symbols);
         TypeCheck result = slist.accept(typeVisitor);
         System.out.println("type check result: " + result);
+        if (result == TypeCheck.ERROR) {
+            throw new RuntimeException("Type checking failed");
+        }
         symbols.clear();
 
         CodeGenerator generator = new CodeGenerator(slist);
 
-        generator.generate();
+        String dirName = "pythonKode.py";
+        generator.generate(dirName);
     }
 
 }

@@ -179,38 +179,8 @@ while (count < 3) {
 }
 ```
 
-## Testing Statements
-```
-int x = 0;
-if(true) {
-x = 5;          //also makes an sblock
-} else{
-x=8;
-}
-
-for (int x = 0; x < 10; i++;) {
-    x++;
-    break;
-    
-}
-
-for (int x = 0; x < 10; i++;) {
-    x++;
-    continue; 
-    
-}
-
-------------------------------
-Skal diskuteres
-while x < 10 x++;
-------------------------------
 
 
-
-for (int x = 0; x < 10; i++;) {
-//should produce an error 
-}
-```
 
 
 

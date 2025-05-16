@@ -1,0 +1,4 @@
+{
+    bool cond = true;
+    int x = cond ? 1 : "hello";
+}

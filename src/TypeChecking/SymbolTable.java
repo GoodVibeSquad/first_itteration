@@ -4,7 +4,7 @@ import java.util.*;
 
 public class SymbolTable {
     // Stack of scopes (innermost scope is on top)
-    private final Deque<Map<String, TypeCheck>> scopes = new ArrayDeque<>();
+    private final Stack<Map<String, TypeCheck>> scopes = new Stack<>();
 
     // Functions and methods are global
     private final Map<String, FunctionSignature> functions = new HashMap<>();
@@ -150,8 +150,6 @@ public class SymbolTable {
         declareClass("Layer", TypeCheck.LAYER);
         declareClass("ActivationFunction", TypeCheck.ACTIVATIONFUNC);
 
-        declareConstructor(TypeCheck.NEURALNETWORK,
-                List.of(TypeCheck.STRING));
 
         declareConstructor(TypeCheck.NEURALNETWORK,
                 List.of(TypeCheck.LAYER, TypeCheck.LAYER, TypeCheck.LAYER));
@@ -160,10 +158,10 @@ public class SymbolTable {
                 List.of(TypeCheck.INT));
 
         declareConstructor(TypeCheck.LAYER,
-                List.of(TypeCheck.INT, TypeCheck.ACTIVATIONFUNC));
+                List.of(TypeCheck.INT, TypeCheck.STRING));
 
         declareConstructor(TypeCheck.LAYER,
-                List.of(TypeCheck.INT, TypeCheck.INT, TypeCheck.ACTIVATIONFUNC));
+                List.of(TypeCheck.INT, TypeCheck.INT, TypeCheck.STRING));
     }
 
     private void registerNativeMethods() {
@@ -197,5 +195,6 @@ public class SymbolTable {
                 List.of(TypeCheck.DOUBLE),
                 TypeCheck.DOUBLE
         );
+
     }
 }

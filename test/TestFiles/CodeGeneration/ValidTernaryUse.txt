@@ -1,0 +1,5 @@
+{
+    bool cond = true;
+    int x = cond ? 1 : 2;
+    print(x);
+}
