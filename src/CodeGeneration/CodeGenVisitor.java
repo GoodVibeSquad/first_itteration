@@ -2,6 +2,9 @@ package CodeGeneration;
 
 import Ast.*;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.SimpleFormatter;
 
@@ -31,11 +34,24 @@ public class CodeGenVisitor implements AstVisitor<Void> {
     private void applyBaseCode() {
         output.append("import math\n");
 
+        String neuralNetworkClasses = readBaseCode();
+        output.append(neuralNetworkClasses+ "\n# BASECODE DONE \n\n");
+
         // Run with python pythonKode.py
         // Test print functions since they don't work yet:
 //        print(piNum + eulerNum)
 //        print(myBool)
 //        print(y)
+    }
+
+    public String readBaseCode(){
+        String filePath = "NativeNeuralNetwork.py";
+        try {
+            return new String(Files.readAllBytes(Paths.get(filePath)));
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+        return null;
     }
 
 
