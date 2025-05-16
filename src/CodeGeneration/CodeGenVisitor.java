@@ -210,6 +210,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         e.condition().accept(this);
         output.append(" else ");
         e.falseExpr().accept(this);
+        output.append(")");
         return null;
     }
 
@@ -380,10 +381,9 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         if (s.init() instanceof SDeclaration decl) {
             initId = decl.var().getId();  // Får navnet først
         }
-        output.append(indent()).append("del ").append(initId).append("\n");
         exitScope();
 
-        scopeStack.peek().remove(initId); //Vi skal manuelt slette update værdien fordi vi initialiserer den ikke i den samme scope vi sletter den i
+        output.append(indent()).append("del ").append(initId).append("\n");
 
         return null;
     }
