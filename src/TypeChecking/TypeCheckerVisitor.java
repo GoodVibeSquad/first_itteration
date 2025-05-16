@@ -3,6 +3,7 @@ package TypeChecking;
 import Ast.*;
 import Tokens.Token;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
@@ -310,16 +311,41 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     }
     @Override
     public TypeCheck visitENewFunc(ENewFunc e) {
-        TypeCheck expressionType = e.e().accept(this);
+        String typeName = e.type().getTypeName();
+        TypeCheck expressionType = resolveType(typeName);
+        TypeCheck argumentType = e.e().accept(this);
+        List<Expression> args = e.e().elements();
+        List<TypeCheck> argTypes = new ArrayList<>();
 
-        if (expressionType == TypeCheck.ERROR){
+        if (argumentType == TypeCheck.ERROR){
             System.err.println("Constructor call inside New Func failed to type check");
         }
 
-        if(!isConstructableType(expressionType)){
-            System.err.println("New Func does not result in a constructable object type: " + expressionType);
+        for (List<TypeCheck> expected : symbolTable.getAllConstructors(expressionType)){
+            if (expected.size() != argTypes.size()) continue;
+
+            boolean match = true;
+            for (int i = 0; i < expected.size(); i++) {
+                if (expected.get(i) != argTypes.get(i)) {
+                    match = false;
+                    break;
+                }
+            }
+
+            if (match) {
+                return expressionType;
+            }else {
+                System.err.println("Constructor for " + typeName + " does not match arguments: " + expressionType);
+                return TypeCheck.ERROR;
+            }
+
+        }
+
+        if (!symbolTable.hasClass(typeName)){
+            System.err.println("Not a valid class");
             return TypeCheck.ERROR;
         }
+
 
         return expressionType;
     }
@@ -334,7 +360,8 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
 
     @Override
     public TypeCheck visitEMethodCall(EMethodCall e) {
-        String objectName = e.object().getId();
+        String objectName = e.object().getId(); //nn
+        String methodName = e.method().getId(); //native neural network method fx train
         TypeCheck objectType;
 
         if (symbolTable.contains(objectName)) {
@@ -344,7 +371,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
             return TypeCheck.ERROR;
         }
 
-        SymbolTable.MethodSignature sig = symbolTable.getMethod(objectType, objectName);
+        SymbolTable.MethodSignature sig = symbolTable.getMethod(objectType, methodName);
         List<Expression> actualArgs = e.args().elements();
 
         if (sig.paramTypes.size() != actualArgs.size()) {
@@ -623,6 +650,11 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         }
 
         return TypeCheck.VOID;
+    }
+
+    @Override
+    public TypeCheck visitSReturn(SReturn s) {
+        return null;
     }
 
     @Override

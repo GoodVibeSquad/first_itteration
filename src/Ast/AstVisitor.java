@@ -40,6 +40,7 @@ package Ast;
     R visitSContinue(SContinue s);
     R visitSlist(Slist slist);
     R visitSInDeCrement(SInDeCrement sInDeCrement);
+    R visitSReturn(SReturn s);
 
     //function definition
     R visitSFunction(SFunction sFunction);

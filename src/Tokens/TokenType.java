@@ -51,14 +51,12 @@ public enum TokenType{
     MUL_ASSIGN("*="),
     MOD_ASSIGN("%="),
     NEW("new"),
-    THIS("This"),
     SUM("Sum"),
     SQUARE_ROOT("Sqrt"),
     EULER("E"),
     PI("PI"),
     EXPONENT("^"),
     MAX("Max"),
-    RELU("Relu"),
     EOF("EOF");
 
 
