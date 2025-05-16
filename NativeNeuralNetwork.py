@@ -185,10 +185,6 @@ class NeuralNetwork:
 
             # Updates the current input and moves forward in neural network
             current_input = current_activation
-
-        # Applies output activation function after weighted sum is finished (1st index)
-        output_activation = self.activation_functions[1].run(current_input)
-        activations.append(output_activation)
         return activations
 
 #        print("Output activation: ", output_activation)
@@ -235,23 +231,24 @@ class NeuralNetwork:
         error = []
         delta = []
 
-        #softmax stuff
+        #origin
         error_output = correct_answer - activations[-1]
         error.append(error_output)
-        delta.append(error_output)
+        delta.append(error_output * self.activation_functions[0].derivative(activations[-1]))
 
-        for i in reversed(range(len(activations)-2)):
-            error.append(np.dot(delta[-1],self.weights_array[i+1].T))
-            delta.append(error[-1] * Relu.derivative(activations[i]))
+        for i in reversed(range(len(activations))):
+            if i == 0:
+                break
+            error.append(np.dot(delta[-1],self.weights_array[i].T))
+            delta.append(error[-1] * self.activation_functions[0].derivative(activations[i-1]))
         #delta is created from end to start
         delta.reverse()
         for i in range(len(self.weights_array)):
-            if(i<=0):
-                tempVar = np.dot(image.T, delta[i])
-                self.weights_array[i] += learningRate * tempVar
-                self.bias[i] += learningRate * delta[i]
-                break
-            tempVar = np.dot(activations[i].T, delta[i])
+            if i == 0:
+                input_to_layer = image
+            else:
+                input_to_layer = activations[i-1]
+            tempVar = np.dot(input_to_layer.T, delta[i])
             self.weights_array[i] += learningRate * tempVar
             self.bias[i] += learningRate * delta[i]
 
@@ -394,20 +391,20 @@ class NeuralNetwork:
 
 # The input layer contains the data
 # The output is automatically matched with the neuron size of the hidden layers
-#input = Layer(28*28)
+input = Layer(28*28)
 
 # 5 Hidden layers (5 Columns)
 # Each layer has 130 neurons (Rows)
 # Activation function is a given activation function such as Relu
-#hidden_layers = Layer(5, 130, Relu)
+hidden_layers = Layer(5, 130, "Relu")
 
 
 
 # 10 Classifications (0-9) Output size is 10
 # Activation function is a given activation function such as Relu
-#output = Layer(10, Softmax)
+output = Layer(10, "Softmax")
 
-#nn = NeuralNetwork(input,hidden_layers,output)
+nn = NeuralNetwork(input,hidden_layers,output)
 
 # Source directory
 
@@ -419,6 +416,6 @@ class NeuralNetwork:
 
 
 
-#nn.train(mnist_directory, ".png", 20, 70, 0.01)
+nn.train("mnist_example", ".png", 5, 70, 0.01)
 
-#nn.save("saved_model.pkl")
+nn.save("saved_model.pkl")
