@@ -37,11 +37,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         String neuralNetworkClasses = readBaseCode();
         output.append(neuralNetworkClasses+ "\n# BASECODE DONE \n\n");
 
-        // Run with python pythonKode.py
-        // Test print functions since they don't work yet:
-//        print(piNum + eulerNum)
-//        print(myBool)
-//        print(y)
+
     }
 
     public String readBaseCode(){

@@ -5,7 +5,7 @@ import Tokens.TokenType;
 public enum Type {
     NEURALNETWORK(TokenType.TYPE, "NeuralNetwork"),
     LAYER(TokenType.TYPE, "Layer"),
-    ACTIVATIONFUNC(TokenType.TYPE, "ActivationFunc"),
+    ACTIVATIONFUNCTION(TokenType.TYPE, "ActivationFunction"),
     ARRAY(TokenType.TYPE, "Array"),
     STRING(TokenType.STRING, "String"),
     INT(TokenType.INT, "int"),

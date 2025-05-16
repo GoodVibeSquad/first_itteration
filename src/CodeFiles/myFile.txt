@@ -1,12 +1,13 @@
+
+
 Layer input = new Layer(784);
-Layer hidden = new Layer(5, 130);
-Layer output = new Layer(10);
+Layer hidden = new Layer(5, 130,"Relu");
+Layer output = new Layer(10,"Softmax");
 
 NeuralNetwork nn = new NeuralNetwork(input, hidden, output);
 
-string path = "hej";
+nn.train("mnist_example", ".png", 20, 70, 0.01);
 
-nn.save(path);
 
 
 

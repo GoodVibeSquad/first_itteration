@@ -9,6 +9,7 @@ import pickle
 
 
 # ACTIVATION FUNCTION INFO
+
 class activationFunction:
     def run(x):
         return x
@@ -45,7 +46,7 @@ class Layer:
         # For output layer
         elif len(args) == 2:
             self.output_size = args[0]
-            self.activation_function = args[1]
+            self.activation_function = globals()[args[1]]
 
         # For multiple hidden layers
         # Amount is how many hidden layers there are
@@ -53,7 +54,7 @@ class Layer:
         elif len(args) == 3:
             self.amount = args[0]
             self.size = args[1]
-            self.activation_function = args[2]
+            self.activation_function = globals()[args[2]]
 
         else:
             raise ValueError(
@@ -346,7 +347,15 @@ class NeuralNetwork:
 
     def train(self, path, datatype, epochs, test_percentage, learningRate):
         # Call forward pass n times for neural network
-        images_array = self.init_data(path,datatype)
+        if not os.path.exists(path):
+            if path == "mnist_example":
+                dirname = os.path.dirname(__file__)
+                mnist_example = os.path.join(dirname, 'Mnist')
+                images_array = self.init_data(mnist_example, datatype)
+            else:
+                raise ValueError(f"Path {path} does not exist.")
+        else:
+            images_array = self.init_data(path,datatype)
         training_set = []
         validation_set = []
         # random selction of images
@@ -385,32 +394,31 @@ class NeuralNetwork:
 
 # The input layer contains the data
 # The output is automatically matched with the neuron size of the hidden layers
-input = Layer(28*28)
+#input = Layer(28*28)
 
 # 5 Hidden layers (5 Columns)
 # Each layer has 130 neurons (Rows)
 # Activation function is a given activation function such as Relu
-hidden_layers = Layer(5, 130, Relu)
+#hidden_layers = Layer(5, 130, Relu)
 
 
 
 # 10 Classifications (0-9) Output size is 10
 # Activation function is a given activation function such as Relu
-output = Layer(10, Softmax)
+#output = Layer(10, Softmax)
 
-nn = NeuralNetwork(input,hidden_layers,output)
+#nn = NeuralNetwork(input,hidden_layers,output)
 
 # Source directory
-dirname = os.path.dirname(__file__)
 
 #### TODO:
 # When we get further make it so users can manually insert filepath as a string
 # In the native code
 
 # Get path for a given image in root
-mnist_directory = os.path.join(dirname, 'Mnist')
 
 
-nn.train(mnist_directory, ".png", 20, 70, 0.01)
 
-nn.save("saved_model.pkl")
+#nn.train(mnist_directory, ".png", 20, 70, 0.01)
+
+#nn.save("saved_model.pkl")
