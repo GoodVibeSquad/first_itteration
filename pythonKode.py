@@ -163,12 +163,11 @@ class NeuralNetwork:
         return weights
 
 
-    def forwardPass(self, data, i, x):
-        weighted_sums = []
+    def forwardPass(self, data, subfolder, subfolder_index_image):
         activations = []
 
         # Initialize the current input to be the initialized data
-        current_input = (data[i])[x]
+        current_input = (data[subfolder])[subfolder_index_image]
 
         # Calculates weighted sum for everything except output
         for i in range(self.hidden_layers.amount + 1):
@@ -178,7 +177,6 @@ class NeuralNetwork:
             # Calculates weighted sum and adds it to weighted sum array
             # print("Weight ", i, ": ", self.weights_array[i])
             current_weighted_sum = np.dot(current_input, self.weights_array[i]) + self.bias[i]
-            weighted_sums.append(current_weighted_sum)
 
             # Runs the activation function for Hidden layers (Found at 0th index)
             current_activation = self.activation_functions[0].run(current_weighted_sum)
@@ -432,4 +430,4 @@ nn = NeuralNetwork(input, hidden, output)
 nn.train("mnist_example", ".png", 20, 70, 0.01)
 nn.save("mnist_example.pkl")
 nn2 = NeuralNetwork("mnist_example.pkl")
-nn2.predict("C:/Users/phili/Documents/GitHub/first_itteration/Mnist/3/32.png", ".png")
+nn2.predict("C:/Users/peter/Desktop/first_itteration/Mnist/9/118.png", ".png")
