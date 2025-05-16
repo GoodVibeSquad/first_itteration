@@ -185,7 +185,7 @@ class NeuralNetwork:
 
             # Updates the current input and moves forward in neural network
             current_input = current_activation
-        return activations
+        return activations, weighted_sums
 
 #        print("Output activation: ", output_activation)
 
@@ -378,7 +378,7 @@ class NeuralNetwork:
 
         for _ in range(epochs):
             for x in range(len(training_set)):
-                activations = self.forwardPass(images_array,training_set[x][0], training_set[x][1])
+                activations, weighted_sums = self.forwardPass(images_array,training_set[x][0], training_set[x][1])
                 self.backPropagate(activations, training_set[x][0],learningRate, images_array[training_set[x][0]][training_set[x][1]])
 
         self.printPredictions(validation_set,images_array)
