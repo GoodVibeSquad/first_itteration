@@ -328,9 +328,8 @@ public class ASTBuilder {
                     }
                 }
 
-//                grammar.add("expression", "ID","DOT","ID","OPEN_PARENTHESIS","expr_list","CLOSED_PARENTHESIS");
-//                grammar.add("expression", "TYPE","DOT","ID","OPEN_PARENTHESIS","expr_list","CLOSED_PARENTHESIS");
-                //Tilføjet ekstra checking fordi tror den conflicter med funcCall ??
+
+
                 else if(expressionValue instanceof Token token && token.getType() == TokenType.ID
                         && children.get(1) instanceof Token token1 && token1.getType() == TokenType.DOT
                         &&children.get(4) instanceof Elist){
@@ -348,28 +347,7 @@ public class ASTBuilder {
                             throw new RuntimeException();
                         }
                 }
-//                DENNE CASE VIRKER IKKE HVORFOR ER DER 2 CASES??? SKAL VI SLETTE DEN????
-//                else if (children.getFirst() instanceof Token token && token.getType() == TokenType.TYPE){
-//                        Object first = children.get(2);
-//                        Object second = children.get(4);
-//
-//                        /*
-//                        Also needs to save the type
-//                         */
-//
-//                   //int add();
-//                        if(first instanceof Token id &&
-//                           second instanceof Elist args ){
-//
-//                            System.out.println("E funccall YYEEEESSS: " + id.getValue() + " " + token.getValue());
-//                           // return new EFuncCall(new Identifier(id.getValue(), String.valueOf(token.getType()) ),args);
-//
-//                            return new EFuncCall(new Identifier(id.getValue(), token.getValue()),args);
-//                        } else {
-//                            System.err.println("Invalid Expression at: " + first);
-//                            throw new RuntimeException();
-//                        }
-//                }
+
             }
             case "expr_list" -> {
                 if(children.size() == 1){

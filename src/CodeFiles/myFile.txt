@@ -1,2 +1,12 @@
-ActivationFunc.Relu(8);
+Layer input = new Layer(784);
+Layer hidden = new Layer(5, 130);
+Layer output = new Layer(10);
+
+NeuralNetwork nn = new NeuralNetwork(input, hidden, output);
+
+string path = "hej";
+
+nn.save(path);
+
+
 

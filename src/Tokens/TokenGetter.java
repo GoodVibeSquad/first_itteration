@@ -44,7 +44,6 @@ public class TokenGetter {
         while ((token = this.lexer.tokenize()).getType() != TokenType.EOF) {
             tokens.add(token);
         }
-        // tokens.add(new Token(TokenType.EOF, "EOF"));
     }
 
     public List<Token> getTokens(){
