@@ -8,6 +8,10 @@ NeuralNetwork nn = new NeuralNetwork(input, hidden, output);
 
 nn.train("mnist_example", ".png", 20, 70, 0.01);
 
+nn.save("mnist_example.pkl");
+
+NeuralNetwork nn2 = new NeuralNetwork("mnist_example.pkl");
+nn2.predict("C:/Users/phili/Documents/GitHub/first_itteration/Mnist/3/32.png", ".png");
 
 
 

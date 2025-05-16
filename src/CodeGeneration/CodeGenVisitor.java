@@ -279,6 +279,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         output.append(e.object().getId()).append(".").append(e.method().getId()).append("(");
         e.args().accept(this);
         output.append(")");
+
         return null;
 
     }
@@ -389,11 +390,14 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
     @Override
     public Void visitSExpression(SExpression s) {
-        s.value().accept(this);
+
 
         // Handles variable declaration with initialized value of 0
         if (s.value() instanceof Eidentifier) {
             output.append("=0\n");
+        } else{
+            s.value().accept(this);
+            output.append("\n");
         }
 
         return null;
