@@ -250,7 +250,7 @@ class NeuralNetwork:
                 input_to_layer = activations[i-1]
             tempVar = np.dot(input_to_layer.T, delta[i])
             self.weights_array[i] += learningRate * tempVar
-            self.bias[i] += learningRate * delta[i]
+            self.bias[i] += learningRate * np.sum(delta[i], axis=0, keepdims=True)
 
 
     def printPredictions(self, validationSet,images_array):
@@ -289,10 +289,6 @@ class NeuralNetwork:
             if not (predicted_index == number):
                 failed[number].append(procent)
 
-        print("average %: ", np.sum(avrage)/len(avrage))
-        avrageprocent = {number: sum(percentages) / len(percentages) for number, percentages in grouped_data.items()}
-        for number in avrageprocent:
-            print("classification: ", self.classification[number], "percentage: ", avrageprocent[number])
 
         print("\nfailed: ", sum(len(v) for v in failed.values()), " out of", len(avrage))
         for number in failed:
