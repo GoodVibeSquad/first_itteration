@@ -156,14 +156,13 @@ class NeuralNetwork:
 
         # Generating weights between last layer(output) and
         # the second to last layer, which is a hidden layer.
-        output_weights = np.random.rand(self.hidden_layers.size, self.output.output_size)
+        output_weights = np.random.rand(self.hidden_layers.size, self.output.output_size) * np.sqrt(2. / self.hidden_layers.size)
         weights.append(output_weights)
 
         return weights
 
 
     def forwardPass(self, data, i, x):
-        weighted_sums = []
         activations = []
 
         # Initialize the current input to be the initialized data
@@ -177,7 +176,6 @@ class NeuralNetwork:
             # Calculates weighted sum and adds it to weighted sum array
             # print("Weight ", i, ": ", self.weights_array[i])
             current_weighted_sum = np.dot(current_input, self.weights_array[i]) + self.bias[i]
-            weighted_sums.append(current_weighted_sum)
 
             # Runs the activation function for Hidden layers (Found at 0th index)
             current_activation = self.activation_functions[0].run(current_weighted_sum)
@@ -185,7 +183,7 @@ class NeuralNetwork:
 
             # Updates the current input and moves forward in neural network
             current_input = current_activation
-        return activations, weighted_sums
+        return activations
 
 #        print("Output activation: ", output_activation)
 
@@ -225,31 +223,31 @@ class NeuralNetwork:
 
         return images_array
 
-    def backPropagate(self, activations,correct_label, learningRate, image):
-        correct_answer = np.zeros(10)
-        correct_answer[correct_label] = 1
-        error = []
+    def backPropagate(self, activations, correct_label, learningRate, image):
+        correct_answer = np.zeros((1, self.output.output_size))
+        correct_answer[0, correct_label] = 1
+
         delta = []
 
-        #origin
-        error_output = correct_answer - activations[-1]
-        error.append(error_output)
-        delta.append(error_output * self.activation_functions[0].derivative(activations[-1]))
+        # Output layer gradient (Softmax + Cross-Entropy)
+        error_output =  correct_answer - activations[-1]
+        delta.append(error_output)
 
-        for i in reversed(range(len(activations))):
-            if i == 0:
-                break
-            error.append(np.dot(delta[-1],self.weights_array[i].T))
-            delta.append(error[-1] * self.activation_functions[0].derivative(activations[i-1]))
-        #delta is created from end to start
+        # Hidden layers: from last hidden to first hidden
+        for i in reversed(range(len(self.weights_array) - 1)):
+            d_activation = self.activation_functions[0].derivative(activations[i])
+            d = np.dot(delta[-1], self.weights_array[i + 1].T) * d_activation
+            delta.append(d)
+
         delta.reverse()
+
+        # Weight and bias updates
         for i in range(len(self.weights_array)):
             if i == 0:
                 input_to_layer = image
             else:
-                input_to_layer = activations[i-1]
-            tempVar = np.dot(input_to_layer.T, delta[i])
-            self.weights_array[i] += learningRate * tempVar
+                input_to_layer = activations[i - 1]
+            self.weights_array[i] += learningRate * np.dot(input_to_layer.T, delta[i])
             self.bias[i] += learningRate * np.sum(delta[i], axis=0, keepdims=True)
 
 
@@ -288,8 +286,8 @@ class NeuralNetwork:
             grouped_data[number].append(procent)
             if not (predicted_index == number):
                 failed[number].append(procent)
-
-
+        
+        print("Acuracy: ", (len(avrage) - sum(len(v) for v in failed.values()))/len(avrage) * 100)
         print("\nfailed: ", sum(len(v) for v in failed.values()), " out of", len(avrage))
         for number in failed:
             print("classification: ", self.classification[number], "\n \t", len(failed[number]), " out of ", len(grouped_data[number]))
@@ -374,8 +372,8 @@ class NeuralNetwork:
 
         for _ in range(epochs):
             for x in range(len(training_set)):
-                activations, weighted_sums = self.forwardPass(images_array,training_set[x][0], training_set[x][1])
-                self.backPropagate(activations, training_set[x][0],learningRate, images_array[training_set[x][0]][training_set[x][1]])
+                activations = self.forwardPass(images_array,training_set[x][0], training_set[x][1])
+                self.backPropagate(activations, weighted_sums, training_set[x][0],learningRate, images_array[training_set[x][0]][training_set[x][1]])   
 
         self.printPredictions(validation_set,images_array)
 
@@ -412,6 +410,6 @@ nn = NeuralNetwork(input,hidden_layers,output)
 
 
 
-nn.train("mnist_example", ".png", 5, 70, 0.01)
+nn.train("mnist_example", ".png", 20, 70, 0.001)
 
 nn.save("saved_model.pkl")
