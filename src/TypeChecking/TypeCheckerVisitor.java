@@ -657,23 +657,85 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     }
 
     @Override
-    public TypeCheck visitSFunction(SFunction s) {
+    public TypeCheck visitSFunction(SFunction sFunction) {
 
+        //starter med functionidentifier delen af SFunction, hvor vi tjekker dens returtype, navn, og parametre
+        FunctionIdentifier f = sFunction.functionIdentifier();
+
+        String funcName = f.var().getId();         // fx "add"
+        String returnTypeStr = f.var().getType();  // fx "int"
+        TypeCheck returnType = resolveType(returnTypeStr);
+
+        //hvis returtype er ugyldig, så fejl
+        if (returnType == TypeCheck.ERROR) {
+            System.err.println("Unknown return type for function '" + funcName + "': " + returnTypeStr);
+            return TypeCheck.ERROR;
+        }
+
+        // === Parametre ===
+        //her opretter vi en liste til typerne i parameterlisten
+        List<TypeCheck> paramTypes = new ArrayList<>();
+        for (Expression p : f.params().elements()) {
+            if (p instanceof Eidentifier e) {
+                //hvis mangler type så returnerer den fejl
+                String paramTypeStr = e.name().getType(); // fx "int"
+                if (paramTypeStr == null) {
+                    System.err.println("Missing type for parameter: " + e.name().getId());
+                    return TypeCheck.ERROR;
+                }
+                //hvis ugyldig type, så returnerer den fejl
+                TypeCheck paramType = resolveType(paramTypeStr);
+                if (paramType == TypeCheck.ERROR) {
+                    System.err.println("Invalid parameter type: " + paramTypeStr);
+                    return TypeCheck.ERROR;
+                }
+                //hvis alt ok, så tilføjer vi den
+                paramTypes.add(paramType);
+            } // Hvis en parameter ikke er et Eidentifie så er det ugyldigt
+            else {
+                System.err.println("Invalid parameter (not identifier) in function '" + funcName + "'");
+                return TypeCheck.ERROR;
+            }
+        }
+
+        // Registrere funktionen
+        if (symbolTable.isFunction(funcName)) {
+            System.err.println("Function '" + funcName + "' already declared.");
+            return TypeCheck.ERROR;
+        } //hvis ikke den findesgemmes den i sybmoltable
+        symbolTable.declareFunction(funcName, paramTypes, returnType);
+
+        // Vi går ind i et nyt scope og registrerer funktionens parametre som lokale variabler så de kan bruges og typecheckes korrekt inde i funktionens body.
+        symbolTable.enterScope();
+
+        // Registrér parametre som variable i scopet
+        for (int i = 0; i < f.params().elements().size(); i++) {
+            Expression p = f.params().elements().get(i);
+            if (p instanceof Eidentifier e) {
+                symbolTable.declareVariable(e.name().getId(), paramTypes.get(i));
+            }
+        }
+
+        TypeCheck body = sFunction.body().accept(this);
+
+        symbolTable.exitScope();
+
+        if (body == TypeCheck.ERROR) {
+            System.err.println("Function body error in '" + funcName + "'");
+            return TypeCheck.ERROR;
+        }
 
         return TypeCheck.VOID;
     }
 
+
+    //typecheckes i sFunction, da functionidentifier er jo en delstruktur som sfunction består af.
     @Override
     public TypeCheck visitFunctionIdentifier(FunctionIdentifier functionIdentifier) {
-//        String funcName = name.getId();
-            return TypeCheck.VOID;
-//        if (symbolTable.isFunction(funcName)) {
-//            return symbolTable.getFunction(funcName).returnType;
-//        } else {
-//            System.err.println("Undeclared function: " + funcName);
-//            return TypeCheck.ERROR;
-//        }
+        return TypeCheck.ERROR;
     }
+
+
     @Override
     public TypeCheck visitDef(Def d) {
         List<TypeCheck> paramTypes = d.params().stream()
