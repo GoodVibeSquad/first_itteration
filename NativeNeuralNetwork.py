@@ -237,7 +237,34 @@ class NeuralNetwork:
 
         # Hidden layers: from last hidden to first hidden
         for i in reversed(range(len(self.weights_array) - 1)):
+            # Why compute the derivative of the activation function (ReLU) with weighted sums?
+            # Explanation:
+            # - The derivative of ReLU is based on the weighted input values (also called pre-activations or weighted sums),
+            #   not the activated outputs themselves.
+            # - ReLU function is defined as: ReLU(z) = max(0, z)
+            #   Its derivative is:
+            #     1 if z > 0
+            #     0 if z <= 0
+            #
+            # Why weighted sums (z) and not activations (a)?
+            # - The activation 'a' is ReLU(z), so it is zero if z <= 0 and equal to z if z > 0.
+            # - The derivative depends solely on whether z was positive or not,
+            #   meaning we only need to check the sign of the weighted sum before applying ReLU.
+            #
+            # How this impacts backpropagation:
+            # - During backpropagation, the chain rule requires the derivative of the activation function with respect to z.
+            # - We multiply the upstream gradient (delta from next layer) by this derivative to get the local gradient (delta for this layer).
+            # - Using weighted sums ensures the derivative correctly masks gradients where ReLU output was zero (inactive neurons),
+            #   effectively stopping gradient flow for those neurons.
+            #
+            # Weight updates themselves use the activated outputs (activations) because the gradient of weights depends on
+            # the output signal from the previous layer, which are the activations.
+            #
+            # Summary:
+            # - Use weighted sums (pre-activations) to calculate ReLU derivative because it encodes the gating behavior of the neuron.
+            # - Use activations when updating weights because weights are adjusted proportional to the input signals to that layer.
             d_activation = self.activation_functions[0].derivative(weighted_sums[i])
+
             d = np.dot(delta[-1], self.weights_array[i + 1].T) * d_activation
             delta.append(d)
 
