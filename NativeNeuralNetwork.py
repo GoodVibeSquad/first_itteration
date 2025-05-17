@@ -164,6 +164,7 @@ class NeuralNetwork:
 
     def forwardPass(self, data, i, x):
         activations = []
+        weighted_sums = []
 
         # Initialize the current input to be the initialized data
         current_input = (data[i])[x]
@@ -176,6 +177,7 @@ class NeuralNetwork:
             # Calculates weighted sum and adds it to weighted sum array
             # print("Weight ", i, ": ", self.weights_array[i])
             current_weighted_sum = np.dot(current_input, self.weights_array[i]) + self.bias[i]
+            weighted_sums.append(current_weighted_sum)
 
             # Runs the activation function for Hidden layers (Found at 0th index)
             current_activation = self.activation_functions[0].run(current_weighted_sum)
@@ -183,7 +185,7 @@ class NeuralNetwork:
 
             # Updates the current input and moves forward in neural network
             current_input = current_activation
-        return activations
+        return activations, weighted_sums
 
 #        print("Output activation: ", output_activation)
 
@@ -223,7 +225,7 @@ class NeuralNetwork:
 
         return images_array
 
-    def backPropagate(self, activations, correct_label, learningRate, image):
+    def backPropagate(self, activations, weighted_sums, correct_label, learningRate, image):
         correct_answer = np.zeros((1, self.output.output_size))
         correct_answer[0, correct_label] = 1
 
@@ -235,7 +237,7 @@ class NeuralNetwork:
 
         # Hidden layers: from last hidden to first hidden
         for i in reversed(range(len(self.weights_array) - 1)):
-            d_activation = self.activation_functions[0].derivative(activations[i])
+            d_activation = self.activation_functions[0].derivative(weighted_sums[i])
             d = np.dot(delta[-1], self.weights_array[i + 1].T) * d_activation
             delta.append(d)
 
@@ -372,8 +374,8 @@ class NeuralNetwork:
 
         for _ in range(epochs):
             for x in range(len(training_set)):
-                activations = self.forwardPass(images_array,training_set[x][0], training_set[x][1])
-                self.backPropagate(activations, weighted_sums, training_set[x][0],learningRate, images_array[training_set[x][0]][training_set[x][1]])   
+                activations, weighted_sums = self.forwardPass(images_array,training_set[x][0], training_set[x][1])
+                self.backPropagate(activations, weighted_sums, training_set[x][0],learningRate, images_array[training_set[x][0]][training_set[x][1]])
 
         self.printPredictions(validation_set,images_array)
 
@@ -390,7 +392,7 @@ input = Layer(28*28)
 # 5 Hidden layers (5 Columns)
 # Each layer has 130 neurons (Rows)
 # Activation function is a given activation function such as Relu
-hidden_layers = Layer(5, 130, "Relu")
+hidden_layers = Layer(4, 100, "Relu")
 
 
 
@@ -410,6 +412,6 @@ nn = NeuralNetwork(input,hidden_layers,output)
 
 
 
-nn.train("mnist_example", ".png", 20, 70, 0.001)
+nn.train("mnist_example", ".png", 40, 80, 0.001)
 
 nn.save("saved_model.pkl")
