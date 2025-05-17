@@ -14,6 +14,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     }
     private int loopDepth = 0;
 
+    private TypeCheck currentExpectedReturnType = null;      //til sfunction + sreturn
 
     // Constants
     @Override
@@ -521,6 +522,10 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         TypeCheck result = TypeCheck.VOID;
         for (Statement stmt : s.stmts().elements()) {
             TypeCheck stmtResult = stmt.accept(this);
+            // Track the return type if the statement is a return
+            if (stmt instanceof SReturn) {
+                result = stmtResult;
+            }
             if (stmtResult == TypeCheck.ERROR) {
                 result = TypeCheck.ERROR;
                 break;
@@ -653,13 +658,29 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
 
     @Override
     public TypeCheck visitSReturn(SReturn s) {
-        return null;
+        if (s.expr() == null) {
+            System.err.println("Return statement missing expression");
+            return TypeCheck.ERROR;
+        }
+
+        TypeCheck actual = s.expr().accept(this);
+
+        if (currentExpectedReturnType == null) {
+            System.err.println("Return statement outside of function.");
+            return TypeCheck.ERROR;
+        }
+
+        if (actual != currentExpectedReturnType) {
+            System.err.println("Return type mismatch: expected " +
+                    currentExpectedReturnType + ", got " + actual);
+            return TypeCheck.ERROR;
+        }
+
+        return actual;
     }
 
     @Override
-    public TypeCheck visitSFunction(SFunction sFunction) {
-
-        //starter med functionidentifier delen af SFunction, hvor vi tjekker dens returtype, navn, og parametre
+    public TypeCheck visitSFunction(SFunction sFunction) { //starter med functionidentifier delen af SFunction, hvor vi tjekker dens returtype, navn, og parametre
         FunctionIdentifier f = sFunction.functionIdentifier();
 
         String funcName = f.var().getId();         // fx "add"
@@ -697,7 +718,6 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
                 return TypeCheck.ERROR;
             }
         }
-
         // Registrere funktionen
         if (symbolTable.isFunction(funcName)) {
             System.err.println("Function '" + funcName + "' already declared.");
@@ -716,12 +736,21 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
             }
         }
 
+        TypeCheck previousExpected = currentExpectedReturnType;
+        currentExpectedReturnType = returnType;
         TypeCheck body = sFunction.body().accept(this);
+        currentExpectedReturnType = previousExpected;
 
         symbolTable.exitScope();
 
         if (body == TypeCheck.ERROR) {
             System.err.println("Function body error in '" + funcName + "'");
+            return TypeCheck.ERROR;
+        }
+
+        if (body != returnType) {
+            System.err.println("Return type mismatch in function '" + funcName +
+                    "': expected " + returnType + ", got " + body);
             return TypeCheck.ERROR;
         }
 
