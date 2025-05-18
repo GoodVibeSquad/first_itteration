@@ -217,6 +217,8 @@ class NeuralNetwork:
                     normalized_data = numpyData / 255.0
                     np.set_printoptions(threshold=np.inf)
                     flattenedData = normalized_data.flatten(order='C').reshape(1, -1)
+                    if flattenedData.shape[1] != self.input.input_size:
+                        raise ValueError(f"Input size mismatch: expected flattened size {self.input.input_size}, got {flattened_data.shape[1]}, from {image}")
                     numbered_image_array.append(flattenedData)
 
             images_array.append(numbered_image_array)
