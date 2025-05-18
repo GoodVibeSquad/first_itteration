@@ -292,9 +292,9 @@ class NeuralNetwork:
                 failed[number].append(procent)
         
         print("Acuracy: ", (len(avrage) - sum(len(v) for v in failed.values()))/len(avrage) * 100)
-        print("\nfailed: ", sum(len(v) for v in failed.values()), " out of", len(avrage))
+        print("\nSuccesses: ",len(avrage) - (sum(len(v) for v in failed.values())), " out of", len(avrage))
         for number in failed:
-            print("classification: ", self.classification[number], "\n \t", len(failed[number]), " out of ", len(grouped_data[number]))
+            print("classification: ", self.classification[number], "\n \t",len(grouped_data[number]) - len(failed[number]), " out of ", len(grouped_data[number]))
 
 
 
@@ -335,6 +335,10 @@ class NeuralNetwork:
         predicted_label = self.classification[predicted_index]
 
         print("This ", datatype, " is classified as: ", predicted_label)
+        print("The likelihood for each classification")
+        for label, activation in zip(self.classification, output_activation.flatten()):
+            print(f"\t {label} is {activation*100} %")
+
 
         return predicted_label
 
@@ -389,20 +393,20 @@ class NeuralNetwork:
 
 # The input layer contains the data
 # The output is automatically matched with the neuron size of the hidden layers
-input = Layer(28*28)
+#input = Layer(28*28)
 
 # 5 Hidden layers (5 Columns)
 # Each layer has 130 neurons (Rows)
 # Activation function is a given activation function such as Relu
-hidden_layers = Layer(5, 130, "Relu")
+#hidden_layers = Layer(5, 130, "Relu")
 
 
 
 # 10 Classifications (0-9) Output size is 10
 # Activation function is a given activation function such as Relu
-output = Layer(10, "Softmax")
+#output = Layer(10, "Softmax")
 
-nn = NeuralNetwork(input,hidden_layers,output)
+#nn = NeuralNetwork(input,hidden_layers,output)
 
 # Source directory
 
@@ -414,6 +418,6 @@ nn = NeuralNetwork(input,hidden_layers,output)
 
 
 
-nn.train("mnist_example", ".png", 20, 70, 0.001)
+#nn.train("mnist_example", ".png", 20, 70, 0.001)
 
-nn.save("saved_model.pkl")
+#nn.save("saved_model.pkl")
