@@ -1,0 +1,7 @@
+{
+    int x = 0;
+    while(true) {
+        print(x);
+        break;
+    }
+}

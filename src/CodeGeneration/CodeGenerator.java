@@ -18,11 +18,11 @@ public class CodeGenerator {
     }
 
     // Method to generate the code file and execute the Python script
-    public void generate() {
+    public void generate(String directoryPath) {
         // Write parsedCode to a Python file
-        try (FileWriter writer = new FileWriter("pythonKode.py")) {
+        try (FileWriter writer = new FileWriter(directoryPath)) {
             writer.write(this.parsedCode);
-            System.out.println("Output written to pythonKode.py");
+            System.out.println("Output written to "+directoryPath+" successfully.");
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("Failed to write to file.");

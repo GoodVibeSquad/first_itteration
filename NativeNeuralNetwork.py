@@ -162,11 +162,13 @@ class NeuralNetwork:
         return weights
 
 
-    def forwardPass(self, data, i, x):
+
+    def forwardPass(self, data, subfolder, subfolder_index_image):
+
         activations = []
 
         # Initialize the current input to be the initialized data
-        current_input = (data[i])[x]
+        current_input = (data[subfolder])[subfolder_index_image]
 
         # Calculates weighted sum for everything except output
         for i in range(self.hidden_layers.amount + 1):

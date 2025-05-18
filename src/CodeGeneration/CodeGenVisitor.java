@@ -210,6 +210,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         e.condition().accept(this);
         output.append(" else ");
         e.falseExpr().accept(this);
+        output.append(")");
         return null;
     }
 
@@ -279,6 +280,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         output.append(e.object().getId()).append(".").append(e.method().getId()).append("(");
         e.args().accept(this);
         output.append(")");
+
         return null;
 
     }
@@ -379,21 +381,23 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         if (s.init() instanceof SDeclaration decl) {
             initId = decl.var().getId();  // Får navnet først
         }
-        output.append(indent()).append("del ").append(initId).append("\n");
         exitScope();
 
-        scopeStack.peek().remove(initId); //Vi skal manuelt slette update værdien fordi vi initialiserer den ikke i den samme scope vi sletter den i
+        output.append(indent()).append("del ").append(initId).append("\n");
 
         return null;
     }
 
     @Override
     public Void visitSExpression(SExpression s) {
-        s.value().accept(this);
+
 
         // Handles variable declaration with initialized value of 0
         if (s.value() instanceof Eidentifier) {
             output.append("=0\n");
+        } else{
+            s.value().accept(this);
+            output.append("\n");
         }
 
         return null;
