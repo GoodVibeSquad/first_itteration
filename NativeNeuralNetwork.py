@@ -373,7 +373,7 @@ class NeuralNetwork:
         for _ in range(epochs):
             for x in range(len(training_set)):
                 activations = self.forwardPass(images_array,training_set[x][0], training_set[x][1])
-                self.backPropagate(activations, weighted_sums, training_set[x][0],learningRate, images_array[training_set[x][0]][training_set[x][1]])   
+                self.backPropagate(activations, training_set[x][0],learningRate, images_array[training_set[x][0]][training_set[x][1]])
 
         self.printPredictions(validation_set,images_array)
 
