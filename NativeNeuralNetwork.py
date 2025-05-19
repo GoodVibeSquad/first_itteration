@@ -144,24 +144,25 @@ class NeuralNetwork:
         # HE initilization used because of RELU and exploding rand weight values
 
         # Calculate first weights between input and hidden
-        input_weights = np.random.randn(self.input.input_size, self.hidden_layers.size) * np.sqrt(2. / self.input.input_size)
+        input_weights = self.he_init(self.input.input_size, self.hidden_layers.size)
         # Rounding to improve readability
         input_weights = np.round(input_weights, decimals=10)
         weights.append(input_weights)
 
         # Generate weights between hidden layers
         for i in range(self.hidden_layers.amount - 1):
-            hidden_weights = np.random.randn(self.hidden_layers.size, self.hidden_layers.size) * np.sqrt(2. / self.hidden_layers.size)
+            hidden_weights = self.he_init(self.hidden_layers.size, self.hidden_layers.size)
             weights.append(hidden_weights)
 
         # Generating weights between last layer(output) and
         # the second to last layer, which is a hidden layer.
-        output_weights = np.random.rand(self.hidden_layers.size, self.output.output_size) * np.sqrt(2. / self.hidden_layers.size)
+        output_weights = self.he_init(self.hidden_layers.size, self.output.output_size)
         weights.append(output_weights)
 
         return weights
 
-
+    def he_init(self, fan_in, fan_out):
+        return np.random.randn(fan_in, fan_out) * np.sqrt(2. / fan_in)
 
     def forwardPass(self, data, subfolder, subfolder_index_image):
 
