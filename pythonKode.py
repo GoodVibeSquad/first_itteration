@@ -157,13 +157,15 @@ class NeuralNetwork:
 
         # Generating weights between last layer(output) and
         # the second to last layer, which is a hidden layer.
-        output_weights = np.random.rand(self.hidden_layers.size, self.output.output_size)
+        output_weights = np.random.rand(self.hidden_layers.size, self.output.output_size) * np.sqrt(2. / self.hidden_layers.size)
         weights.append(output_weights)
 
         return weights
 
 
+
     def forwardPass(self, data, subfolder, subfolder_index_image):
+
         activations = []
 
         # Initialize the current input to be the initialized data
@@ -184,10 +186,6 @@ class NeuralNetwork:
 
             # Updates the current input and moves forward in neural network
             current_input = current_activation
-
-        # Applies output activation function after weighted sum is finished (1st index)
-        output_activation = self.activation_functions[1].run(current_input)
-        activations.append(output_activation)
         return activations
 
 #        print("Output activation: ", output_activation)
@@ -222,37 +220,40 @@ class NeuralNetwork:
                     normalized_data = numpyData / 255.0
                     np.set_printoptions(threshold=np.inf)
                     flattenedData = normalized_data.flatten(order='C').reshape(1, -1)
+                    if flattenedData.shape[1] != self.input.input_size:
+                        raise ValueError(f"Input size mismatch: expected flattened size {self.input.input_size}, got {flattened_data.shape[1]}, from {image}")
                     numbered_image_array.append(flattenedData)
 
             images_array.append(numbered_image_array)
 
         return images_array
 
-    def backPropagate(self, activations,correct_label, learningRate, image):
-        correct_answer = np.zeros(10)
-        correct_answer[correct_label] = 1
-        error = []
+    def backPropagate(self, activations, correct_label, learningRate, image):
+        correct_answer = np.zeros((1, self.output.output_size))
+        correct_answer[0, correct_label] = 1
+
         delta = []
 
-        #softmax stuff
-        error_output = correct_answer - activations[-1]
-        error.append(error_output)
+        # Output layer gradient (Softmax + Cross-Entropy)
+        error_output =  correct_answer - activations[-1]
         delta.append(error_output)
 
-        for i in reversed(range(len(activations)-2)):
-            error.append(np.dot(delta[-1],self.weights_array[i+1].T))
-            delta.append(error[-1] * Relu.derivative(activations[i]))
-        #delta is created from end to start
+        # Hidden layers: from last hidden to first hidden
+        for i in reversed(range(len(self.weights_array) - 1)):
+            d_activation = self.activation_functions[0].derivative(activations[i])
+            d = np.dot(delta[-1], self.weights_array[i + 1].T) * d_activation
+            delta.append(d)
+
         delta.reverse()
+
+        # Weight and bias updates
         for i in range(len(self.weights_array)):
-            if(i<=0):
-                tempVar = np.dot(image.T, delta[i])
-                self.weights_array[i] += learningRate * tempVar
-                self.bias[i] += learningRate * delta[i]
-                break
-            tempVar = np.dot(activations[i].T, delta[i])
-            self.weights_array[i] += learningRate * tempVar
-            self.bias[i] += learningRate * delta[i]
+            if i == 0:
+                input_to_layer = image
+            else:
+                input_to_layer = activations[i - 1]
+            self.weights_array[i] += learningRate * np.dot(input_to_layer.T, delta[i])
+            self.bias[i] += learningRate * np.sum(delta[i], axis=0, keepdims=True)
 
 
     def printPredictions(self, validationSet,images_array):
@@ -290,12 +291,8 @@ class NeuralNetwork:
             grouped_data[number].append(procent)
             if not (predicted_index == number):
                 failed[number].append(procent)
-
-        print("average %: ", np.sum(avrage)/len(avrage))
-        avrageprocent = {number: sum(percentages) / len(percentages) for number, percentages in grouped_data.items()}
-        for number in avrageprocent:
-            print("classification: ", self.classification[number], "percentage: ", avrageprocent[number])
-
+        
+        print("Acuracy: ", (len(avrage) - sum(len(v) for v in failed.values()))/len(avrage) * 100)
         print("\nfailed: ", sum(len(v) for v in failed.values()), " out of", len(avrage))
         for number in failed:
             print("classification: ", self.classification[number], "\n \t", len(failed[number]), " out of ", len(grouped_data[number]))
@@ -393,20 +390,20 @@ class NeuralNetwork:
 
 # The input layer contains the data
 # The output is automatically matched with the neuron size of the hidden layers
-#input = Layer(28*28)
+input = Layer(28*28)
 
 # 5 Hidden layers (5 Columns)
 # Each layer has 130 neurons (Rows)
 # Activation function is a given activation function such as Relu
-#hidden_layers = Layer(5, 130, Relu)
+hidden_layers = Layer(5, 130, "Relu")
 
 
 
 # 10 Classifications (0-9) Output size is 10
 # Activation function is a given activation function such as Relu
-#output = Layer(10, Softmax)
+output = Layer(10, "Softmax")
 
-#nn = NeuralNetwork(input,hidden_layers,output)
+nn = NeuralNetwork(input,hidden_layers,output)
 
 # Source directory
 
@@ -418,16 +415,24 @@ class NeuralNetwork:
 
 
 
-#nn.train(mnist_directory, ".png", 20, 70, 0.01)
+nn.train("mnist_example", ".png", 20, 70, 0.001)
 
-#nn.save("saved_model.pkl")
+nn.save("saved_model.pkl")
+
 # BASECODE DONE 
 
-input = Layer(784)
-hidden = Layer(5, 130, "Relu")
-output = Layer(10, "Softmax")
+input_image_size = 28 * 28
+h_layers = 5
+h_layers_neurons = 120
+classifications = 10
+h_layer_act_func = "Relu"
+output_layer_activation = "Softmax"
+input = Layer(input_image_size)
+hidden = Layer(h_layers, h_layers_neurons, h_layer_act_func)
+output = Layer(classifications, output_layer_activation)
 nn = NeuralNetwork(input, hidden, output)
-nn.train("mnist_example", ".png", 20, 70, 0.01)
-nn.save("mnist_example.pkl")
-nn2 = NeuralNetwork("mnist_example.pkl")
-nn2.predict("C:/Users/peter/Desktop/first_itteration/Mnist/9/118.png", ".png")
+epochs = 20
+train_percentage = 70
+learning_rate = 0.01
+nn.train("mnist_example", ".png", epochs, train_percentage, learning_rate)
+nn.save("My_Network.pkl")
