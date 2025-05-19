@@ -164,7 +164,7 @@ public class LexerTest {
 
     @Test
     void testScanCommentSingleLine() {
-        Deque<Character> charQueue = new LinkedList<>(Arrays.asList('/', '/', 'T', 'e', 's', 't', '\n', '\0'));
+        Deque<Character> charQueue = new LinkedList<>(Arrays.asList('/', '/', 'T', 'e', 's', 't', '\n', 'f', 'o', 'o', '\0'));
 
         Mockito.when(reader.currentChar()).thenAnswer(invocation -> charQueue.peek());
         Mockito.when(reader.peek()).thenAnswer(invocation -> {
@@ -177,15 +177,17 @@ public class LexerTest {
             charQueue.poll();
             return null;
         }).when(reader).advance();
+
         Token token = lexer.tokenize();
 
-
-        Assertions.assertEquals("Test", token.getValue(), "Token value should be 'Test'");
+        Assertions.assertEquals("foo", token.getValue(), "Lexer should skip single-line comment and return next token");
     }
+
 
     @Test
     void testScanMultiLineComment() {
-        Deque<Character> charQueue = new LinkedList<>(Arrays.asList('/', '*', 'T', 'e', 's', 't', '*', '/', '\0'));
+        Deque<Character> charQueue = new LinkedList<>(Arrays.asList('/', '*', 'T', 'e', 's', 't', '*', '/', 'b', 'a', 'r', '\0'));
+
         Mockito.when(reader.currentChar()).thenAnswer(invocation -> charQueue.peek());
         Mockito.when(reader.peek()).thenAnswer(invocation -> {
             if (charQueue.size() > 1) {
@@ -200,7 +202,7 @@ public class LexerTest {
 
         Token token = lexer.tokenize();
 
-        Assertions.assertEquals("Test", token.getValue(), "Token value should be 'Test'");
+        Assertions.assertEquals("bar", token.getValue(), "Lexer should skip multi-line comment and return next token");
     }
 
 
