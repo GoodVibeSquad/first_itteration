@@ -154,6 +154,9 @@ public class SymbolTable {
         declareConstructor(TypeCheck.NEURALNETWORK,
                 List.of(TypeCheck.LAYER, TypeCheck.LAYER, TypeCheck.LAYER));
 
+        declareConstructor(TypeCheck.NEURALNETWORK,
+                List.of(TypeCheck.STRING));
+
         declareConstructor(TypeCheck.LAYER,
                 List.of(TypeCheck.INT));
 

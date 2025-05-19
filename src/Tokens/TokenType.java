@@ -59,7 +59,6 @@ public enum TokenType{
     MAX("Max"),
     EOF("EOF");
 
-
     private final String name;
 
     TokenType(String name) {
