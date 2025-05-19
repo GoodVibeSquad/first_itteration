@@ -2,5 +2,5 @@
 3.14;
 true;
 "test";
-Pi;
+PI;
 E;
