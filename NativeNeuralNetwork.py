@@ -144,24 +144,25 @@ class NeuralNetwork:
         # HE initilization used because of RELU and exploding rand weight values
 
         # Calculate first weights between input and hidden
-        input_weights = np.random.randn(self.input.input_size, self.hidden_layers.size) * np.sqrt(2. / self.input.input_size)
+        input_weights = self.he_init(self.input.input_size, self.hidden_layers.size)
         # Rounding to improve readability
         input_weights = np.round(input_weights, decimals=10)
         weights.append(input_weights)
 
         # Generate weights between hidden layers
         for i in range(self.hidden_layers.amount - 1):
-            hidden_weights = np.random.randn(self.hidden_layers.size, self.hidden_layers.size) * np.sqrt(2. / self.hidden_layers.size)
+            hidden_weights = self.he_init(self.hidden_layers.size, self.hidden_layers.size)
             weights.append(hidden_weights)
 
         # Generating weights between last layer(output) and
         # the second to last layer, which is a hidden layer.
-        output_weights = np.random.rand(self.hidden_layers.size, self.output.output_size) * np.sqrt(2. / self.hidden_layers.size)
+        output_weights = self.he_init(self.hidden_layers.size, self.output.output_size)
         weights.append(output_weights)
 
         return weights
 
-
+    def he_init(self, fan_in, fan_out):
+        return np.random.randn(fan_in, fan_out) * np.sqrt(2. / fan_in)
 
     def forwardPass(self, data, subfolder, subfolder_index_image):
 
@@ -344,7 +345,7 @@ class NeuralNetwork:
 
 
 
-    def train(self, path, datatype, epochs, test_percentage, learningRate):
+    def train(self, path, datatype, epochs, training_percentage, learningRate):
         # Call forward pass n times for neural network
         if not os.path.exists(path):
             if path == "mnist_example":
@@ -356,70 +357,37 @@ class NeuralNetwork:
         else:
             images_array = self.init_data(path,datatype)
         training_set = []
-        validation_set = []
+        test_set = []
         # random selction of images
         for i in range(len(images_array)):
-            # Takes 70 percent of images (Rest will be used for validation)
-            training_amount = int(len(images_array[i])/100 * test_percentage)
+            # Takes 70 percent of images (Rest will be used for test)
+            training_amount = int(len(images_array[i])/100 * training_percentage)
             #print("the ", i, "Training set amount", training_amount)
 
-            validation_amount = len(images_array[i]) - training_amount
-            #print("the ", i, "Validation set amount", validation_amount)
+            test_amount = len(images_array[i]) - training_amount
+            #print("the ", i, "test set amount", test_amount)
 
             for x in range(training_amount):
                 training_set.append([i,x])
-            for x in range(validation_amount):
-                validation_set.append([i,x+training_amount])
+            for x in range(test_amount):
+                test_set.append([i,x+training_amount])
 
         np.random.shuffle(training_set)
 
         #print("Training set length: ", len(training_set))
-        #print("validation set length: ", len(validation_set))
+        #print("test set length: ", len(test_set))
         # Second parameter is the subfolders in this example (0th subfolder)
         # Third parameter is the index of a given image in the subfolder
 
         for _ in range(epochs):
-            for x in range(len(training_set)):
-                activations = self.forwardPass(images_array,training_set[x][0], training_set[x][1])
-                self.backPropagate(activations, training_set[x][0],learningRate, images_array[training_set[x][0]][training_set[x][1]])
+            for image_index in range(len(training_set)):
+                data_pair = training_set[image_index]
+                class_index = data_pair[0]
+                file_index = data_pair[1]
 
-        self.printPredictions(validation_set,images_array)
+                activations = self.forwardPass(images_array,class_index, file_index)
+                image_data = images_array[class_index][file_index]
+                self.backPropagate(activations, class_index, learningRate, image_data)
 
-
-##### NEURAL NETWORK STUFF
-# Layer needs to take the width- of a matrix and the height of a matrix
-# We imagine the images to be 28px * 28px images such as Mnist dataset
-# This creates a vector with 784 columns and 1 row
-
-# The input layer contains the data
-# The output is automatically matched with the neuron size of the hidden layers
-#input = Layer(28*28)
-
-# 5 Hidden layers (5 Columns)
-# Each layer has 130 neurons (Rows)
-# Activation function is a given activation function such as Relu
-#hidden_layers = Layer(5, 130, "Relu")
-
-
-
-# 10 Classifications (0-9) Output size is 10
-# Activation function is a given activation function such as Relu
-#output = Layer(10, "Softmax")
-
-#nn = NeuralNetwork(input,hidden_layers,output)
-
-# Source directory
-
-#### TODO:
-# When we get further make it so users can manually insert filepath as a string
-# In the native code
-
-# Get path for a given image in root
-
-
-
-#nn.train("mnist_example", ".png", 20, 70, 0.001)
-
-#nn.save("saved_model.pkl")
-
+        self.printPredictions(test_set,images_array)
 
