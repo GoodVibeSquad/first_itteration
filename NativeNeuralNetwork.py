@@ -421,3 +421,5 @@ class NeuralNetwork:
 #nn.train("mnist_example", ".png", 20, 70, 0.001)
 
 #nn.save("saved_model.pkl")
+
+
