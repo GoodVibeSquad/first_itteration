@@ -46,5 +46,48 @@ NeuralNetwork nn2 = new NeuralNetwork("mnist_example.pkl");
 nn2.predict("C:/Users/phili/Documents/GitHub/first_itteration/Mnist/3/32.png", ".png");
 
 ```
+# Documentation
+Intro her
+
+## Types
+- int
+- string
+- double
+- bool
+- Layer
+- NeuralNetwork
+- ActivationFunction
+ 
+
+## Variables
+- int x = 7;
+- string x = "test";
+- double x = 7.5;
+- bool x = true; 
+- Layer input = new Layer(28x28)
+- Layer hidden = new Layer(5, 130,"Relu");
+- Layer output = new Layer(10,"Softmax");
+- NeuralNetwork nn = new NeuralNetwork(input, hidden, output);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
