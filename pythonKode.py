@@ -428,18 +428,14 @@ class NeuralNetwork:
         plt.show()
 # BASECODE DONE 
 
-input_image_size = 28 * 28
-h_layers = 5
-h_layers_neurons = 120
-classifications = 10
-h_layer_act_func = "Relu"
-output_layer_activation = "Softmax"
-input = Layer(input_image_size)
-hidden = Layer(h_layers, h_layers_neurons, h_layer_act_func)
-output = Layer(classifications, output_layer_activation)
-nn = NeuralNetwork(input, hidden, output)
-epochs = 30
-train_percentage = 90
-learning_rate = 0.001
-nn.train("mnist_example", ".png", epochs, train_percentage, learning_rate)
-nn.save("My_Network.pkl")
+nn = NeuralNetwork("My_Network.pkl")
+predicted_image_one = nn.predict("C:\\Users\\peter\\Desktop\\University\\4TH SEMESTER\\P4\\first_itteration\\Mnist\\1\\37.png", ".png")
+predicted_image_eight = nn.predict("C:\\Users\\peter\\Desktop\\University\\4TH SEMESTER\\P4\\first_itteration\\Mnist\\8\\374.png", ".png")
+if predicted_image_one == 1:
+	print("Image 1 has been correctly classified")
+else:
+	print("Misclassification of digit 1")
+if predicted_image_eight == 8:
+	print("Image 8 has been correctly classified")
+else:
+	print("Misclassification of digit 8")

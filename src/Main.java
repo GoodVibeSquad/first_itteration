@@ -34,7 +34,7 @@ public class Main {
 //        parser.run();
 
 
-        TokenGetter tokenGetter = new TokenGetter("basicNetwork.txt");
+        TokenGetter tokenGetter = new TokenGetter("predictionTest.txt");
         tokenGetter.initialize();
 //        List<String> input = new ArrayList<>();
 //

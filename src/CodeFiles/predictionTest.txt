@@ -1,0 +1,18 @@
+NeuralNetwork nn = new NeuralNetwork("My_Network.pkl");
+
+int predicted_image_one = nn.predict("C:\\Users\\peter\\Desktop\\University\\4TH SEMESTER\\P4\\first_itteration\\Mnist\\1\\37.png", ".png");
+int predicted_image_eight = nn.predict("C:\\Users\\peter\\Desktop\\University\\4TH SEMESTER\\P4\\first_itteration\\Mnist\\8\\374.png", ".png");
+
+// Check if digit 1 image was correctly classified
+if (predicted_image_one == 1) {
+    print("Image 1 has been correctly classified");
+} else {
+    print("Misclassification of digit 1");
+}
+
+// Check if digit 8 image was correctly classified
+if (predicted_image_eight == 8) {
+    print("Image 8 has been correctly classified");
+} else {
+    print("Misclassification of digit 8");
+}
