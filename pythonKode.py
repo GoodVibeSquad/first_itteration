@@ -145,24 +145,25 @@ class NeuralNetwork:
         # HE initilization used because of RELU and exploding rand weight values
 
         # Calculate first weights between input and hidden
-        input_weights = np.random.randn(self.input.input_size, self.hidden_layers.size) * np.sqrt(2. / self.input.input_size)
+        input_weights = self.he_init(self.input.input_size, self.hidden_layers.size)
         # Rounding to improve readability
         input_weights = np.round(input_weights, decimals=10)
         weights.append(input_weights)
 
         # Generate weights between hidden layers
         for i in range(self.hidden_layers.amount - 1):
-            hidden_weights = np.random.randn(self.hidden_layers.size, self.hidden_layers.size) * np.sqrt(2. / self.hidden_layers.size)
+            hidden_weights = self.he_init(self.hidden_layers.size, self.hidden_layers.size)
             weights.append(hidden_weights)
 
         # Generating weights between last layer(output) and
         # the second to last layer, which is a hidden layer.
-        output_weights = np.random.rand(self.hidden_layers.size, self.output.output_size) * np.sqrt(2. / self.hidden_layers.size)
+        output_weights = self.he_init(self.hidden_layers.size, self.output.output_size)
         weights.append(output_weights)
 
         return weights
 
-
+    def he_init(self, fan_in, fan_out):
+        return np.random.randn(fan_in, fan_out) * np.sqrt(2. / fan_in)
 
     def forwardPass(self, data, subfolder, subfolder_index_image):
 
@@ -293,9 +294,9 @@ class NeuralNetwork:
                 failed[number].append(procent)
         
         print("Acuracy: ", (len(avrage) - sum(len(v) for v in failed.values()))/len(avrage) * 100)
-        print("\nfailed: ", sum(len(v) for v in failed.values()), " out of", len(avrage))
+        print("\nSuccesses: ",len(avrage) - (sum(len(v) for v in failed.values())), " out of", len(avrage))
         for number in failed:
-            print("classification: ", self.classification[number], "\n \t", len(failed[number]), " out of ", len(grouped_data[number]))
+            print("classification: ", self.classification[number], "\n \t",len(grouped_data[number]) - len(failed[number]), " out of ", len(grouped_data[number]))
 
 
 
@@ -336,12 +337,16 @@ class NeuralNetwork:
         predicted_label = self.classification[predicted_index]
 
         print("This ", datatype, " is classified as: ", predicted_label)
+        print("The likelihood for each classification")
+        for label, activation in zip(self.classification, output_activation.flatten()):
+            print(f"\t {label} is {activation*100} %")
+
 
         return predicted_label
 
 
 
-    def train(self, path, datatype, epochs, test_percentage, learningRate):
+    def train(self, path, datatype, epochs, training_percentage, learningRate):
         # Call forward pass n times for neural network
         if not os.path.exists(path):
             if path == "mnist_example":
@@ -353,34 +358,39 @@ class NeuralNetwork:
         else:
             images_array = self.init_data(path,datatype)
         training_set = []
-        validation_set = []
+        test_set = []
         # random selction of images
         for i in range(len(images_array)):
-            # Takes 70 percent of images (Rest will be used for validation)
-            training_amount = int(len(images_array[i])/100 * test_percentage)
+            # Takes 70 percent of images (Rest will be used for test)
+            training_amount = int(len(images_array[i])/100 * training_percentage)
             #print("the ", i, "Training set amount", training_amount)
 
-            validation_amount = len(images_array[i]) - training_amount
-            #print("the ", i, "Validation set amount", validation_amount)
+            test_amount = len(images_array[i]) - training_amount
+            #print("the ", i, "test set amount", test_amount)
 
             for x in range(training_amount):
                 training_set.append([i,x])
-            for x in range(validation_amount):
-                validation_set.append([i,x+training_amount])
+            for x in range(test_amount):
+                test_set.append([i,x+training_amount])
 
         np.random.shuffle(training_set)
 
         #print("Training set length: ", len(training_set))
-        #print("validation set length: ", len(validation_set))
+        #print("test set length: ", len(test_set))
         # Second parameter is the subfolders in this example (0th subfolder)
         # Third parameter is the index of a given image in the subfolder
 
         for _ in range(epochs):
-            for x in range(len(training_set)):
-                activations = self.forwardPass(images_array,training_set[x][0], training_set[x][1])
-                self.backPropagate(activations, training_set[x][0],learningRate, images_array[training_set[x][0]][training_set[x][1]])
+            for image_index in range(len(training_set)):
+                data_pair = training_set[image_index]
+                class_index = data_pair[0]
+                file_index = data_pair[1]
 
-        self.printPredictions(validation_set,images_array)
+                activations = self.forwardPass(images_array,class_index, file_index)
+                image_data = images_array[class_index][file_index]
+                self.backPropagate(activations, class_index, learningRate, image_data)
+
+        self.printPredictions(test_set,images_array)
 
 
 ##### NEURAL NETWORK STUFF
@@ -390,20 +400,20 @@ class NeuralNetwork:
 
 # The input layer contains the data
 # The output is automatically matched with the neuron size of the hidden layers
-input = Layer(28*28)
+#input = Layer(28*28)
 
 # 5 Hidden layers (5 Columns)
 # Each layer has 130 neurons (Rows)
 # Activation function is a given activation function such as Relu
-hidden_layers = Layer(5, 130, "Relu")
+#hidden_layers = Layer(5, 130, "Relu")
 
 
 
 # 10 Classifications (0-9) Output size is 10
 # Activation function is a given activation function such as Relu
-output = Layer(10, "Softmax")
+#output = Layer(10, "Softmax")
 
-nn = NeuralNetwork(input,hidden_layers,output)
+#nn = NeuralNetwork(input,hidden_layers,output)
 
 # Source directory
 
@@ -415,24 +425,19 @@ nn = NeuralNetwork(input,hidden_layers,output)
 
 
 
-nn.train("mnist_example", ".png", 20, 70, 0.001)
+#nn.train("mnist_example", ".png", 20, 70, 0.001)
 
-nn.save("saved_model.pkl")
+#nn.save("saved_model.pkl")
+
+
 
 # BASECODE DONE 
 
-input_image_size = 28 * 28
-h_layers = 5
-h_layers_neurons = 120
-classifications = 10
-h_layer_act_func = "Relu"
-output_layer_activation = "Softmax"
-input = Layer(input_image_size)
-hidden = Layer(h_layers, h_layers_neurons, h_layer_act_func)
-output = Layer(classifications, output_layer_activation)
+input = Layer(784)
+hidden = Layer(5, 130, "Relu")
+output = Layer(10, "Softmax")
 nn = NeuralNetwork(input, hidden, output)
-epochs = 20
-train_percentage = 70
-learning_rate = 0.01
-nn.train("mnist_example", ".png", epochs, train_percentage, learning_rate)
-nn.save("My_Network.pkl")
+nn.train("mnist_example", ".png", 20, 70, 0.001)
+nn.save("mnist_example.pkl")
+nn2 = NeuralNetwork("mnist_example.pkl")
+nn2.predict("C:\\Users\\peter\\Desktop\\University\\4TH SEMESTER\\P4\\first_itteration\\Mnist\\1\\5.png", ".png")

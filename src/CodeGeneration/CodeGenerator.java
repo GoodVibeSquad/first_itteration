@@ -30,30 +30,30 @@ public class CodeGenerator {
         }
 
         // Execute the Python script using Runtime.exec
-        try {
-            // Get the filename of the file
-            String pythonScriptPath = "pythonKode.py";
-
-            // Construct the command for the terminal
-            String command = "python " + pythonScriptPath;
-
-            // Execute the command to run our program, but in python.
-            Process p = Runtime.getRuntime().exec(command);
-
-            // Print stack trace from python using a reader to the java terminal
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    System.out.println(line);
-                }
-            }
-
-            // Wait for the process to finish
-            p.waitFor();
-            System.out.println("Python script executed successfully.");
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            System.err.println("Failed to execute the Python script.");
-        }
+//        try {
+//            // Get the filename of the file
+//            String pythonScriptPath = "pythonKode.py";
+//
+//            // Construct the command for the terminal
+//            String command = "python " + pythonScriptPath;
+//
+//            // Execute the command to run our program, but in python.
+//            Process p = Runtime.getRuntime().exec(command);
+//
+//            // Print stack trace from python using a reader to the java terminal
+//            try (BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
+//                String line;
+//                while ((line = reader.readLine()) != null) {
+//                    System.out.println(line);
+//                }
+//            }
+//
+//            // Wait for the process to finish
+//            p.waitFor();
+//            System.out.println("Python script executed successfully.");
+//        } catch (IOException | InterruptedException e) {
+//            e.printStackTrace();
+//            System.err.println("Failed to execute the Python script.");
+//        }
     }
 }

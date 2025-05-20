@@ -1,17 +1,14 @@
-
-
 Layer input = new Layer(784);
 Layer hidden = new Layer(5, 130,"Relu");
 Layer output = new Layer(10,"Softmax");
 
 NeuralNetwork nn = new NeuralNetwork(input, hidden, output);
 
-nn.train("mnist_example", ".png", 20, 70, 0.01);
+nn.train("mnist_example", ".png", 20, 70, 0.001);
 
 nn.save("mnist_example.pkl");
 
 NeuralNetwork nn2 = new NeuralNetwork("mnist_example.pkl");
-nn2.predict("C:/Users/peter/Desktop/first_itteration/Mnist/9/118.png", ".png");
-
+nn2.predict("C:\\Users\\peter\\Desktop\\University\\4TH SEMESTER\\P4\\first_itteration\\Mnist\\1\\5.png", ".png");
 
 
