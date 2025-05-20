@@ -6,7 +6,7 @@ from PIL import Image
 from collections import defaultdict
 import os
 import pickle
-
+import matplotlib.pyplot as plt
 
 
 # ACTIVATION FUNCTION INFO
@@ -347,6 +347,8 @@ class NeuralNetwork:
 
 
     def train(self, path, datatype, epochs, training_percentage, learningRate):
+        epoch_accuracies = []
+
         # Call forward pass n times for neural network
         if not os.path.exists(path):
             if path == "mnist_example":
@@ -390,9 +392,40 @@ class NeuralNetwork:
                 image_data = images_array[class_index][file_index]
                 self.backPropagate(activations, class_index, learningRate, image_data)
 
+            # Evaluate accuracy each epoch for plotting purposes
+            accuracy = self.evaluate_accuracy(test_set, images_array)
+            epoch_accuracies.append(accuracy)
+
         self.printPredictions(test_set,images_array)
 
 
+        # Plot the accuracy per epoch
+        self.plot_accuracies_over_epoch(epoch_accuracies)
+
+    def evaluate_accuracy(self, test_set, images_array):
+        test_set_length = len(test_set)
+        correctly_predicted = 0
+        for i in range(test_set_length):
+            class_index = test_set[i][0]
+            file_index = test_set[i][1]
+            current_picture = self.forwardPass(images_array, class_index, file_index)[-1]
+            output_activation = self.activation_functions[1].run(current_picture)
+            predicted_index = np.argmax(output_activation)
+            if predicted_index == class_index:
+                correctly_predicted += 1
+        return (correctly_predicted / test_set_length) * 100
+
+    def plot_accuracies_over_epoch(self, accuracies):
+        epochs = range(1, len(accuracies) + 1)
+        plt.figure(figsize=(12,5))
+        plt.subplot(1,2,2)
+        plt.plot(epochs, accuracies, label='Accuracy', color='green')
+        plt.xlabel('Epoch')
+        plt.ylabel('Accuracy (%)')
+        plt.title('Accuracy per Epoch')
+        plt.grid(True)
+        plt.tight_layout()
+        plt.show()
 # BASECODE DONE 
 
 input_image_size = 28 * 28

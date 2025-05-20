@@ -9,7 +9,7 @@ Install Python
 - pip install numpy
 - pip install pillow
 - pip install pickle
-
+- pip install matplotlib
 
 ## Using the Language
 This example will walkthrough the process of using the language to create a simple program that can train a neuralnetwork and predict an image classification.
