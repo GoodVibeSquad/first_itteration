@@ -47,30 +47,75 @@ nn2.predict("C:/Users/phili/Documents/GitHub/first_itteration/Mnist/3/32.png", "
 
 ```
 # Documentation
-Intro her
+Neura is a high-level programming language designed for building, training, and deploying neural networks in a concise and readable syntax. It provides native types for neural network constructs and compiles to Python for execution.
 
 ## Types
-- int
-- string
-- double
-- bool
-- Layer
-- NeuralNetwork
-- ActivationFunction
- 
-
+### Primitive types
+- int: integers
+- double: Floating-point number
+- string: Unicode String
+- bool: Boolean (true / false)
+### Special types
+- Layer: Represents a layer in a neural network. Constructed with shape size and activation
+- NeuralNetwork: Represents a complete neural network model
+- ActivationFunction: Represents a function such as "Relu" or "Softmax" 
 ## Variables
-- int x = 7;
-- string x = "test";
-- double x = 7.5;
-- bool x = true; 
-- Layer input = new Layer(28x28)
-- Layer hidden = new Layer(5, 130,"Relu");
-- Layer output = new Layer(10,"Softmax");
-- NeuralNetwork nn = new NeuralNetwork(input, hidden, output);
+- ``int x = 7;``
+- ``string x = "test";``
+- ``double x = 7.5;``
+- ``bool x = true; ``
+- ``Layer input = new Layer(28x28)``
+- ``Layer hidden = new Layer(5, 130,"Relu");``
+- ``Layer output = new Layer(10,"Softmax");``
+- ``NeuralNetwork nn = new NeuralNetwork(input, hidden, output);``
+## Expressions
+Supports arithmetic, logical, and comparison expressions
+```
+int sum = 3 + 4 * 5;
+bool isValid = (x > 0) && (y < 100);
+```
+## Statements
+### Initialization
+``int x = 10:``
+### Assignment
+``x = x + 1;``
+### If / Else
+```
+if (isTraining) {
+nn.train(data, labels);
+} else {
+nn.evaluate(testData, testLabels);
+}
+```
+### While
+```
+while (epoch < 10) {
+    nn.train(batch, targets);
+    epoch = epoch + 1;
+}
+```
+## Functions
+User-defined functions (Virker det her???)
+```
+int add(int a, int b) {
+    return a + b;
+}
+```
+## Methods
+```
+nn.train(data, labels);
+nn.save("model.nn");
+nn.predict("imagePath", "fileType");
+NeuralNetwork.loadModel("model.nn");
+```
+## Comments
+```
+// this is a single line comment
 
-
-
+/* 
+ This is a multi line comment
+*/
+```
 
 
 
