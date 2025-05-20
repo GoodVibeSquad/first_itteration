@@ -393,51 +393,20 @@ class NeuralNetwork:
         self.printPredictions(test_set,images_array)
 
 
-##### NEURAL NETWORK STUFF
-# Layer needs to take the width- of a matrix and the height of a matrix
-# We imagine the images to be 28px * 28px images such as Mnist dataset
-# This creates a vector with 784 columns and 1 row
-
-# The input layer contains the data
-# The output is automatically matched with the neuron size of the hidden layers
-#input = Layer(28*28)
-
-# 5 Hidden layers (5 Columns)
-# Each layer has 130 neurons (Rows)
-# Activation function is a given activation function such as Relu
-#hidden_layers = Layer(5, 130, "Relu")
-
-
-
-# 10 Classifications (0-9) Output size is 10
-# Activation function is a given activation function such as Relu
-#output = Layer(10, "Softmax")
-
-#nn = NeuralNetwork(input,hidden_layers,output)
-
-# Source directory
-
-#### TODO:
-# When we get further make it so users can manually insert filepath as a string
-# In the native code
-
-# Get path for a given image in root
-
-
-
-#nn.train("mnist_example", ".png", 20, 70, 0.001)
-
-#nn.save("saved_model.pkl")
-
-
-
 # BASECODE DONE 
 
-input = Layer(784)
-hidden = Layer(5, 130, "Relu")
-output = Layer(10, "Softmax")
+input_image_size = 28 * 28
+h_layers = 5
+h_layers_neurons = 120
+classifications = 10
+h_layer_act_func = "Relu"
+output_layer_activation = "Softmax"
+input = Layer(input_image_size)
+hidden = Layer(h_layers, h_layers_neurons, h_layer_act_func)
+output = Layer(classifications, output_layer_activation)
 nn = NeuralNetwork(input, hidden, output)
-nn.train("mnist_example", ".png", 20, 70, 0.001)
-nn.save("my_network.pkl")
-nn2 = NeuralNetwork("my_network.pkl")
-nn2.predict("C:\\Users\\peter\\Desktop\\University\\4TH SEMESTER\\P4\\first_itteration\\Mnist\\1\\5.png", ".png")
+epochs = 20
+train_percentage = 70
+learning_rate = 0.01
+nn.train("mnist_example", ".png", epochs, train_percentage, learning_rate)
+nn.save("My_Network.pkl")
