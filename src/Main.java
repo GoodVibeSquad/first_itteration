@@ -20,11 +20,11 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-//        Scanner scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
 
         // Ask the user for the file name
 //        System.out.print("Enter the file name: ");
-//        String filePathName = scanner.nextLine();  // Get the file name from the user
+        String filePathName = scanner.nextLine();  // Get the file name from the user
 //        TokenGetter tokenGetter = nw TokenGetter(filePathName);
 //        tokenGetter.initialize();
 //        System.out.println("Tokens" + tokenGetter.getTokens());
@@ -34,7 +34,7 @@ public class Main {
 //        parser.run();
 
 
-        TokenGetter tokenGetter = new TokenGetter("myFile.txt");
+        TokenGetter tokenGetter = new TokenGetter(filePathName);
         tokenGetter.initialize();
 //        List<String> input = new ArrayList<>();
 //
@@ -68,8 +68,19 @@ public class Main {
 
         CodeGenerator generator = new CodeGenerator(slist);
 
-        String dirName = "pythonKode.py";
+        String dirName = replaceFileExtension(filePathName,"py");
         generator.generate(dirName);
+    }
+
+    public static String replaceFileExtension(String path, String newExtension) {
+        int dotIndex = path.lastIndexOf('.');
+        if (dotIndex == -1) {
+            // No extension found, just add the new one
+            return path + "." + newExtension;
+        } else {
+            // Replace existing extension
+            return path.substring(0, dotIndex + 1) + newExtension;
+        }
     }
 
 }
