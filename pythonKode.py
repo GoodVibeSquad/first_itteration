@@ -257,12 +257,12 @@ class NeuralNetwork:
             self.bias[i] += learningRate * np.sum(delta[i], axis=0, keepdims=True)
 
 
-    def printPredictions(self, validationSet,images_array):
+    def printPredictions(self, test_set,images_array):
         avrage = []
         grouped_data = defaultdict(list)
         failed = defaultdict(list)
-        for i in range(len(validationSet)):
-            current_picture = (images_array[validationSet[i][0]])[validationSet[i][1]]
+        for i in range(len(test_set)):
+            current_picture = (images_array[test_set[i][0]])[test_set[i][1]]
             activations = []
 
             for j in range(self.hidden_layers.amount + 1):
@@ -281,7 +281,7 @@ class NeuralNetwork:
                 current_picture = current_activation
 
             # Applies output activation function after weighted sum is finished (1st index)
-            number = validationSet[i][0]
+            number = test_set[i][0]
             output_activation = self.activation_functions[1].run(current_picture)
             predicted_index = np.argmax(output_activation)
             correct_answer = np.zeros(10)
@@ -342,7 +342,7 @@ class NeuralNetwork:
             print(f"\t {label} is {activation*100} %")
 
 
-        return predicted_label
+        return int(predicted_label)
 
 
 
