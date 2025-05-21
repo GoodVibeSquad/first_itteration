@@ -19,9 +19,15 @@ public class TokenGetter {
         this.tokens = new ArrayList<Token>();
         this.sourceCodeDir = new File ("src/CodeFiles");
         try {
-            this.basePath = sourceCodeDir.getCanonicalPath();
-            this.reader = new SourceCodeReader2(basePath + "/" + filePathName);
-            this.lexer = new Lexer(reader);
+            if(filePathName.contains(":")){
+                this.reader = new SourceCodeReader2(filePathName);
+                this.lexer = new Lexer(reader);
+            }
+            else {
+                this.basePath = sourceCodeDir.getCanonicalPath();
+                this.reader = new SourceCodeReader2(basePath + "/" + filePathName);
+                this.lexer = new Lexer(reader);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
