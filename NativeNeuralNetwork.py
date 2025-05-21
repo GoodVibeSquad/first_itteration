@@ -347,6 +347,7 @@ class NeuralNetwork:
 
     def train(self, path, datatype, epochs, training_percentage, learningRate):
         epoch_accuracies = []
+        epoch_losses = []
 
         # Call forward pass n times for neural network
         if not os.path.exists(path):
@@ -376,12 +377,8 @@ class NeuralNetwork:
 
         np.random.shuffle(training_set)
 
-        #print("Training set length: ", len(training_set))
-        #print("test set length: ", len(test_set))
-        # Second parameter is the subfolders in this example (0th subfolder)
-        # Third parameter is the index of a given image in the subfolder
-
         for _ in range(epochs):
+            total_loss = 0
             for image_index in range(len(training_set)):
                 data_pair = training_set[image_index]
                 class_index = data_pair[0]
@@ -391,15 +388,24 @@ class NeuralNetwork:
                 image_data = images_array[class_index][file_index]
                 self.backPropagate(activations, class_index, learningRate, image_data)
 
+                # Sum the total loss in one epoch
+                # We use softmax here, but just to get percentage, not actually applied in training.
+                loss = self.cross_entropy_loss(self.activation_functions[1].run(activations[-1]), class_index)
+                total_loss += loss
+
             # Evaluate accuracy each epoch for plotting purposes
             accuracy = self.evaluate_accuracy(test_set, images_array)
             epoch_accuracies.append(accuracy)
 
+            # Evaluate average loss per eoch
+            average_loss = total_loss / len(test_set)
+            epoch_losses.append(average_loss)
+
         self.printPredictions(test_set,images_array)
 
 
-        # Plot the accuracy per epoch
-        self.plot_accuracies_over_epoch(epoch_accuracies)
+        # Plot the accuracy and loss over epoch
+        self.plot_accuracy_loss_curve(epoch_accuracies, epoch_losses)
 
     def evaluate_accuracy(self, test_set, images_array):
         test_set_length = len(test_set)
@@ -414,14 +420,35 @@ class NeuralNetwork:
                 correctly_predicted += 1
         return (correctly_predicted / test_set_length) * 100
 
-    def plot_accuracies_over_epoch(self, accuracies):
+    def cross_entropy_loss(self, predicted, correct_class):
+
+        # Prevent log 0 by making sure epsilon is within epsilon and 1-epsilon
+        # This prevents log(0) for very small results preventing a crash or error.
+        epsilon = 1e-12
+        predicted = np.clip(predicted, epsilon, 1. - epsilon)
+
+        return -np.log(predicted[0, correct_class])
+
+    def plot_accuracy_loss_curve(self, accuracies, losses):
         epochs = range(1, len(accuracies) + 1)
-        plt.figure(figsize=(12,5))
-        plt.subplot(1,2,2)
-        plt.plot(epochs, accuracies, label='Accuracy', color='green')
-        plt.xlabel('Epoch')
-        plt.ylabel('Accuracy (%)')
-        plt.title('Accuracy per Epoch')
-        plt.grid(True)
-        plt.tight_layout()
+
+        fig, ax1 = plt.subplots(figsize=(10, 5))
+
+        # Plot Accuracy on left y-axis
+        color = 'tab:green'
+        ax1.set_xlabel('Epoch')
+        ax1.set_ylabel('Accuracy (%)', color=color)
+        ax1.plot(epochs, accuracies, color=color, label='Accuracy')
+        ax1.tick_params(axis='y', labelcolor=color)
+        ax1.grid(True)
+
+        # Create second y-axis for Loss on right
+        ax2 = ax1.twinx()
+        color = '#6A0DAD'
+        ax2.set_ylabel('Cross-Entropy Loss', color=color)
+        ax2.plot(epochs, losses, color=color, label='Loss')
+        ax2.tick_params(axis='y', labelcolor=color)
+
+        plt.title('Accuracy Loss curve')
+        fig.tight_layout()
         plt.show()
