@@ -56,7 +56,7 @@ Neura is a high-level programming language designed for building, training, and 
 - string: Unicode String
 - bool: Boolean (true / false)
 ### Special types
-- Layer: Represents a layer in a neural network. Constructed with shape size and activation
+- Layer: Represents a layer in a neural network. Constructed with image size and activation
 - NeuralNetwork: Represents a complete neural network model
 - ActivationFunction: Represents a function such as "Relu" or "Softmax" 
 ## Variables
@@ -68,6 +68,7 @@ Neura is a high-level programming language designed for building, training, and 
 - ``Layer hidden = new Layer(5, 130,"Relu");``
 - ``Layer output = new Layer(10,"Softmax");``
 - ``NeuralNetwork nn = new NeuralNetwork(input, hidden, output);``
+- ``NeuralNetwork nn2 = new NeuralNetwork("mnist_example.pkl");``
 ## Expressions
 Supports arithmetic, logical, and comparison expressions
 ```
@@ -82,23 +83,22 @@ bool isValid = (x > 0) && (y < 100);
 ### If / Else
 ```
 if (isTraining) {
-nn.train(data, labels);
+code
 } else {
-nn.evaluate(testData, testLabels);
+code
 }
 ```
 ### While
 ```
 while (epoch < 10) {
-    nn.train(batch, targets);
-    epoch = epoch + 1;
+    code block
 }
 ```
 ## Functions
 User-defined functions (Virker det her???)
 ```
 int add(int a, int b) {
-    return a + b;
+    code 
 }
 ```
 ## Methods
@@ -106,7 +106,6 @@ int add(int a, int b) {
 nn.train(data, labels);
 nn.save("model.nn");
 nn.predict("imagePath", "fileType");
-NeuralNetwork.loadModel("model.nn");
 ```
 ## Comments
 ```
