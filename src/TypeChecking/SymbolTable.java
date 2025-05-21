@@ -181,7 +181,7 @@ public class SymbolTable {
 
         declareMethod(TypeCheck.NEURALNETWORK, "predict",
                 List.of(TypeCheck.STRING, TypeCheck.STRING),
-                TypeCheck.STRING
+                TypeCheck.INT
         );
 
         declareMethod(TypeCheck.NEURALNETWORK, "load",

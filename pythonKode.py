@@ -6,7 +6,7 @@ from PIL import Image
 from collections import defaultdict
 import os
 import pickle
-
+import matplotlib.pyplot as plt
 
 
 # ACTIVATION FUNCTION INFO
@@ -257,12 +257,12 @@ class NeuralNetwork:
             self.bias[i] += learningRate * np.sum(delta[i], axis=0, keepdims=True)
 
 
-    def printPredictions(self, validationSet,images_array):
+    def printPredictions(self, test_set,images_array):
         avrage = []
         grouped_data = defaultdict(list)
         failed = defaultdict(list)
-        for i in range(len(validationSet)):
-            current_picture = (images_array[validationSet[i][0]])[validationSet[i][1]]
+        for i in range(len(test_set)):
+            current_picture = (images_array[test_set[i][0]])[test_set[i][1]]
             activations = []
 
             for j in range(self.hidden_layers.amount + 1):
@@ -281,7 +281,7 @@ class NeuralNetwork:
                 current_picture = current_activation
 
             # Applies output activation function after weighted sum is finished (1st index)
-            number = validationSet[i][0]
+            number = test_set[i][0]
             output_activation = self.activation_functions[1].run(current_picture)
             predicted_index = np.argmax(output_activation)
             correct_answer = np.zeros(10)
@@ -342,11 +342,13 @@ class NeuralNetwork:
             print(f"\t {label} is {activation*100} %")
 
 
-        return predicted_label
+        return int(predicted_label)
 
 
 
     def train(self, path, datatype, epochs, training_percentage, learningRate):
+        epoch_accuracies = []
+
         # Call forward pass n times for neural network
         if not os.path.exists(path):
             if path == "mnist_example":
@@ -390,54 +392,54 @@ class NeuralNetwork:
                 image_data = images_array[class_index][file_index]
                 self.backPropagate(activations, class_index, learningRate, image_data)
 
+            # Evaluate accuracy each epoch for plotting purposes
+            accuracy = self.evaluate_accuracy(test_set, images_array)
+            epoch_accuracies.append(accuracy)
+
         self.printPredictions(test_set,images_array)
 
 
-##### NEURAL NETWORK STUFF
-# Layer needs to take the width- of a matrix and the height of a matrix
-# We imagine the images to be 28px * 28px images such as Mnist dataset
-# This creates a vector with 784 columns and 1 row
+        # Plot the accuracy per epoch
+        self.plot_accuracies_over_epoch(epoch_accuracies)
 
-# The input layer contains the data
-# The output is automatically matched with the neuron size of the hidden layers
-#input = Layer(28*28)
+    def evaluate_accuracy(self, test_set, images_array):
+        test_set_length = len(test_set)
+        correctly_predicted = 0
+        for i in range(test_set_length):
+            class_index = test_set[i][0]
+            file_index = test_set[i][1]
+            current_picture = self.forwardPass(images_array, class_index, file_index)[-1]
+            output_activation = self.activation_functions[1].run(current_picture)
+            predicted_index = np.argmax(output_activation)
+            if predicted_index == class_index:
+                correctly_predicted += 1
+        return (correctly_predicted / test_set_length) * 100
 
-# 5 Hidden layers (5 Columns)
-# Each layer has 130 neurons (Rows)
-# Activation function is a given activation function such as Relu
-#hidden_layers = Layer(5, 130, "Relu")
-
-
-
-# 10 Classifications (0-9) Output size is 10
-# Activation function is a given activation function such as Relu
-#output = Layer(10, "Softmax")
-
-#nn = NeuralNetwork(input,hidden_layers,output)
-
-# Source directory
-
-#### TODO:
-# When we get further make it so users can manually insert filepath as a string
-# In the native code
-
-# Get path for a given image in root
-
-
-
-#nn.train("mnist_example", ".png", 20, 70, 0.001)
-
-#nn.save("saved_model.pkl")
-
-
-
+    def plot_accuracies_over_epoch(self, accuracies):
+        epochs = range(1, len(accuracies) + 1)
+        plt.figure(figsize=(12,5))
+        plt.subplot(1,2,2)
+        plt.plot(epochs, accuracies, label='Accuracy', color='green')
+        plt.xlabel('Epoch')
+        plt.ylabel('Accuracy (%)')
+        plt.title('Accuracy per Epoch')
+        plt.grid(True)
+        plt.tight_layout()
+        plt.show()
 # BASECODE DONE 
 
-input = Layer(784)
-hidden = Layer(5, 130, "Relu")
-output = Layer(10, "Softmax")
+input_image_size = 28 * 28
+h_layers = 5
+h_layers_neurons = 130
+classifications = 10
+h_layer_act_func = "Relu"
+output_layer_activation = "Softmax"
+input = Layer(input_image_size)
+hidden = Layer(h_layers, h_layers_neurons, h_layer_act_func)
+output = Layer(classifications, output_layer_activation)
 nn = NeuralNetwork(input, hidden, output)
-nn.train("mnist_example", ".png", 20, 70, 0.001)
-nn.save("mnist_example.pkl")
-nn2 = NeuralNetwork("mnist_example.pkl")
-nn2.predict("C:\\Users\\peter\\Desktop\\University\\4TH SEMESTER\\P4\\first_itteration\\Mnist\\1\\5.png", ".png")
+epochs = 100
+train_percentage = 70
+learning_rate = 0.001
+nn.train("mnist_example", ".png", epochs, train_percentage, learning_rate)
+nn.save("My_Network.pkl")
