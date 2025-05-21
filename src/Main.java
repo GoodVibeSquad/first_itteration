@@ -20,6 +20,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws IOException {
+        System.out.println("Input file name or path: \n");
         Scanner scanner = new Scanner(System.in);
 
         // Ask the user for the file name
