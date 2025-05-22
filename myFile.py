@@ -1,3 +1,4 @@
+import math
 # REQUIREMENT: Install Numpy
 
 import numpy as np
@@ -26,7 +27,8 @@ class Relu(activationFunction):
 
 class Softmax(activationFunction):
     def run(x):
-        e_x = np.exp(x)
+        # Subtract max for numerical stability
+        e_x = np.exp(x - np.max(x, axis=1, keepdims=True))
         return e_x / e_x.sum(axis=1, keepdims=True)
 
 class Layer:
@@ -186,6 +188,7 @@ class NeuralNetwork:
 
             # Updates the current input and moves forward in neural network
             current_input = current_activation
+        activations[-1] = self.activation_functions[1].run(activations[-1])
         return activations
 
 #        print("Output activation: ", output_activation)
@@ -287,7 +290,7 @@ class NeuralNetwork:
             correct_answer = np.zeros(10)
             correct_answer[number] = 1
             dif =  correct_answer - output_activation
-            procent = (output_activation[predicted_index])*100
+            procent = (output_activation[0][predicted_index])*100
             avrage.append(procent)
             grouped_data[number].append(procent)
             if procent > 50:
@@ -395,3 +398,11 @@ class NeuralNetwork:
 
         self.printPredictions(test_set,images_array)
 
+
+# BASECODE DONE 
+
+input = Layer(784)
+hidden = Layer(5, 130, "Relu")
+output = Layer(10, "Softmax")
+nn = NeuralNetwork(input, hidden, output)
+nn.train("mnist_example", ".png", 20, 70, 0.001)
