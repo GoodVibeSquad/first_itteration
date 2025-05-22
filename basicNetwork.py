@@ -258,7 +258,7 @@ class NeuralNetwork:
             self.bias[i] += learningRate * np.sum(delta[i], axis=0, keepdims=True)
 
 
-    def printPredictions(self, test_set,images_array):
+    def printPredictions(self, test_set,images_array, final_avg_loss):
         avrage = []
         grouped_data = defaultdict(list)
         failed = defaultdict(list)
@@ -295,6 +295,7 @@ class NeuralNetwork:
                 failed[number].append(procent)
         
         print("Acuracy: ", (len(avrage) - sum(len(v) for v in failed.values()))/len(avrage) * 100)
+        print("Average loss: ", final_avg_loss)
         print("\nSuccesses: ",len(avrage) - (sum(len(v) for v in failed.values())), " out of", len(avrage))
         for number in failed:
             print("classification: ", self.classification[number], "\n \t",len(grouped_data[number]) - len(failed[number]), " out of ", len(grouped_data[number]))
@@ -408,7 +409,7 @@ class NeuralNetwork:
             average_loss = total_loss / len(training_set)
             epoch_losses.append(average_loss)
 
-        self.printPredictions(test_set,images_array)
+        self.printPredictions(test_set,images_array, epoch_losses[-1])
 
 
         # Plot the accuracy and loss over epoch
@@ -469,7 +470,7 @@ hidden = Layer(h_layers, h_layers_neurons, h_layer_act_func)
 output = Layer(classifications, output_layer_activation)
 nn = NeuralNetwork(input, hidden, output)
 epochs = 20
-train_percentage = 70
+train_percentage = 90
 learning_rate = 0.001
 nn.train("mnist_example", ".png", epochs, train_percentage, learning_rate)
 nn.save("My_Network.pkl")
