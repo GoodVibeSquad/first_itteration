@@ -385,21 +385,28 @@ class NeuralNetwork:
                 class_index = data_pair[0]
                 file_index = data_pair[1]
 
+
+
                 activations = self.forwardPass(images_array,class_index, file_index)
-                image_data = images_array[class_index][file_index]
-                self.backPropagate(activations, class_index, learningRate, image_data)
 
                 # Sum the total loss in one epoch
                 # We use softmax here, but just to get percentage, not actually applied in training.
-                loss = self.cross_entropy_loss(self.activation_functions[1].run(activations[-1]), class_index)
+                predicted_probs = self.activation_functions[1].run(activations[-1])
+                loss = self.cross_entropy_loss(predicted_probs, class_index)
                 total_loss += loss
+
+                image_data = images_array[class_index][file_index]
+                self.backPropagate(activations, class_index, learningRate, image_data)
+
+
 
             # Evaluate accuracy each epoch for plotting purposes
             accuracy = self.evaluate_accuracy(test_set, images_array)
             epoch_accuracies.append(accuracy)
 
             # Evaluate average loss per eoch
-            average_loss = total_loss / len(test_set)
+            average_loss = total_loss / len(training_set)
+            print("average loss", average_loss)
             epoch_losses.append(average_loss)
 
         self.printPredictions(test_set,images_array)
@@ -422,13 +429,14 @@ class NeuralNetwork:
         return (correctly_predicted / test_set_length) * 100
 
     def cross_entropy_loss(self, predicted, correct_class):
-        epsilon = 1e-12
-        predicted = np.clip(predicted, epsilon, 1. - epsilon)
-        return -np.log(predicted[0, correct_class])
+        # Flatten array so we can just index it
+        predicted = predicted.flatten()
+        loss = -np.log(predicted[correct_class])
+        return loss
 
     def plot_accuracy_loss_curve(self, accuracies, losses):
         epochs = range(1, len(accuracies) + 1)
-        
+
         fig, ax1 = plt.subplots(figsize=(10, 5))
 
         # Plot Accuracy on left y-axis
@@ -451,18 +459,14 @@ class NeuralNetwork:
         plt.show()
 # BASECODE DONE 
 
-input_image_size = 28 * 28
-h_layers = 5
-h_layers_neurons = 130
-classifications = 10
-h_layer_act_func = "Relu"
-output_layer_activation = "Softmax"
-input = Layer(input_image_size)
-hidden = Layer(h_layers, h_layers_neurons, h_layer_act_func)
-output = Layer(classifications, output_layer_activation)
-nn = NeuralNetwork(input, hidden, output)
-epochs = 20
-train_percentage = 70
-learning_rate = 0.001
-nn.train("mnist_example", ".png", epochs, train_percentage, learning_rate)
-nn.save("My_Network.pkl")
+nn = NeuralNetwork("My_Network.pkl")
+predicted_image_one = nn.predict("C:\\Users\\peter\\Desktop\\University\\4TH SEMESTER\\P4\\first_itteration\\Mnist\\1\\37.png", ".png")
+predicted_image_eight = nn.predict("C:\\Users\\peter\\Desktop\\University\\4TH SEMESTER\\P4\\first_itteration\\Mnist\\8\\374.png", ".png")
+if predicted_image_one == 1:
+	print("Image 1 has been correctly classified")
+else:
+	print("Misclassification of digit 1")
+if predicted_image_eight == 8:
+	print("Image 8 has been correctly classified")
+else:
+	print("Misclassification of digit 8")

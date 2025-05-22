@@ -1,3 +1,4 @@
+import math
 # REQUIREMENT: Install Numpy
 
 import numpy as np
@@ -456,3 +457,20 @@ class NeuralNetwork:
         plt.title('Accuracy Loss curve')
         fig.tight_layout()
         plt.show()
+# BASECODE DONE 
+
+input_image_size = 28 * 28
+h_layers = 5
+h_layers_neurons = 120
+classifications = 10
+h_layer_act_func = "Relu"
+output_layer_activation = "Softmax"
+input = Layer(input_image_size)
+hidden = Layer(h_layers, h_layers_neurons, h_layer_act_func)
+output = Layer(classifications, output_layer_activation)
+nn = NeuralNetwork(input, hidden, output)
+epochs = 20
+train_percentage = 70
+learning_rate = 0.01
+nn.train("mnist_example", ".png", epochs, train_percentage, learning_rate)
+nn.save("My_Network.pkl")
