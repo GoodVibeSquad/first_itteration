@@ -187,6 +187,7 @@ class NeuralNetwork:
 
             # Updates the current input and moves forward in neural network
             current_input = current_activation
+       # activations[-1] = self.activation_functions[1].run(activations[-1])
         return activations
 
 #        print("Output activation: ", output_activation)

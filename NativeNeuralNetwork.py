@@ -186,6 +186,7 @@ class NeuralNetwork:
 
             # Updates the current input and moves forward in neural network
             current_input = current_activation
+        activations[-1] = self.activation_functions[1].run(activations[-1])
         return activations
 
 #        print("Output activation: ", output_activation)
@@ -390,8 +391,7 @@ class NeuralNetwork:
 
                 # Sum the total loss in one epoch
                 # We use softmax here, but just to get percentage, not actually applied in training.
-                predicted_probs = self.activation_functions[1].run(activations[-1])
-                loss = self.cross_entropy_loss(predicted_probs, class_index)
+                loss = self.cross_entropy_loss(activations[-1], class_index)
                 total_loss += loss
 
                 image_data = images_array[class_index][file_index]
