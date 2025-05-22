@@ -405,7 +405,6 @@ class NeuralNetwork:
 
             # Evaluate average loss per eoch
             average_loss = total_loss / len(training_set)
-            print("average loss", average_loss)
             epoch_losses.append(average_loss)
 
         self.printPredictions(test_set,images_array)

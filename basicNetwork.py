@@ -471,6 +471,6 @@ output = Layer(classifications, output_layer_activation)
 nn = NeuralNetwork(input, hidden, output)
 epochs = 20
 train_percentage = 70
-learning_rate = 0.01
+learning_rate = 0.001
 nn.train("mnist_example", ".png", epochs, train_percentage, learning_rate)
 nn.save("My_Network.pkl")

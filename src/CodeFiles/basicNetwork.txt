@@ -14,7 +14,7 @@ NeuralNetwork nn = new NeuralNetwork(input, hidden, output);
 
 int epochs = 20;
 int train_percentage = 70;
-double learning_rate = 0.01;
+double learning_rate = 0.001;
 nn.train("mnist_example", ".png", epochs, train_percentage, learning_rate);
 nn.save("My_Network.pkl");
 
