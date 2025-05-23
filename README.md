@@ -61,9 +61,9 @@ Neura is a high-level programming language designed for building, training, and 
 - ActivationFunction: Represents a function such as "Relu" or "Softmax" 
 ## Variables
 - ``int x = 7;``
-- ``string x = "test";``
-- ``double x = 7.5;``
-- ``bool x = true; ``
+- ``string y = "test";``
+- ``double z = 7.5;``
+- ``bool n = true; ``
 - ``Layer input = new Layer(28x28)``
 - ``Layer hidden = new Layer(5, 130,"Relu");``
 - ``Layer output = new Layer(10,"Softmax");``
