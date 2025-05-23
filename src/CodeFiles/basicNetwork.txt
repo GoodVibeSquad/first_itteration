@@ -1,7 +1,7 @@
 // Defining variables for our network
 int input_image_size = 28*28;
 int h_layers = 5;
-int h_layers_neurons = 130;
+int h_layers_neurons = 120;
 int classifications = 10;
 string h_layer_act_func = "Relu";
 string output_layer_activation = "Softmax";
