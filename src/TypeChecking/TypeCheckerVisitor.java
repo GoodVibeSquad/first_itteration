@@ -683,8 +683,8 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     public TypeCheck visitSFunction(SFunction sFunction) { //starter med functionidentifier delen af SFunction, hvor vi tjekker dens returtype, navn, og parametre
         FunctionIdentifier f = sFunction.functionIdentifier();
 
-        String funcName = f.var().getId();         // fx "add"
-        String returnTypeStr = f.var().getType();  // fx "int"
+        String funcName = f.typedName().getId();
+        String returnTypeStr = f.typedName().getType();
         TypeCheck returnType = resolveType(returnTypeStr);
 
         //hvis returtype er ugyldig, så fejl

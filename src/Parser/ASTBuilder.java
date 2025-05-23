@@ -24,18 +24,16 @@ public class ASTBuilder {
 
                     if (type instanceof Token typeToken && id instanceof Token idToken && exprList instanceof Elist params) {
                         // Brug to-strengs constructor for at sætte både id og type rigtigt
-                        Identifier name = new Identifier(idToken.getValue());
-                        Identifier var = new Identifier(idToken.getValue(), typeToken.getValue()); // her er type sat korrekt
-                        return new FunctionIdentifier(name, var, params);
+                        Identifier typedName = new Identifier(idToken.getValue(), typeToken.getValue()); // her er type sat korrekt
+                        return new FunctionIdentifier(typedName, params);
                     }
                 } else if (children.size() == 4) {  // Function af denne form : TYPE ID ( )
                     Object type = children.get(0);
                     Object id = children.get(1);
 
                     if (type instanceof Token typeToken && id instanceof Token idToken) {
-                        Identifier name = new Identifier(idToken.getValue());
-                        Identifier var = new Identifier(idToken.getValue(), typeToken.getValue()); // type gemmes
-                        return new FunctionIdentifier(name, var, new Elist(List.of()));
+                        Identifier typedName = new Identifier(idToken.getValue(), typeToken.getValue()); // type gemmes
+                        return new FunctionIdentifier(typedName, new Elist(List.of()));
                     }
                 }
             }
