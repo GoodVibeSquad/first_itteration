@@ -77,7 +77,7 @@ public class ParserTest {
         // Check that we get exactly one statement
         assertEquals(1, result.ast.elements().size(), "Should have exactly one statement");
         
-        // Check that it's the correct targetType
+        // Check that it's the correct type
         Statement stmt = result.ast.elements().getFirst();
         assertTrue(stmt instanceof SExpression, "Statement should be an SExpression");
         

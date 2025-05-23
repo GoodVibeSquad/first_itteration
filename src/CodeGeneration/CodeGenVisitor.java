@@ -78,7 +78,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         Set<String> currentScope = scopeStack.peek();
         for (String var : currentScope) {
             output.append(indent()).append("del ").append(var).append("\n");
-            //output.append("del ").append(returnType).append("\n");
+            //output.append("del ").append(var).append("\n");
         }
 
         scopeStack.pop();

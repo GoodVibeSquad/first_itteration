@@ -237,12 +237,12 @@ public static Set<String> computeFirst(String symbol, Grammar grammar) {
         }
 
 //        System.out.println("\n=== ACTION TABLE ===");
-//        for (returnType entry : actionTable.entrySet()) {
+//        for (var entry : actionTable.entrySet()) {
 //            System.out.println("State " + entry.getKey() + ": " + entry.getValue());
 //        }
 //
 //        System.out.println("\n=== GOTO TABLE ===");
-//        for (returnType entry : gotoTable.entrySet()) {
+//        for (var entry : gotoTable.entrySet()) {
 //            System.out.println("State " + entry.getKey() + ": " + entry.getValue());
 //        }
     }

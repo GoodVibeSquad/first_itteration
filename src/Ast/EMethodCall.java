@@ -1,7 +1,7 @@
 package Ast;
 
 /*
-receiver: the receiver you're calling the method on (could be an Eidentifier, EFuncCall, etc.)
+receiver: the object you're calling the method on (could be an Eidentifier, EFuncCall, etc.)
 
 method: the method name (like "train")
 

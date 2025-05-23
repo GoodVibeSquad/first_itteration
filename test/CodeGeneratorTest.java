@@ -132,7 +132,7 @@ public class CodeGeneratorTest {
     @DisplayName("09_UnsupportedCastBoolToInt")
     public void testUnsupportedCastBoolToInt() {
         assertThrows(RuntimeException.class, () -> {runGeneratedPythonCode("UnsupportedCastBoolToInt.txt");
-        }, "Expected a RuntimeException due to unsupported targetType conversion");
+        }, "Expected a RuntimeException due to unsupported type conversion");
     }
 
     @Test
