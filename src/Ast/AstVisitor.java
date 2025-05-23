@@ -46,6 +46,4 @@ package Ast;
     R visitSFunction(SFunction sFunction);
     R visitFunctionIdentifier(FunctionIdentifier functionIdentifier);
 
-    //Other
-    R visitDef(Def d);
  }

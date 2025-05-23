@@ -184,7 +184,7 @@ public class Lexer {
             if (reader.isEOF() || reader.currentChar() != symbol.charAt(i)) {
                 return false; // If any character does not match, return false
             }
-            reader.advance(); // Move to the next character
+            reader.advance();
         }
 
         return true; // If all characters match, return true

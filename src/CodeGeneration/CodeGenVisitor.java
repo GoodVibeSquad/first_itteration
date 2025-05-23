@@ -437,14 +437,6 @@ public class CodeGenVisitor implements AstVisitor<Void> {
     }
 
 
-
-    // VI BRUGER DEN IKKE (DEF)
-    @Override
-    public Void visitDef(Def d) {
-        return null;
-    }
-
-
     @Override
     public Void visitSFunction(SFunction sFunction) {
         output.append("def ");

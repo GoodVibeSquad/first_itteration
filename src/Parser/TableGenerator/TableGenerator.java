@@ -65,18 +65,6 @@ public class TableGenerator {
         return false;
     }
 
-//    static Set<String> first(String nonTerminal, Grammar grammar) {
-//        Set<String> firstSet = new HashSet<>();
-//
-//        for (Production p : grammar.getProductions()) {
-//            if (p.getLhs().equals(nonTerminal)) {
-//                if (!p.getRhs().isEmpty()) {
-//                    firstSet.add(p.getRhs().get(0));
-//                }
-//            }
-//        }
-//        return firstSet;
-//    }
 public static Set<String> computeFirst(String symbol, Grammar grammar) {
     return computeFirst(symbol, grammar, new HashSet<>());
 }
@@ -107,11 +95,7 @@ public static Set<String> computeFirst(String symbol, Grammar grammar) {
     }
 
     static Set<String> isFirst(String symbol, Grammar grammar) {
-//        if (!isNonTerminal(symbol, grammar)) {
-//            return Set.of(symbol);
-//        } else {
-//            return first(symbol, grammar);
-//        }
+
         return computeFirst(symbol,grammar);
     }
 
