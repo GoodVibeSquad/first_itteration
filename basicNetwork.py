@@ -470,7 +470,7 @@ hidden = Layer(h_layers, h_layers_neurons, h_layer_act_func)
 output = Layer(classifications, output_layer_activation)
 nn = NeuralNetwork(input, hidden, output)
 epochs = 20
-train_percentage = 90
+train_percentage = 70
 learning_rate = 0.001
 nn.train("mnist_example", ".png", epochs, train_percentage, learning_rate)
 nn.save("My_Network.pkl")

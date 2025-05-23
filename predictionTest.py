@@ -187,7 +187,7 @@ class NeuralNetwork:
 
             # Updates the current input and moves forward in neural network
             current_input = current_activation
-       # activations[-1] = self.activation_functions[1].run(activations[-1])
+        activations[-1] = self.activation_functions[1].run(activations[-1])
         return activations
 
 #        print("Output activation: ", output_activation)
@@ -258,7 +258,7 @@ class NeuralNetwork:
             self.bias[i] += learningRate * np.sum(delta[i], axis=0, keepdims=True)
 
 
-    def printPredictions(self, test_set,images_array):
+    def printPredictions(self, test_set,images_array, final_avg_loss):
         avrage = []
         grouped_data = defaultdict(list)
         failed = defaultdict(list)
@@ -295,6 +295,7 @@ class NeuralNetwork:
                 failed[number].append(procent)
         
         print("Acuracy: ", (len(avrage) - sum(len(v) for v in failed.values()))/len(avrage) * 100)
+        print("Average loss: ", final_avg_loss)
         print("\nSuccesses: ",len(avrage) - (sum(len(v) for v in failed.values())), " out of", len(avrage))
         for number in failed:
             print("classification: ", self.classification[number], "\n \t",len(grouped_data[number]) - len(failed[number]), " out of ", len(grouped_data[number]))
@@ -392,8 +393,7 @@ class NeuralNetwork:
 
                 # Sum the total loss in one epoch
                 # We use softmax here, but just to get percentage, not actually applied in training.
-                predicted_probs = self.activation_functions[1].run(activations[-1])
-                loss = self.cross_entropy_loss(predicted_probs, class_index)
+                loss = self.cross_entropy_loss(activations[-1], class_index)
                 total_loss += loss
 
                 image_data = images_array[class_index][file_index]
@@ -409,7 +409,7 @@ class NeuralNetwork:
             average_loss = total_loss / len(training_set)
             epoch_losses.append(average_loss)
 
-        self.printPredictions(test_set,images_array)
+        self.printPredictions(test_set,images_array, epoch_losses[-1])
 
 
         # Plot the accuracy and loss over epoch
@@ -460,8 +460,8 @@ class NeuralNetwork:
 # BASECODE DONE 
 
 nn = NeuralNetwork("My_Network.pkl")
-predicted_image_one = nn.predict("C:\\Users\\peter\\Desktop\\University\\4TH SEMESTER\\P4\\first_itteration\\Mnist\\1\\37.png", ".png")
-predicted_image_eight = nn.predict("C:\\Users\\peter\\Desktop\\University\\4TH SEMESTER\\P4\\first_itteration\\Mnist\\8\\374.png", ".png")
+predicted_image_one = nn.predict("C:\\Users\\peter\\Desktop\\first_itteration\\Mnist\\1\\14.png", ".png")
+predicted_image_eight = nn.predict("C:\\Users\\peter\\Desktop\\first_itteration\\Mnist\\8\\84.png", ".png")
 if predicted_image_one == 1:
 	print("Image 1 has been correctly classified")
 else:
