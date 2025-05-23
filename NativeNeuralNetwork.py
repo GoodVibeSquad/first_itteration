@@ -195,7 +195,7 @@ class NeuralNetwork:
             case ".png" | ".jpg" | ".jpeg" :
                 return self.load_image_data(path, datatype)
             case _:
-                raise ValueError(f"File must be a {datatype} image.")
+                raise ValueError(f"File type must be that of an image, not {datatype}.")
 
     def load_image_data(self, path,datatype):
         subfolders = [ f.path for f in os.scandir(path) if f.is_dir() ]
@@ -221,7 +221,7 @@ class NeuralNetwork:
                     np.set_printoptions(threshold=np.inf)
                     flattenedData = normalized_data.flatten(order='C').reshape(1, -1)
                     if flattenedData.shape[1] != self.input.input_size:
-                        raise ValueError(f"Input size mismatch: expected flattened size {self.input.input_size}, got {flattened_data.shape[1]}, from {image}")
+                        raise ValueError(f"Input size mismatch: expected flattened size {self.input.input_size}, got {flattenedData.shape[1]}, from {image} in loading images for training")
                     numbered_image_array.append(flattenedData)
 
             images_array.append(numbered_image_array)
@@ -321,7 +321,11 @@ class NeuralNetwork:
         return flattened_data
 
     def predict(self, path, datatype):
+        if not os.path.exists(path):
+            raise ValueError(f"Path {path} does not exist.")
         data = self.init_one_data(path,datatype)
+
+
         activations = []
 
         current_input = data
