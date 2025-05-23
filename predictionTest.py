@@ -460,8 +460,8 @@ class NeuralNetwork:
 # BASECODE DONE 
 
 nn = NeuralNetwork("My_Network.pkl")
-predicted_image_one = nn.predict("C:\\Users\\peter\\Desktop\\first_itteration\\Mnist\\1\\14.png", ".png")
-predicted_image_eight = nn.predict("C:\\Users\\peter\\Desktop\\first_itteration\\Mnist\\8\\84.png", ".png")
+predicted_image_one = nn.predict("C:\\Users\\phili\\Documents\\GitHub\\first_itteration\\Mnist\\3\\32.png", ".png")
+predicted_image_eight = nn.predict("C:\\Users\\phili\\Documents\\GitHub\\first_itteration\\Mnist\\5\\52.png", ".png")
 if predicted_image_one == 1:
 	print("Image 1 has been correctly classified")
 else:
