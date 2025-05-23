@@ -1,6 +1,6 @@
 package Parser;
 
-import Ast.Slist;
+import Ast.SList;
 import Parser.TableGenerator.TableGenerator;
 import Tokens.Token;
 import Tokens.TokenType;
@@ -9,7 +9,7 @@ import java.util.*;
 
 public class Parser {
 
-    public static Slist parse(List<Token> input) {
+    public static SList parse(List<Token> input) {
         Stack<Integer> stateStack = new Stack<>();
         stateStack.push(0); // Start state
         Stack<Object> objectStack = new Stack<>();
@@ -80,6 +80,6 @@ public class Parser {
 
         }
 
-        return (Slist) objectStack.pop();
+        return (SList) objectStack.pop();
     }
 }

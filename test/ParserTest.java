@@ -14,14 +14,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ParserTest {
 
-    private record ParseResult(boolean success, Slist ast, String errorMsg) {}
+    private record ParseResult(boolean success, SList ast, String errorMsg) {}
 
     private ParseResult parseFile(String filename) {
         try {
             TokenGetter tokenGetter = new TokenGetter(filename, testDir);
             tokenGetter.initialize();
             List<Token> tokens = tokenGetter.getTokens();
-            Slist ast = Parser.parse(tokens);
+            SList ast = Parser.parse(tokens);
             return new ParseResult(true, ast, null);
         } catch (Exception e) {
             return new ParseResult(false, null, e.getMessage());
@@ -47,7 +47,7 @@ public class ParserTest {
         List<Token> tokens = tokenGetter.getTokens();
 
         try {
-            Slist slist = Parser.parse(tokens);
+            SList slist = Parser.parse(tokens);
             if (!expectSuccess) {
                 fail("Expected syntax error, but parsing succeeded for " + filename);
             } else {
@@ -83,7 +83,7 @@ public class ParserTest {
         
         // Check the internal structure
         SExpression sExpr = (SExpression) stmt;
-        assertTrue(sExpr.value() instanceof Econstant, "Expression should be an Econstant");
+        assertTrue(sExpr.expr() instanceof EConstant, "Expression should be an Econstant");
         
         // Optionally print the parse tree to verify shift/reduce actions
         System.out.println("Parse result: " + result.ast);
@@ -101,8 +101,8 @@ public class ParserTest {
         for (Statement stmt : result.ast.elements()) {
             assertTrue(stmt instanceof SExpression, "Statement should be SExpression, because constants are expressions, got " + stmt.getClass().getSimpleName() + " instead.");
             SExpression sExpr = (SExpression) stmt;
-            assertTrue(sExpr.value() instanceof Econstant, 
-                sExpr.value() + " should be constant, got " + sExpr.value().getClass().getSimpleName());
+            assertTrue(sExpr.expr() instanceof EConstant,
+                sExpr.expr() + " should be constant, got " + sExpr.expr().getClass().getSimpleName());
         }
     }
 

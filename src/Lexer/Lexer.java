@@ -100,7 +100,7 @@ public class Lexer {
         }
         String word = result.toString();
 
-        // Check if it's a keyword instead of returning an identifier
+        // Check if it's a keyword instead of returning an index
         if (TokenType.tokenTypeMap.containsKey(word)) {
             return new Token(TokenType.tokenTypeMap.get(word), word);
         }

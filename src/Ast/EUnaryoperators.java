@@ -1,6 +1,6 @@
 package Ast;
 
-public record Eunaryoperators(UnaryOperators op, Expression expr) implements Expression {
+public record EUnaryoperators(UnaryOperators op, Expression expr) implements Expression {
 
     //accept metode (visitor)
     @Override

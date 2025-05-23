@@ -1,6 +1,6 @@
 package Ast;
 
-public record ENewFunc(Type type, Elist e) implements Expression{
+public record ENewFunc(Type type, EList e) implements Expression{
     //accept metode (visitor)
     @Override
     public <R> R accept(AstVisitor<R> visitor) {
