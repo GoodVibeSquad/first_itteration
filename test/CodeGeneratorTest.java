@@ -1,4 +1,4 @@
-import Ast.Slist;
+import Ast.SList;
 import Parser.*;
 import Parser.TableGenerator.TableGenerator;
 import Tokens.Token;
@@ -13,7 +13,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
-import java.nio.file.*;
 import java.util.List;
 
 public class CodeGeneratorTest {
@@ -26,7 +25,7 @@ public class CodeGeneratorTest {
         new TableGenerator(grammar);
     }
 
-    public Slist buildTestAst(String filename) {
+    public SList buildTestAst(String filename) {
         TokenGetter tokenGetter = new TokenGetter(filename, testDir);
         tokenGetter.initialize();
         List<Token> tokens = tokenGetter.getTokens();
@@ -34,7 +33,7 @@ public class CodeGeneratorTest {
     }
 
     public String runGeneratedPythonCode(String filename) {
-        Slist slist = buildTestAst(filename);
+        SList slist = buildTestAst(filename);
         SymbolTable symbols = new SymbolTable();
         TypeCheckerVisitor typeVisitor = new TypeCheckerVisitor(symbols);
         TypeCheck result = slist.accept(typeVisitor);
@@ -65,7 +64,7 @@ public class CodeGeneratorTest {
     @DisplayName("01_testEmptyProgram")
     public void testEmptyProgram() {
         assertThrows(RuntimeException.class, () -> {
-            Slist slist = buildTestAst("EmptyProgram.txt");
+            SList slist = buildTestAst("EmptyProgram.txt");
             CodeGenerator generator = new CodeGenerator(slist);
             generator.generate("testPythonCode.py");
         });
@@ -76,7 +75,7 @@ public class CodeGeneratorTest {
     @DisplayName("02_testPrintNone")
     public void testPrintNone() {
         assertThrows(RuntimeException.class, () -> {
-            Slist slist = buildTestAst("PrintNone.txt");
+            SList slist = buildTestAst("PrintNone.txt");
             CodeGenerator generator = new CodeGenerator(slist);
             generator.generate("testPythonCode.py");  // or runGeneratedPythonCode("PrintNone.txt");
         });
@@ -133,7 +132,7 @@ public class CodeGeneratorTest {
     @DisplayName("09_UnsupportedCastBoolToInt")
     public void testUnsupportedCastBoolToInt() {
         assertThrows(RuntimeException.class, () -> {runGeneratedPythonCode("UnsupportedCastBoolToInt.txt");
-        }, "Expected a RuntimeException due to unsupported type conversion");
+        }, "Expected a RuntimeException due to unsupported targetType conversion");
     }
 
     @Test
@@ -175,7 +174,7 @@ public class CodeGeneratorTest {
     @DisplayName("15_testMathLibraryUsage")
     public void testMathLibraryUsage() {
         String output = runGeneratedPythonCode("MathLibraryUsage.txt");
-        assertTrue(output.contains("3.14") || output.contains("3.141"), "Should print approximate value of pi");
+        assertTrue(output.contains("3.14") || output.contains("3.141"), "Should print approximate expr of pi");
     }
 
 }

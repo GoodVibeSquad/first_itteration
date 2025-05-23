@@ -41,7 +41,7 @@ public class GrammarBuilder {
         grammar.add("expression", "OPEN_PARENTHESIS", "expression" , "CLOSED_PARENTHESIS");
         grammar.add("expression", "expression", "binaryoperator", "expression");
         grammar.add("expression", "unaryOperator", "expression");
-        grammar.add("expression", "identifier");
+        grammar.add("expression", "index");
         grammar.add("expression",  "TYPE","ID", "OPEN_PARENTHESIS", "CLOSED_PARENTHESIS");
         grammar.add("expression",  "TYPE","ID", "OPEN_PARENTHESIS", "expr_list", "CLOSED_PARENTHESIS");
         grammar.add("expression", "SUM", "OPEN_PARENTHESIS", "expression","COMMA", "expression","COMMA", "ID", "COMMA", "expression", "CLOSED_PARENTHESIS");
@@ -68,7 +68,7 @@ public class GrammarBuilder {
         // Matched if-else and other complete statements
         grammar.add("matched_stmt", "IF", "expression", "matched_stmt", "ELSE", "matched_stmt");
         grammar.add("matched_stmt", "expression", "SEMICOLON");
-        grammar.add("matched_stmt", "identifier", "assop", "expression", "SEMICOLON");
+        grammar.add("matched_stmt", "index", "assop", "expression", "SEMICOLON");
         grammar.add("matched_stmt", "OPEN_CURLY_BRACKET", "statementlist", "CLOSED_CURLY_BRACKET");
         grammar.add("matched_stmt", "FOR", "OPEN_PARENTHESIS", "statement", "expression", "SEMICOLON", "statement", "CLOSED_PARENTHESIS", "statement");
         grammar.add("matched_stmt", "WHILE", "OPEN_PARENTHESIS", "expression", "CLOSED_PARENTHESIS", "statement"); //nu parentes fx while (..)
@@ -93,7 +93,7 @@ public class GrammarBuilder {
         // ====== FUNCTIONS ======
         // En hel funktion: "function" nøgleordet, navnet, og kroppen
         grammar.add("function", "functionIdentifier", "statement");
-        // Navn og parametre på en funktion (VI har tilføjet TYPE og ændret identifier til ID)
+        // Navn og parametre på en funktion (VI har tilføjet TYPE og ændret index til ID)
         grammar.add("functionIdentifier", "TYPE", "ID", "OPEN_PARENTHESIS", "expr_list", "CLOSED_PARENTHESIS");
         grammar.add("functionIdentifier", "TYPE", "ID", "OPEN_PARENTHESIS", "CLOSED_PARENTHESIS");
 
@@ -107,8 +107,8 @@ public class GrammarBuilder {
         grammar.add("assop", "MOD_ASSIGN");
 
         // ====== IDENTIFIER ======
-        grammar.add("identifier", "typed_identifier");
-        grammar.add("identifier", "ID");
+        grammar.add("index", "typed_identifier");
+        grammar.add("index", "ID");
         grammar.add("typed_identifier", "TYPE", "ID");
 
         // ====== UNARY OPERATORS ======

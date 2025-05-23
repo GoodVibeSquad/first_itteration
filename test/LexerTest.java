@@ -53,8 +53,8 @@ public class LexerTest {
         }).when(reader).advance();
         Token token = lexer.tokenize();
 
-        Assertions.assertEquals(TokenType.ID, token.getType(), "Token type should be ID");
-        Assertions.assertEquals("var", token.getValue(), "Token value should be 'var'");
+        Assertions.assertEquals(TokenType.ID, token.getType(), "Token targetType should be ID");
+        Assertions.assertEquals("returnType", token.getValue(), "Token expr should be 'returnType'");
     }
 
     @Test
@@ -68,7 +68,7 @@ public class LexerTest {
         }).when(reader).advance();
 
         Token token = lexer.tokenize();
-        Assertions.assertNotEquals(TokenType.ID, token.getType(), "Token type should not be ID");
+        Assertions.assertNotEquals(TokenType.ID, token.getType(), "Token targetType should not be ID");
 
     }
 
@@ -83,7 +83,7 @@ public class LexerTest {
         }).when(reader).advance();
 
         Token token = lexer.tokenize();
-        Assertions.assertEquals(TokenType.INT, token.getType(), "Token type should be INT");
+        Assertions.assertEquals(TokenType.INT, token.getType(), "Token targetType should be INT");
 
     }
 
@@ -99,7 +99,7 @@ public class LexerTest {
         }).when(reader).advance();
 
         Token token = lexer.tokenize();
-        Assertions.assertNotEquals(TokenType.INT, token.getType(), "Token type should be INT");
+        Assertions.assertNotEquals(TokenType.INT, token.getType(), "Token targetType should be INT");
 
     }
 
@@ -113,7 +113,7 @@ public class LexerTest {
             return null;
         }).when(reader).advance();
         Token token = lexer.tokenize();
-        Assertions.assertEquals(TokenType.DOUBLE, token.getType(), "Token type should be Double");
+        Assertions.assertEquals(TokenType.DOUBLE, token.getType(), "Token targetType should be Double");
         Assertions.assertEquals("1.0", token.getValue());
     }
 
@@ -128,7 +128,7 @@ public class LexerTest {
             return null;
         }).when(reader).advance();
         Token token = lexer.tokenize();
-        Assertions.assertNotEquals(TokenType.DOUBLE, token.getType(), "Token type should not be DOUBLE");
+        Assertions.assertNotEquals(TokenType.DOUBLE, token.getType(), "Token targetType should not be DOUBLE");
 
     }
 
@@ -143,7 +143,7 @@ public class LexerTest {
             return null;
         }).when(reader).advance();
         Token token = lexer.tokenize();
-        Assertions.assertEquals(TokenType.STRING, token.getType(), "Token type should not be DOUBLE");
+        Assertions.assertEquals(TokenType.STRING, token.getType(), "Token targetType should not be DOUBLE");
         Assertions.assertEquals("hey", token.getValue());
     }
 
@@ -158,7 +158,7 @@ public class LexerTest {
             return null;
         }).when(reader).advance();
         Token token = lexer.tokenize();
-        Assertions.assertNotEquals(TokenType.STRING, token.getType(), "Token type should not be DOUBLE");
+        Assertions.assertNotEquals(TokenType.STRING, token.getType(), "Token targetType should not be DOUBLE");
     }
 
 
@@ -247,8 +247,8 @@ public class LexerTest {
             Token token = lexer.tokenize();
 
             Assertions.assertEquals(TokenType.tokenTypeMap.get(op), token.getType(),
-                    "Token type should match operator: " + op);
-            Assertions.assertEquals(op, token.getValue(), "Token value should match operator: " + op);
+                    "Token targetType should match operator: " + op);
+            Assertions.assertEquals(op, token.getValue(), "Token expr should match operator: " + op);
         }
     }
 
@@ -272,7 +272,7 @@ public class LexerTest {
 
             Token token = lexer.tokenize();
             Assertions.assertEquals(TokenType.tokenTypeMap.get(keyword), token.getType(),
-                    "Token type should match keyword: " + keyword);
+                    "Token targetType should match keyword: " + keyword);
             Assertions.assertEquals(keyword, token.getValue());
         }
     }
@@ -295,7 +295,7 @@ public class LexerTest {
             }).when(reader).advance();
 
             Token token = lexer.tokenize();
-            Assertions.assertEquals(TokenType.BOOL, token.getType(), "Token type should be BOOL");
+            Assertions.assertEquals(TokenType.BOOL, token.getType(), "Token targetType should be BOOL");
             Assertions.assertEquals(boolVal, token.getValue());
         }
     }
@@ -318,7 +318,7 @@ public class LexerTest {
             }).when(reader).advance();
 
             Token token = lexer.tokenize();
-            Assertions.assertEquals(TokenType.TYPE, token.getType(), "Token type should be TYPE");
+            Assertions.assertEquals(TokenType.TYPE, token.getType(), "Token targetType should be TYPE");
             Assertions.assertEquals(type, token.getValue());
         }
     }
@@ -343,7 +343,7 @@ public class LexerTest {
 
             Token token = lexer.tokenize();
             Assertions.assertEquals(TokenType.tokenTypeMap.get(symbol), token.getType(),
-                    "Token type should match symbol: " + symbol);
+                    "Token targetType should match symbol: " + symbol);
             Assertions.assertEquals(symbol, token.getValue());
         }
     }
@@ -383,7 +383,7 @@ public class LexerTest {
         for (TokenType expectedType : expectedTypes) {
             Token token = lexer.tokenize();
             Assertions.assertEquals(expectedType, token.getType(),
-                    "Unexpected token type: " + token.getType());
+                    "Unexpected token targetType: " + token.getType());
         }
     }
 }

@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.logging.SimpleFormatter;
 
 public class CodeGenVisitor implements AstVisitor<Void> {
     private int scopeSize = 0;
@@ -59,7 +58,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
     private boolean isEmptyElseBranch(Statement elseBranch) {
         if (elseBranch instanceof SExpression sExpr) {
-            if (sExpr.value() instanceof Econstant eConst) {
+            if (sExpr.expr() instanceof EConstant eConst) {
                 if (eConst.value() instanceof CNone) {
                     return true;
                 }
@@ -79,7 +78,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         Set<String> currentScope = scopeStack.peek();
         for (String var : currentScope) {
             output.append(indent()).append("del ").append(var).append("\n");
-            //output.append("del ").append(var).append("\n");
+            //output.append("del ").append(returnType).append("\n");
         }
 
         scopeStack.pop();
@@ -109,7 +108,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
     @Override
     public Void visitCBool(CBool c) {
 
-        // the value of c contains an actual boolean variable which prints to a true or false
+        // the expr of c contains an actual boolean variable which prints to a true or false
         // with un-capitalized first letter. Python requires capitalization (True, False)
         // Therefore we capitalize the first letter before appending it.
         String javaBool = String.valueOf(c.value());
@@ -150,19 +149,19 @@ public class CodeGenVisitor implements AstVisitor<Void> {
     }
 
     @Override
-    public Void visitEconstant(Econstant e) {
+    public Void visitEconstant(EConstant e) {
         e.value().accept(this);
         return null;
     }
 
     @Override
-    public Void visitEidentifier(Eidentifier e) {
+    public Void visitEidentifier(EIdentifier e) {
         output.append(e.name().getId());
         return null;
     }
 
     @Override
-    public Void visitEbinaryoperators(Ebinaryoperators e) {
+    public Void visitEbinaryoperators(EBinaryoperators e) {
         e.left().accept(this);
         output.append(" ").append(e.op().toSymbol()).append(" ");
         e.right().accept(this);
@@ -171,7 +170,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
     }
 
     @Override
-    public Void visitEunaryoperators(Eunaryoperators e) {
+    public Void visitEunaryoperators(EUnaryoperators e) {
         //output.append(e.op().toSymbol()); ! istedet for not????
         //e.expr().accept(this); ! istedet for not????
 
@@ -191,7 +190,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
     }
 
     @Override
-    public Void visitElist(Elist e) {
+    public Void visitElist(EList e) {
         for (int i = 0; i < e.elements().size(); i++) {
             e.elements().get(i).accept(this);
             if (i < e.elements().size() - 1) {
@@ -203,13 +202,13 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
 
     @Override
-    public Void visitEternary(Eternary e) {
+    public Void visitEternary(ETernary e) {
         output.append("(");
-        e.trueExpr().accept(this);
+        e.thenBranch().accept(this);
         output.append(" if ");
         e.condition().accept(this);
         output.append(" else ");
-        e.falseExpr().accept(this);
+        e.elseBranch().accept(this);
         output.append(")");
         return null;
     }
@@ -220,7 +219,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
         output.append("sum(");
         e.body().accept(this);
-        output.append(" for ").append(e.identifier().getId());
+        output.append(" for ").append(e.index().getId());
         output.append(" in range( ");
         e.topExpression().accept(this);
         output.append(", ");
@@ -232,7 +231,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
     @Override
     public Void visitEMax(EMax e) {
         output.append("max(");
-        e.e().accept(this);
+        e.args().accept(this);
         output.append(")");
         return null;
     }
@@ -249,11 +248,11 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
     @Override
     public Void visitETypeconversion(ETypeconversion e) {
-        output.append(e.type().getValue()).append("(");
+        output.append(e.targetType().getValue()).append("(");
         e.expression().accept(this);
         output.append(")\n");
 
-        //type(x)
+        //targetType(x)
         return null;
     }
 
@@ -277,7 +276,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
     @Override
     public Void visitEMethodCall(EMethodCall e) {
-        output.append(e.object().getId()).append(".").append(e.method().getId()).append("(");
+        output.append(e.receiver().getId()).append(".").append(e.method().getId()).append("(");
         e.args().accept(this);
         output.append(")");
 
@@ -287,7 +286,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
 
     @Override
-    public Void visitSif(Sif s) {
+    public Void visitSif(SIf s) {
         output.append("if ");
         s.condition().accept(this);
         output.append(":\n");
@@ -307,7 +306,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
             // This is a problem because we need the else branch to be a continuation of the original
             // scope. Instead of being an else of the (else if) is statement is a else to that
             // specific if statement.
-            if (elseBranch instanceof Sif nestedIf) {
+            if (elseBranch instanceof SIf nestedIf) {
                 output.append(indent()).append("elif ");
                 nestedIf.condition().accept(this);
                 output.append(":\n");
@@ -334,8 +333,8 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
 
     @Override
-    public Void visitSassign(Sassign s) {
-        output.append(s.var().getId()).append(" ").
+    public Void visitSassign(SAssign s) {
+        output.append(s.name().getId()).append(" ").
                 append(s.assignmentOperator().toSymbol()).append(" ");
 
         s.expr().accept(this);
@@ -347,7 +346,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
 
     @Override
-    public Void visitSprint(Sprint s) {
+    public Void visitSprint(SPrint s) {
         output.append("print(");
         s.expr().accept(this);
         output.append(")\n");
@@ -355,13 +354,13 @@ public class CodeGenVisitor implements AstVisitor<Void> {
     }
 
     @Override
-    public Void visitSblock(Sblock s) {
+    public Void visitSblock(SBlock s) {
         s.stmts().accept(this);
         return null;
     }
 
     @Override
-    public Void visitSfor(Sfor s) {
+    public Void visitSfor(SFor s) {
 
         s.init().accept(this);
 
@@ -392,11 +391,11 @@ public class CodeGenVisitor implements AstVisitor<Void> {
     public Void visitSExpression(SExpression s) {
 
 
-        // Handles variable declaration with initialized value of 0
-        if (s.value() instanceof Eidentifier) {
+        // Handles variable declaration with initialized expr of 0
+        if (s.expr() instanceof EIdentifier) {
             output.append("=0\n");
         } else{
-            s.value().accept(this);
+            s.expr().accept(this);
             output.append("\n");
         }
 
@@ -432,7 +431,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
     }
 
     @Override
-    public Void visitSlist(Slist slist) {
+    public Void visitSlist(SList slist) {
         for (Statement statement : slist.elements()) {
             output.append(indent());
             statement.accept(this);
@@ -495,7 +494,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         if (s.expr() != null) {
             s.expr().accept(this);
         } else {
-            output.append("0");  //if no initialised value.
+            output.append("0");  //if no initialised expr.
         }
 
         addVarToStack(s.var().getId()); //track that the variable has been declared

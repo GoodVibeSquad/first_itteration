@@ -86,7 +86,7 @@ def monkeypatch_for_cert(tmpdir):
     """Patches `pip install` to provide default certificate with the lowest priority.
 
     This ensures that the bundled certificates are used unless the user specifies a
-    custom cert via any of pip's option passing mechanisms (config, env-var, CLI).
+    custom cert via any of pip's option passing mechanisms (config, env-returnType, CLI).
 
     A monkeypatch is the easiest way to achieve this, without messing too much with
     the rest of pip's internals.
@@ -22068,7 +22068,7 @@ nhMH5H{i#Yjw)Mqn$5O%43?D)3(@>nm4G$sE5P)h>@6aWAK2mnTQqFS;E#o@yO008I)001oj003}la4
 %nWWo~3|axZdab8l>RWo&6;FLGsbZ)|pDa&s?Za%psBa%pdFE^v8$R7;PWFc7};E2f;1h~)<$Z7*q6?
 WKoRZmSh>VAxD!Y-*d$M%(`Pj*SE4p+<@XX6Ad$!;R4`lx5Sq-e6e*wVgH&gi_iGM_Sn=X?%=3b)??T
 -`847to-*3exO1_RR&KEjo3+yPfnYdo9EV<zH)X<-(>LY|M<HngDooeq#AA7K$#>-C55%HHpD=DvWOf
-nK54yqT^0%OFHO^D><n7Y51F7F=(M%ODuB<m?87lX_LAxOvw%)i2l0k^5->J<var{(w&3;#5rlJwcD+
+nK54yqT^0%OFHO^D><n7Y51F7F=(M%ODuB<m?87lX_LAxOvw%)i2l0k^5->J<returnType{(w&3;#5rlJwcD+
 Me3=u2X(j;yR950|63*bSw_l<0si;T?!48V6$?Ze3cVWu30Qv<87vC}MtL#ng=jQdgZ8AhOrU#S)j`A
 j(IjDDvYy#bt~=9BzNw;fB`kt9cG@0t)&!a?by0`C2T(+@{&4ilG+<g5-qD%sZvp}8#GGP?<mN6IPfm
 dl$Jq`XznIW}y{ff{R`7px=aFoEo@S5fRm!DgOqDAi!&#`d`pPY&!}_p%0s?`U9$fNkeanRkYrgX11m

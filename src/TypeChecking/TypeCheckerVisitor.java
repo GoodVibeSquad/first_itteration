@@ -1,7 +1,6 @@
 package TypeChecking;
 
 import Ast.*;
-import Tokens.Token;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,12 +56,12 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
 
     // Expressions
     @Override
-    public TypeCheck visitEconstant(Econstant e) {
+    public TypeCheck visitEconstant(EConstant e) {
         return e.value().accept(this);
     }
 
     @Override
-    public TypeCheck visitEidentifier(Eidentifier e) {
+    public TypeCheck visitEidentifier(EIdentifier e) {
         String name = e.name().getId();
 
         if (symbolTable.contains(name)) {
@@ -74,7 +73,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     }
 
     @Override
-    public TypeCheck visitEbinaryoperators(Ebinaryoperators e) {
+    public TypeCheck visitEbinaryoperators(EBinaryoperators e) {
         TypeCheck leftType = e.left().accept(this);
         TypeCheck rightType = e.right().accept(this);
         BinaryOperators op = e.op();
@@ -132,7 +131,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     }
 
     @Override
-    public TypeCheck visitEunaryoperators(Eunaryoperators e) {
+    public TypeCheck visitEunaryoperators(EUnaryoperators e) {
         TypeCheck type = e.expr().accept(this);
         UnaryOperators op = e.op();
 
@@ -187,7 +186,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
             TypeCheck actual = actualArgs.get(i).accept(this);
             if (actual != expected.get(i)) {
                 System.err.println("Argument " + (i + 1) + " to function '" + funcName +
-                        "' has wrong type. Expected " + expected.get(i) +
+                        "' has wrong targetType. Expected " + expected.get(i) +
                         ", got " + actual);
                 return TypeCheck.ERROR;
             }
@@ -197,7 +196,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     }
 
     @Override
-    public TypeCheck visitElist(Elist e) {
+    public TypeCheck visitElist(EList e) {
         if (e.elements().isEmpty()) {
             return TypeCheck.ERROR;
         }
@@ -220,15 +219,15 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     }
 
     @Override
-    public TypeCheck visitEternary(Eternary e) {
+    public TypeCheck visitEternary(ETernary e) {
         TypeCheck condition = e.condition().accept(this);
         if (condition != TypeCheck.BOOL) {
-            System.err.println("Terneary condition must be of type BOOL, but got: " + condition);
+            System.err.println("Terneary condition must be of targetType BOOL, but got: " + condition);
             return TypeCheck.ERROR;
         }
 
-        TypeCheck trueType = e.trueExpr().accept(this);
-        TypeCheck falseType = e.falseExpr().accept(this);
+        TypeCheck trueType = e.thenBranch().accept(this);
+        TypeCheck falseType = e.elseBranch().accept(this);
 
         if (trueType == falseType) {
             return trueType;
@@ -238,7 +237,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
             return TypeCheck.DOUBLE;
         }
 
-        System.err.println("Ternary expression must have same type in both branches, but got: " + trueType + " and " + falseType);
+        System.err.println("Ternary expression must have same targetType in both branches, but got: " + trueType + " and " + falseType);
         return TypeCheck.ERROR;
     }
 
@@ -253,7 +252,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         }
 
         // Declare iteration variable
-        String loopVar = e.identifier().getId();
+        String loopVar = e.index().getId();
         symbolTable.declareVariable(loopVar, TypeCheck.INT);
 
         TypeCheck bodyType = e.body().accept(this);
@@ -273,7 +272,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
 
     @Override
     public TypeCheck visitEMax(EMax e) {
-        TypeCheck expressionType = e.e().accept(this);
+        TypeCheck expressionType = e.args().accept(this);
 
         if (expressionType == TypeCheck.INT || expressionType == TypeCheck.DOUBLE) {
             return expressionType;
@@ -297,7 +296,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
 
     @Override
     public TypeCheck visitETypeconversion(ETypeconversion e) {
-        String targetType = e.type().getValue();
+        String targetType = e.targetType().getValue();
         TypeCheck actualType = resolveType(targetType);
 
         TypeCheck expressionType = e.expression().accept(this);
@@ -305,7 +304,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         if(canConvert(expressionType, actualType)){
             return actualType;
         } else {
-            System.err.println("Invalid type conversion from " + expressionType + " to " + actualType);
+            System.err.println("Invalid targetType conversion from " + expressionType + " to " + actualType);
             return TypeCheck.ERROR;
         }
 
@@ -360,7 +359,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
 
     @Override
     public TypeCheck visitEMethodCall(EMethodCall e) {
-        String objectName = e.object().getId(); //nn
+        String objectName = e.receiver().getId(); //nn
         String methodName = e.method().getId(); //native neural network method fx train
         TypeCheck objectType;
 
@@ -394,7 +393,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     }
 
     @Override
-    public TypeCheck visitSif(Sif s) {
+    public TypeCheck visitSif(SIf s) {
         TypeCheck conditionType = s.condition().accept(this);
         if (conditionType != TypeCheck.BOOL) {
             System.err.println("Condition of if statement must be BOOL");
@@ -463,8 +462,8 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     }
 
     @Override
-    public TypeCheck visitSassign(Sassign s) {
-        String varName = s.var().getId();
+    public TypeCheck visitSassign(SAssign s) {
+        String varName = s.name().getId();
         TypeCheck exprType = s.expr().accept(this);
 
 
@@ -505,7 +504,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
 
 
     @Override
-    public TypeCheck visitSprint(Sprint s) {
+    public TypeCheck visitSprint(SPrint s) {
         TypeCheck exprType = s.expr().accept(this);
         if (exprType == TypeCheck.ERROR) {
             System.err.println("Error in print statement: " + exprType);
@@ -516,13 +515,13 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     }
 
     @Override
-    public TypeCheck visitSblock(Sblock s) {
+    public TypeCheck visitSblock(SBlock s) {
         symbolTable.enterScope();
 
         TypeCheck result = TypeCheck.VOID;
         for (Statement stmt : s.stmts().elements()) {
             TypeCheck stmtResult = stmt.accept(this);
-            // Track the return type if the statement is a return
+            // Track the return targetType if the statement is a return
             if (stmt instanceof SReturn) {
                 result = stmtResult;
             }
@@ -538,14 +537,14 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
 
 
     @Override
-    public TypeCheck visitSfor(Sfor s) {
+    public TypeCheck visitSfor(SFor s) {
 
         symbolTable.enterScope();
        // Check the assigment (initialization)
        if (s.init() != null ){
            TypeCheck assignmentType = s.init().accept(this);
            if (assignmentType == TypeCheck.ERROR) {
-               System.err.println("Error in for loop initialization: " + s.var().getId());
+               System.err.println("Error in for loop initialization:");
                return TypeCheck.ERROR;
            }
        }
@@ -554,7 +553,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         if (s.condition() != null) {
             TypeCheck compType = s.condition().accept(this);
             if (compType != TypeCheck.BOOL) {
-                System.err.println("For-loop comparison must be of type BOOL.");
+                System.err.println("For-loop comparison must be of targetType BOOL.");
                 return TypeCheck.ERROR;
             }
         }
@@ -563,18 +562,18 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         if (s.update() != null) {
             TypeCheck iterateType = s.update().accept(this);
             if (iterateType == TypeCheck.ERROR) {
-                System.err.println("Error in for loop update: " + s.var().getId());
+                System.err.println("Error in for loop update:");
                 return TypeCheck.ERROR;
             }
         }
 
 
-        // Check the body type
+        // Check the body targetType
         loopDepth++;
         if (s.body() != null) {
             TypeCheck bodyType = s.body().accept(this);
             if (bodyType == TypeCheck.ERROR) {
-                System.err.println("Error in body of for loop: " + s.var().getId());
+                System.err.println("Error in body of for loop: ");
                 loopDepth--;
                 return TypeCheck.ERROR;
             }
@@ -588,7 +587,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     @Override
     public TypeCheck visitSExpression(SExpression s) {
         // Check if this is actually a declaration like "int x;"
-        s.value().accept(this);
+        s.expr().accept(this);
         return TypeCheck.VOID;
     }
 
@@ -628,7 +627,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     }
 
     @Override
-    public TypeCheck visitSlist(Slist s) {
+    public TypeCheck visitSlist(SList s) {
         for (Statement stmt : s.elements()) {
             TypeCheck result = stmt.accept(this);
             if(result == TypeCheck.ERROR){
@@ -671,7 +670,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         }
 
         if (actual != currentExpectedReturnType) {
-            System.err.println("Return type mismatch: expected " +
+            System.err.println("Return targetType mismatch: expected " +
                     currentExpectedReturnType + ", got " + actual);
             return TypeCheck.ERROR;
         }
@@ -683,13 +682,13 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     public TypeCheck visitSFunction(SFunction sFunction) { //starter med functionidentifier delen af SFunction, hvor vi tjekker dens returtype, navn, og parametre
         FunctionIdentifier f = sFunction.functionIdentifier();
 
-        String funcName = f.var().getId();         // fx "add"
-        String returnTypeStr = f.var().getType();  // fx "int"
+        String funcName = f.returnType().getId();         // fx "add"
+        String returnTypeStr = f.returnType().getType();  // fx "int"
         TypeCheck returnType = resolveType(returnTypeStr);
 
         //hvis returtype er ugyldig, så fejl
         if (returnType == TypeCheck.ERROR) {
-            System.err.println("Unknown return type for function '" + funcName + "': " + returnTypeStr);
+            System.err.println("Unknown return targetType for function '" + funcName + "': " + returnTypeStr);
             return TypeCheck.ERROR;
         }
 
@@ -697,24 +696,24 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         //her opretter vi en liste til typerne i parameterlisten
         List<TypeCheck> paramTypes = new ArrayList<>();
         for (Expression p : f.params().elements()) {
-            if (p instanceof Eidentifier e) {
-                //hvis mangler type så returnerer den fejl
+            if (p instanceof EIdentifier e) {
+                //hvis mangler targetType så returnerer den fejl
                 String paramTypeStr = e.name().getType(); // fx "int"
                 if (paramTypeStr == null) {
-                    System.err.println("Missing type for parameter: " + e.name().getId());
+                    System.err.println("Missing targetType for parameter: " + e.name().getId());
                     return TypeCheck.ERROR;
                 }
-                //hvis ugyldig type, så returnerer den fejl
+                //hvis ugyldig targetType, så returnerer den fejl
                 TypeCheck paramType = resolveType(paramTypeStr);
                 if (paramType == TypeCheck.ERROR) {
-                    System.err.println("Invalid parameter type: " + paramTypeStr);
+                    System.err.println("Invalid parameter targetType: " + paramTypeStr);
                     return TypeCheck.ERROR;
                 }
                 //hvis alt ok, så tilføjer vi den
                 paramTypes.add(paramType);
             } // Hvis en parameter ikke er et Eidentifie så er det ugyldigt
             else {
-                System.err.println("Invalid parameter (not identifier) in function '" + funcName + "'");
+                System.err.println("Invalid parameter (not index) in function '" + funcName + "'");
                 return TypeCheck.ERROR;
             }
         }
@@ -731,7 +730,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         // Registrér parametre som variable i scopet
         for (int i = 0; i < f.params().elements().size(); i++) {
             Expression p = f.params().elements().get(i);
-            if (p instanceof Eidentifier e) {
+            if (p instanceof EIdentifier e) {
                 symbolTable.declareVariable(e.name().getId(), paramTypes.get(i));
             }
         }
@@ -749,7 +748,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         }
 
         if (body != returnType) {
-            System.err.println("Return type mismatch in function '" + funcName +
+            System.err.println("Return targetType mismatch in function '" + funcName +
                     "': expected " + returnType + ", got " + body);
             return TypeCheck.ERROR;
         }

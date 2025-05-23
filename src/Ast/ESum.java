@@ -1,6 +1,6 @@
 package Ast;
 
-public record ESum(Expression topExpression, Expression bottomExpression, Identifier identifier, Expression body) implements Expression{
+public record ESum(Identifier index, Expression bottomExpression, Expression topExpression, Expression body) implements Expression{
 
     @Override
     public <R> R accept(AstVisitor<R> visitor) {
