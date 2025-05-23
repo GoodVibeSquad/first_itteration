@@ -1,3 +1,4 @@
+import math
 # REQUIREMENT: Install Numpy
 
 import numpy as np
@@ -196,7 +197,7 @@ class NeuralNetwork:
             case ".png" | ".jpg" | ".jpeg" :
                 return self.load_image_data(path, datatype)
             case _:
-                raise ValueError(f"File type must be that of an image, not {datatype}.")
+                raise ValueError(f"File must be a {datatype} image.")
 
     def load_image_data(self, path,datatype):
         subfolders = [ f.path for f in os.scandir(path) if f.is_dir() ]
@@ -222,7 +223,7 @@ class NeuralNetwork:
                     np.set_printoptions(threshold=np.inf)
                     flattenedData = normalized_data.flatten(order='C').reshape(1, -1)
                     if flattenedData.shape[1] != self.input.input_size:
-                        raise ValueError(f"Input size mismatch: expected flattened size {self.input.input_size}, got {flattenedData.shape[1]}, from {image} in loading images for training")
+                        raise ValueError(f"Input size mismatch: expected flattened size {self.input.input_size}, got {flattened_data.shape[1]}, from {image}")
                     numbered_image_array.append(flattenedData)
 
             images_array.append(numbered_image_array)
@@ -323,11 +324,7 @@ class NeuralNetwork:
         return flattened_data
 
     def predict(self, path, datatype):
-        if not os.path.exists(path):
-            raise ValueError(f"Path {path} does not exist.")
         data = self.init_one_data(path,datatype)
-
-
         activations = []
 
         current_input = data
@@ -439,6 +436,7 @@ class NeuralNetwork:
 
     def plot_accuracy_loss_curve(self, accuracies, losses):
         epochs = range(1, len(accuracies) + 1)
+
         fig, ax1 = plt.subplots(figsize=(10, 5))
 
         # Plot Accuracy on left y-axis
@@ -459,3 +457,20 @@ class NeuralNetwork:
         plt.title('Accuracy Loss curve')
         fig.tight_layout()
         plt.show()
+# BASECODE DONE 
+
+input_image_size = 28 * 28
+h_layers = 5
+h_layers_neurons = 120
+classifications = 10
+h_layer_act_func = "Relu"
+output_layer_activation = "Softmax"
+input = Layer(input_image_size)
+hidden = Layer(h_layers, h_layers_neurons, h_layer_act_func)
+output = Layer(classifications, output_layer_activation)
+nn = NeuralNetwork(input, hidden, output)
+epochs = 20
+train_percentage = 70
+learning_rate = 0.001
+nn.train("mnist_example", ".png", epochs, train_percentage, learning_rate)
+nn.save("My_Network.pkl")

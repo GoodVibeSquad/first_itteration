@@ -1,7 +1,7 @@
 NeuralNetwork nn = new NeuralNetwork("My_Network.pkl");
 
-int predicted_image_one = nn.predict("C:\\Users\\peter\\Desktop\\University\\4TH SEMESTER\\P4\\first_itteration\\Mnist\\1\\37.png", ".png");
-int predicted_image_eight = nn.predict("C:\\Users\\peter\\Desktop\\University\\4TH SEMESTER\\P4\\first_itteration\\Mnist\\8\\374.png", ".png");
+int predicted_image_one = nn.predict("C:\\Users\\peter\\Desktop\\first_itteration\\Mnist\\1\\14.png", ".png");
+int predicted_image_eight = nn.predict("C:\\Users\\peter\\Desktop\\first_itteration\\Mnist\\8\\84.png", ".png");
 
 
 // Check if digit 1 image was correctly classified
