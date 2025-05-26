@@ -10,7 +10,7 @@ public class SymbolTable {
     private final Map<String, FunctionSignature> functions = new HashMap<>();
     private final Map<TypeCheck, Map<String, MethodSignature>> methods = new HashMap<>();
 
-    private final Map<String, TypeCheck> classes = new HashMap<>();
+    private final Map<String, TypeCheck> types = new HashMap<>();
     private final Map<TypeCheck, List<List<TypeCheck>>> constructors = new HashMap<>();
 
 
@@ -19,7 +19,7 @@ public class SymbolTable {
         // Always start with a global scope
         enterScope();
         registerNativeMethods();
-        registerNativeClasses();
+        registerNativeType();
     }
 
     // Scope handling
@@ -124,31 +124,31 @@ public class SymbolTable {
         return methods.get(type).get(methodName);
     }
 
-    public void declareClass(String className, TypeCheck type) {
-        classes.put(className, type);
+    public void declareType(String typeName, TypeCheck type) {
+        types.put(typeName, type);
     }
 
-    public void declareConstructor(TypeCheck classType, List<TypeCheck> paramTypes) {
-        constructors.putIfAbsent(classType, new ArrayList<>());
-        constructors.get(classType).add(paramTypes);
+    public void declareConstructor(TypeCheck type, List<TypeCheck> paramTypes) {
+        constructors.putIfAbsent(type, new ArrayList<>());
+        constructors.get(type).add(paramTypes);
     }
 
-    public List<List<TypeCheck>> getAllConstructors(TypeCheck classType) {
-        return constructors.getOrDefault(classType, List.of());
+    public List<List<TypeCheck>> getAllConstructors(TypeCheck type) {
+        return constructors.getOrDefault(type, List.of());
     }
 
-    public Map<String, TypeCheck> getClasses() {
-        return classes;
+    public Map<String, TypeCheck> getTypes() {
+        return types;
     }
 
-    public Boolean hasClass(String key){
-        return classes.containsKey(key);
+    public Boolean hasType(String key){
+        return types.containsKey(key);
     }
 
-    private void registerNativeClasses() {
-        declareClass("NeuralNetwork", TypeCheck.NEURALNETWORK);
-        declareClass("Layer", TypeCheck.LAYER);
-        declareClass("ActivationFunction", TypeCheck.ACTIVATIONFUNC);
+    private void registerNativeType() {
+        declareType("NeuralNetwork", TypeCheck.NEURALNETWORK);
+        declareType("Layer", TypeCheck.LAYER);
+        declareType("ActivationFunction", TypeCheck.ACTIVATIONFUNC);
 
 
         declareConstructor(TypeCheck.NEURALNETWORK,
