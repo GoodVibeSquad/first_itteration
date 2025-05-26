@@ -1,7 +1,6 @@
 package TypeChecking;
 
 import Ast.*;
-import Tokens.Token;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -313,11 +312,11 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     @Override
     public TypeCheck visitENewFunc(ENewFunc e) {
         String typeName = e.type().getTypeName();
-        TypeCheck classType = resolveType(typeName);
+        TypeCheck type = resolveType(typeName);
 
 
-        if (!symbolTable.hasClass(typeName)) {
-            System.err.println("Type '" + typeName + "' is not a valid class.");
+        if (!symbolTable.hasType(typeName)) {
+            System.err.println("Type '" + typeName + "' is not a valid type.");
             return TypeCheck.ERROR;
         }
 
@@ -329,7 +328,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         }
 
         // Try to match against any declared constructor
-        for (List<TypeCheck> expectedTypes : symbolTable.getAllConstructors(classType)) {
+        for (List<TypeCheck> expectedTypes : symbolTable.getAllConstructors(type)) {
             if (expectedTypes.size() != argTypes.size()) continue;
 
             boolean match = true;
@@ -341,11 +340,11 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
             }
 
             if (match) {
-                return classType;
+                return type;
             }
         }
 
-        System.err.println("No matching constructor for class '" + typeName +
+        System.err.println("No matching constructor for type '" + typeName +
                 "' with argument types: " + argTypes);
         return TypeCheck.ERROR;
     }
