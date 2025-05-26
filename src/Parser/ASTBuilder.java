@@ -23,8 +23,7 @@ public class ASTBuilder {
                     Object exprList = children.get(3);
 
                     if (type instanceof Token typeToken && id instanceof Token idToken && exprList instanceof Elist params) {
-                        // Brug to-strengs constructor for at sætte både id og type rigtigt
-                        Identifier typedName = new Identifier(idToken.getValue(), typeToken.getValue()); // her er type sat korrekt
+                        Identifier typedName = new Identifier(idToken.getValue(), typeToken.getValue());
                         return new FunctionIdentifier(typedName, params);
                     }
                 } else if (children.size() == 4) { // Function of this form: TYPE ID ( )
@@ -290,7 +289,6 @@ public class ASTBuilder {
                             throw new RuntimeException();
                         }
                 }
-//
 
                 else if (children.size() == 5 &&
                         children.get(0) instanceof Token newToken &&
