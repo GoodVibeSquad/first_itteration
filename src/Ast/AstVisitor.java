@@ -12,13 +12,13 @@ package Ast;
     R visitCPi(CPi c);
 
     // Expressions
-    R visitEconstant(Econstant e);
-    R visitEidentifier(Eidentifier e);
-    R visitEbinaryoperators(Ebinaryoperators e);
-    R visitEunaryoperators(Eunaryoperators e);
+    R visitEconstant(EConstant e);
+    R visitEidentifier(EIdentifier e);
+    R visitEbinaryoperators(EBinaryoperators e);
+    R visitEunaryoperators(EUnaryoperators e);
     R visitEcall(EFuncCall e);
-    R visitElist(Elist e);
-    R visitEternary(Eternary e);
+    R visitElist(EList e);
+    R visitEternary(ETernary e);
     R visitESum(ESum e);
     R visitEMax(EMax e);
     R visitESqrt(ESqrt e);
@@ -28,17 +28,17 @@ package Ast;
     R visitEMethodCall(EMethodCall e);
 
     // Statements
-    R visitSif(Sif s);
-    R visitSassign(Sassign s);
+    R visitSif(SIf s);
+    R visitSassign(SAssign s);
     R visitSDeclaration(SDeclaration s);
-    R visitSprint(Sprint s);
-    R visitSblock(Sblock s);
-    R visitSfor(Sfor s);
+    R visitSprint(SPrint s);
+    R visitSblock(SBlock s);
+    R visitSfor(SFor s);
     R visitSExpression(SExpression s);
     R visitSWhile(SWhile s);
     R visitSBreak(SBreak s);
     R visitSContinue(SContinue s);
-    R visitSlist(Slist slist);
+    R visitSlist(SList slist);
     R visitSInDeCrement(SInDeCrement sInDeCrement);
     R visitSReturn(SReturn s);
 

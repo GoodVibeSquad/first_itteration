@@ -1,6 +1,7 @@
 package TypeChecking;
 
 import Ast.*;
+import Tokens.Token;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,12 +58,12 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
 
     // Expressions
     @Override
-    public TypeCheck visitEconstant(Econstant e) {
+    public TypeCheck visitEconstant(EConstant e) {
         return e.value().accept(this);
     }
 
     @Override
-    public TypeCheck visitEidentifier(Eidentifier e) {
+    public TypeCheck visitEidentifier(EIdentifier e) {
         String name = e.name().getId();
 
         if (symbolTable.contains(name)) {
@@ -74,7 +75,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     }
 
     @Override
-    public TypeCheck visitEbinaryoperators(Ebinaryoperators e) {
+    public TypeCheck visitEbinaryoperators(EBinaryoperators e) {
         TypeCheck leftType = e.left().accept(this);
         TypeCheck rightType = e.right().accept(this);
         BinaryOperators op = e.op();
@@ -132,7 +133,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     }
 
     @Override
-    public TypeCheck visitEunaryoperators(Eunaryoperators e) {
+    public TypeCheck visitEunaryoperators(EUnaryoperators e) {
         TypeCheck type = e.expr().accept(this);
         UnaryOperators op = e.op();
 
@@ -197,7 +198,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     }
 
     @Override
-    public TypeCheck visitElist(Elist e) {
+    public TypeCheck visitElist(EList e) {
         if (e.elements().isEmpty()) {
             return TypeCheck.ERROR;
         }
@@ -220,15 +221,15 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     }
 
     @Override
-    public TypeCheck visitEternary(Eternary e) {
+    public TypeCheck visitEternary(ETernary e) {
         TypeCheck condition = e.condition().accept(this);
         if (condition != TypeCheck.BOOL) {
             System.err.println("Terneary condition must be of type BOOL, but got: " + condition);
             return TypeCheck.ERROR;
         }
 
-        TypeCheck trueType = e.trueExpr().accept(this);
-        TypeCheck falseType = e.falseExpr().accept(this);
+        TypeCheck trueType = e.thenBranch().accept(this);
+        TypeCheck falseType = e.elseBranch().accept(this);
 
         if (trueType == falseType) {
             return trueType;
@@ -253,7 +254,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         }
 
         // Declare iteration variable
-        String loopVar = e.identifier().getId();
+        String loopVar = e.index().getId();
         symbolTable.declareVariable(loopVar, TypeCheck.INT);
 
         TypeCheck bodyType = e.body().accept(this);
@@ -273,7 +274,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
 
     @Override
     public TypeCheck visitEMax(EMax e) {
-        TypeCheck expressionType = e.e().accept(this);
+        TypeCheck expressionType = e.args().accept(this);
 
         if (expressionType == TypeCheck.INT || expressionType == TypeCheck.DOUBLE) {
             return expressionType;
@@ -297,7 +298,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
 
     @Override
     public TypeCheck visitETypeconversion(ETypeconversion e) {
-        String targetType = e.type().getValue();
+        String targetType = e.targetType().getValue();
         TypeCheck actualType = resolveType(targetType);
 
         TypeCheck expressionType = e.expression().accept(this);
@@ -360,7 +361,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
 
     @Override
     public TypeCheck visitEMethodCall(EMethodCall e) {
-        String objectName = e.object().getId(); //nn
+        String objectName = e.receiver().getId(); //nn
         String methodName = e.method().getId(); //native neural network method fx train
         TypeCheck objectType;
 
@@ -394,7 +395,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     }
 
     @Override
-    public TypeCheck visitSif(Sif s) {
+    public TypeCheck visitSif(SIf s) {
         TypeCheck conditionType = s.condition().accept(this);
         if (conditionType != TypeCheck.BOOL) {
             System.err.println("Condition of if statement must be BOOL");
@@ -463,8 +464,8 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     }
 
     @Override
-    public TypeCheck visitSassign(Sassign s) {
-        String varName = s.var().getId();
+    public TypeCheck visitSassign(SAssign s) {
+        String varName = s.name().getId();
         TypeCheck exprType = s.expr().accept(this);
 
 
@@ -505,7 +506,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
 
 
     @Override
-    public TypeCheck visitSprint(Sprint s) {
+    public TypeCheck visitSprint(SPrint s) {
         TypeCheck exprType = s.expr().accept(this);
         if (exprType == TypeCheck.ERROR) {
             System.err.println("Error in print statement: " + exprType);
@@ -516,7 +517,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     }
 
     @Override
-    public TypeCheck visitSblock(Sblock s) {
+    public TypeCheck visitSblock(SBlock s) {
         symbolTable.enterScope();
 
         TypeCheck result = TypeCheck.VOID;
@@ -538,14 +539,14 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
 
 
     @Override
-    public TypeCheck visitSfor(Sfor s) {
+    public TypeCheck visitSfor(SFor s) {
 
         symbolTable.enterScope();
        // Check the assigment (initialization)
        if (s.init() != null ){
            TypeCheck assignmentType = s.init().accept(this);
            if (assignmentType == TypeCheck.ERROR) {
-               System.err.println("Error in for loop initialization: " + s.var().getId());
+               System.err.println("Error in for loop initialization:");
                return TypeCheck.ERROR;
            }
        }
@@ -563,7 +564,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         if (s.update() != null) {
             TypeCheck iterateType = s.update().accept(this);
             if (iterateType == TypeCheck.ERROR) {
-                System.err.println("Error in for loop update: " + s.var().getId());
+                System.err.println("Error in for loop update:");
                 return TypeCheck.ERROR;
             }
         }
@@ -574,7 +575,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         if (s.body() != null) {
             TypeCheck bodyType = s.body().accept(this);
             if (bodyType == TypeCheck.ERROR) {
-                System.err.println("Error in body of for loop: " + s.var().getId());
+                System.err.println("Error in body of for loop: ");
                 loopDepth--;
                 return TypeCheck.ERROR;
             }
@@ -588,7 +589,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     @Override
     public TypeCheck visitSExpression(SExpression s) {
         // Check if this is actually a declaration like "int x;"
-        s.value().accept(this);
+        s.expr().accept(this);
         return TypeCheck.VOID;
     }
 
@@ -628,7 +629,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     }
 
     @Override
-    public TypeCheck visitSlist(Slist s) {
+    public TypeCheck visitSlist(SList s) {
         for (Statement stmt : s.elements()) {
             TypeCheck result = stmt.accept(this);
             if(result == TypeCheck.ERROR){
@@ -671,7 +672,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         }
 
         if (actual != currentExpectedReturnType) {
-            System.err.println("Return type mismatch: expected " +
+            System.err.println("Return Type mismatch: expected " +
                     currentExpectedReturnType + ", got " + actual);
             return TypeCheck.ERROR;
         }
@@ -697,7 +698,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
 
         List<TypeCheck> paramTypes = new ArrayList<>();
         for (Expression p : f.params().elements()) {
-            if (p instanceof Eidentifier e) {
+            if (p instanceof EIdentifier e) {
                 //if no type return error
                 String paramTypeStr = e.name().getType();
                 if (paramTypeStr == null) {
@@ -725,12 +726,13 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         } // if not in symboltable will save
         symbolTable.declareFunction(funcName, paramTypes, returnType);
 
+        // Vi går ind i et nyt scope og registrerer funktionens parametre som lokale variabler så de kan bruges og typecheckes korrekt inde i funktionens body.
         symbolTable.enterScope();
 
         // Register parameter as a variable in the scope
         for (int i = 0; i < f.params().elements().size(); i++) {
             Expression p = f.params().elements().get(i);
-            if (p instanceof Eidentifier e) {
+            if (p instanceof EIdentifier e) {
                 symbolTable.declareVariable(e.name().getId(), paramTypes.get(i));
             }
         }
