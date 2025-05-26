@@ -248,7 +248,7 @@ public class LexerTest {
 
             Assertions.assertEquals(TokenType.tokenTypeMap.get(op), token.getType(),
                     "Token type should match operator: " + op);
-            Assertions.assertEquals(op, token.getValue(), "Token expr should match operator: " + op);
+            Assertions.assertEquals(op, token.getValue(), "Token value should match operator: " + op);
         }
     }
 

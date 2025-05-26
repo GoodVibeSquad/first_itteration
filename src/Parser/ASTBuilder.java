@@ -77,7 +77,7 @@ public class ASTBuilder {
                 }
             }
 
-            case "index" -> {
+            case "identifier" -> {
                 Object identifier = children.getFirst();
                 if (identifier instanceof Token id) {
                     return new Identifier(id.getValue());

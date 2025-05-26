@@ -1,7 +1,6 @@
 package TypeChecking;
 
 import Ast.*;
-import Tokens.Token;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -672,7 +671,7 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
         }
 
         if (actual != currentExpectedReturnType) {
-            System.err.println("Return Type mismatch: expected " +
+            System.err.println("Return type mismatch: expected " +
                     currentExpectedReturnType + ", got " + actual);
             return TypeCheck.ERROR;
         }

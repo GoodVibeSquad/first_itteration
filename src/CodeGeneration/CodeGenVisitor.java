@@ -107,7 +107,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
     @Override
     public Void visitCBool(CBool c) {
 
-        // the expr of c contains an actual boolean variable which prints to a true or false
+        // the value of c contains an actual boolean variable which prints to a true or false
         // with un-capitalized first letter. Python requires capitalization (True, False)
         // Therefore we capitalize the first letter before appending it.
         String javaBool = String.valueOf(c.value());
