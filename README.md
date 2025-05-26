@@ -43,6 +43,7 @@ nn.save("mnist_example.pkl");
 
 //to load the model, you need to use the absolute path of the model
 // if you don't use absolute path, it will look for the model in the current directory
+// if you are using windows, you must replace all forward slashes(/) with two backslashes(\\)
 NeuralNetwork nn2 = new NeuralNetwork("mnist_example.pkl");
 
 //it is required to use the absoulte path of the image
