@@ -23,21 +23,17 @@ public class ASTBuilder {
                     Object exprList = children.get(3);
 
                     if (type instanceof Token typeToken && id instanceof Token idToken && exprList instanceof Elist params) {
-                        // Use two-string constructor to correctly set both id and type
-                        Identifier name = new Identifier(idToken.getValue());
-                        Identifier var = new Identifier(idToken.getValue(), typeToken.getValue()); // here the type is set correctly
-
-
-                        return new FunctionIdentifier(name, var, params);
+                        // Brug to-strengs constructor for at sætte både id og type rigtigt
+                        Identifier typedName = new Identifier(idToken.getValue(), typeToken.getValue()); // her er type sat korrekt
+                        return new FunctionIdentifier(typedName, params);
                     }
                 } else if (children.size() == 4) { // Function of this form: TYPE ID ( )
                     Object type = children.get(0);
                     Object id = children.get(1);
 
                     if (type instanceof Token typeToken && id instanceof Token idToken) {
-                        Identifier name = new Identifier(idToken.getValue());
-                        Identifier var = new Identifier(idToken.getValue(), typeToken.getValue()); // type gemmes
-                        return new FunctionIdentifier(name, var, new Elist(List.of()));
+                        Identifier typedName = new Identifier(idToken.getValue(), typeToken.getValue()); // type gemmes
+                        return new FunctionIdentifier(typedName, new Elist(List.of()));
                     }
                 }
             }
@@ -208,30 +204,28 @@ public class ASTBuilder {
                     }
 
                 }
-                else if (children.size() == 5 && expressionValue instanceof Token t && t.getType() == TokenType.TYPE
-                        && children.get(1) instanceof Token id && id.getType() == TokenType.ID
-                        && children.get(2) instanceof Token openParen && openParen.getType() == TokenType.OPEN_PARENTHESIS
-                        && children.get(3) instanceof Elist
-                        && children.get(4) instanceof Token closeParen && closeParen.getType() == TokenType.CLOSED_PARENTHESIS) {
-                    Object first = children.getFirst();
-                    Object second = children.get(1);
-                    Object third = children.get(2);
-                    Object fourth = children.get(3);
-                    Object fifth = children.getLast();
+                    else if (children.size() == 4 && expressionValue instanceof Token id && id.getType() == TokenType.ID
+                            && children.get(1) instanceof Token openParen && openParen.getType() == TokenType.OPEN_PARENTHESIS
+                            && children.get(2) instanceof Elist
+                            && children.get(3) instanceof Token closeParen && closeParen.getType() == TokenType.CLOSED_PARENTHESIS) {
+                        Object first = children.getFirst();
+                        Object second = children.get(1);
+                        Object third = children.get(2);
+                        Object fourth = children.get(3);
 
-                    if (first instanceof Token &&
-                            second instanceof Token &&
-                            third instanceof Token &&
-                            fourth instanceof Elist exprList &&
-                            fifth instanceof Token) {
+                        if (first instanceof Token &&
+                                second instanceof Token &&
+                                third instanceof Elist exprList &&
+                                fourth instanceof Token) {
 
-                        return new EFuncCall(new Identifier(((Token) second).getValue(), ((Token) first).getValue()), exprList);
+                            return new EFuncCall(new Identifier(((Token) first).getValue()), exprList);
 
-                    } else {
-                        System.err.println("Invalid Expression at: " + third);
-                        throw new RuntimeException();
-                    }
-                } else if (expressionValue instanceof Token token && token.getType() == TokenType.SUM) {
+                        } else {
+                            System.err.println("Invalid Expression at: " + third);
+                            throw new RuntimeException();
+                        }
+
+                    } else if (expressionValue instanceof Token token && token.getType() == TokenType.SUM) {
 
                     Object first = children.get(2);
                     Object second = children.get(4);

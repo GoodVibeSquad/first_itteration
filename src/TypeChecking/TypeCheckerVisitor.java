@@ -683,8 +683,8 @@ public class TypeCheckerVisitor implements AstVisitor<TypeCheck> {
     public TypeCheck visitSFunction(SFunction sFunction) {
         FunctionIdentifier f = sFunction.functionIdentifier();
 
-        String funcName = f.var().getId();
-        String returnTypeStr = f.var().getType();
+        String funcName = f.typedName().getId();
+        String returnTypeStr = f.typedName().getType();
         TypeCheck returnType = resolveType(returnTypeStr);
 
 

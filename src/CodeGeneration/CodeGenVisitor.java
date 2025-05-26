@@ -453,7 +453,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
     @Override
     public Void visitFunctionIdentifier(FunctionIdentifier functionIdentifier) {
-        output.append(functionIdentifier.name().getId());
+        output.append(functionIdentifier.typedName().getId());
         output.append("(");
         functionIdentifier.params().accept(this);
         output.append(")");
