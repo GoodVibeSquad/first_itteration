@@ -284,7 +284,7 @@ class NeuralNetwork:
             number = test_set[i][0]
             output_activation = self.activation_functions[1].run(current_picture)
             predicted_index = np.argmax(output_activation)
-            correct_answer = np.zeros(10)
+            correct_answer = np.zeros(self.output.output_size)
             correct_answer[number] = 1
             dif =  correct_answer - output_activation
             procent = (1 - dif[0,number])*100

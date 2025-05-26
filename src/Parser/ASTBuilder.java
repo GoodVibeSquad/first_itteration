@@ -23,7 +23,6 @@ public class ASTBuilder {
                     Object exprList = children.get(3);
 
                     if (type instanceof Token typeToken && id instanceof Token idToken && exprList instanceof EList params) {
-                        // Brug to-strengs constructor for at sætte både id og type rigtigt
                         Identifier typedName = new Identifier(idToken.getValue(), typeToken.getValue()); // her er type sat korrekt
                         return new FunctionIdentifier(typedName, params);
                     }

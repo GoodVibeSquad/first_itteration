@@ -15,6 +15,9 @@ Install Python
 This example will walkthrough the process of using the language to create a simple program that can train a neuralnetwork and predict an image classification.
 
 ## Example
+First create a file for creating your Neura code. This should be a simple txt file.
+
+Next set up a neural network as shown below:
 ```
 //Image size is 28x28
 Layer input = new Layer(28*28);
@@ -46,6 +49,10 @@ NeuralNetwork nn2 = new NeuralNetwork("mnist_example.pkl");
 nn2.predict("C:/Users/phili/Documents/GitHub/first_itteration/Mnist/3/32.png", ".png");
 
 ```
+With the neural network file created. Run the compiler and insert the absolute path for the code file.
+
+A python file should now be in the same directory as the original .txt file, which can now be run in the terminal.
+
 # Documentation
 Neura is a high-level programming language designed for building, training, and deploying neural networks in a concise and readable syntax. It provides native types for neural network constructs and compiles to Python for execution.
 
