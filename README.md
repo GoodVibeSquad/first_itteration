@@ -47,7 +47,7 @@ nn.save("mnist_example.pkl");
 NeuralNetwork nn2 = new NeuralNetwork("mnist_example.pkl");
 
 //it is required to use the absoulte path of the image
-nn2.predict("C:/Users/phili/Documents/GitHub/first_itteration/Mnist/3/32.png", ".png");
+nn2.predict("YOUR_FILEPAH", ".FILETYPE");
 
 ```
 With the neural network file created. Run the compiler and insert the absolute path for the code file.
