@@ -14,18 +14,17 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
     private Stack<Set<String>> scopeStack = new Stack<>();
 
-    //Constructor
+
     public CodeGenVisitor() {
     }
 
-
-    //Funktion som starter hele generation fra den første ast node
+    //Function which starts the generation from the first ast node
     public String generate(Statement ASTRoot) {
         applyBaseCode();
 
         scopeStack.push(new HashSet<>());
         ASTRoot.accept(this);
-        scopeStack.pop(); //tror ikke den her er nødvendig men den er her just in case
+        scopeStack.pop();
 
         return output.toString();
     }
@@ -50,8 +49,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         return null;
     }
 
-
-    //Hjælpefunktion til indentation
+    //Helper function for indentation
     private String indent() {
         return "\t".repeat(scopeSize);
     }
@@ -68,7 +66,6 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         return false;
     }
 
-    //ScopeSize tilføjelser
 
     private void enterScope() {
         scopeStack.push(new HashSet<>());
@@ -79,7 +76,6 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         Set<String> currentScope = scopeStack.peek();
         for (String var : currentScope) {
             output.append(indent()).append("del ").append(var).append("\n");
-            //output.append("del ").append(var).append("\n");
         }
 
         scopeStack.pop();
@@ -118,7 +114,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         return null;
     }
 
-    // NOTE: Maybe look into this such that it appends the stirng correctly
+
     @Override
     public Void visitCString(CString c) {
         output.append('"' + c.value() + '"');
@@ -172,9 +168,6 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
     @Override
     public Void visitEunaryoperators(Eunaryoperators e) {
-        //output.append(e.op().toSymbol()); ! istedet for not????
-        //e.expr().accept(this); ! istedet for not????
-
         output.append("not ");
         e.expr().accept(this);
 
@@ -183,7 +176,6 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
     @Override
     public Void visitEcall(EFuncCall e) {
-
         output.append("def ").append(e.func().getId()).append("(");
         e.args().accept(this);
         output.append(")\n");
@@ -225,7 +217,7 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         e.topExpression().accept(this);
         output.append(", ");
         e.bottomExpression().accept(this);
-        output.append(" + 1 ))"); //Skal vi litterally plus med 1?
+        output.append(" + 1 ))");
         return null;
     }
 
@@ -252,8 +244,6 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         output.append(e.type().getValue()).append("(");
         e.expression().accept(this);
         output.append(")\n");
-
-        //type(x)
         return null;
     }
 
@@ -303,10 +293,6 @@ public class CodeGenVisitor implements AstVisitor<Void> {
         Statement elseBranch = s.elseBranch();
         while (!isEmptyElseBranch(elseBranch)) {
 
-            // Keeps adding elif, because the AST contains Sif's on an else branch (which also have else branch)
-            // This is a problem because we need the else branch to be a continuation of the original
-            // scope. Instead of being an else of the (else if) is statement is a else to that
-            // specific if statement.
             if (elseBranch instanceof Sif nestedIf) {
                 output.append(indent()).append("elif ");
                 nestedIf.condition().accept(this);
@@ -405,9 +391,6 @@ public class CodeGenVisitor implements AstVisitor<Void> {
 
     @Override
     public Void visitSWhile(SWhile s) {
-        //while betingelse:
-        //    # kodeblok
-
         output.append("while ");
         s.expression().accept(this);
         output.append(":\n");
@@ -450,14 +433,6 @@ public class CodeGenVisitor implements AstVisitor<Void> {
             output.append(varName).append(" -= 1\n");
         }
 
-        return null;
-    }
-
-
-
-    // VI BRUGER DEN IKKE (DEF)
-    @Override
-    public Void visitDef(Def d) {
         return null;
     }
 

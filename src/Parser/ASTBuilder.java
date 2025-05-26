@@ -17,18 +17,20 @@ public class ASTBuilder {
         switch (production.lhs) {
 
             case "functionIdentifier" -> {
-                if (children.size() == 5) {  // Function af denne form : TYPE ID ( expr_list )
+                if (children.size() == 5) {  // Function of this form: TYPE ID ( expr_list )
                     Object type = children.get(0);
                     Object id = children.get(1);
                     Object exprList = children.get(3);
 
                     if (type instanceof Token typeToken && id instanceof Token idToken && exprList instanceof Elist params) {
-                        // Brug to-strengs constructor for at sætte både id og type rigtigt
+                        // Use two-string constructor to correctly set both id and type
                         Identifier name = new Identifier(idToken.getValue());
-                        Identifier var = new Identifier(idToken.getValue(), typeToken.getValue()); // her er type sat korrekt
+                        Identifier var = new Identifier(idToken.getValue(), typeToken.getValue()); // here the type is set correctly
+
+
                         return new FunctionIdentifier(name, var, params);
                     }
-                } else if (children.size() == 4) {  // Function af denne form : TYPE ID ( )
+                } else if (children.size() == 4) { // Function of this form: TYPE ID ( )
                     Object type = children.get(0);
                     Object id = children.get(1);
 
@@ -294,21 +296,7 @@ public class ASTBuilder {
                             throw new RuntimeException();
                         }
                 }
-//                else if(children.get(1) instanceof Type type && type.tok == TokenType.TYPE && children.size() == 5){
 //
-//                    //"NEW",TYPE","OPEN_PARENTHESIS","expr_list","CLOSED_PARENTHESIS"
-//
-//                    //first instanceof Token id && second instanceof InDeCrement inDe
-//
-//                        Object first = children.get(1);
-//                        Object second = children.get(3);
-//                        if(second instanceof Elist args){
-//                            return new ENewFunc(Type, args);
-//                        } else {
-//                            System.err.println("Invalid Expression at: " + first);
-//                            throw new RuntimeException();
-//                        }
-//                }
 
                 else if (children.size() == 5 &&
                         children.get(0) instanceof Token newToken &&
@@ -334,7 +322,7 @@ public class ASTBuilder {
                         && children.get(1) instanceof Token token1 && token1.getType() == TokenType.DOT
                         &&children.get(4) instanceof Elist){
                         Object first = children.getFirst();
-                        Object second = children.get(2); //ændret til 2, ellers for den bare en dot som metode navn
+                        Object second = children.get(2); // changed to 2, otherwise it just gets a dot as method name
                         Object third = children.get(4);
 
                         if(first instanceof Token object &&
@@ -447,15 +435,8 @@ public class ASTBuilder {
                                 return new Sfor(null, declaration, comp, increase, body);
                             }
                         }
-//                        case "WHILE" -> {  // GAMLE WHILE just in case
-//                            Object comparisonObject = children.get(1);
-//                            Object boddyObject = children.get(2);
-//                            if (comparisonObject instanceof Expression comp
-//                                    && boddyObject instanceof Statement buddy) {
-//                                return new SWhile(comp, buddy);
-//                            }
-//                        }
-                            case "WHILE" -> {  // Nye while til grammar, så den har parentes fx while(..) : "WHILE", "OPEN_PARENTHESIS", "expression", "CLOSED_PARENTHESIS", "statement");
+//
+                            case "WHILE" -> {  // New while for the grammar, so it has parentheses e.g. while(..): "WHILE", "OPEN_PARENTHESIS", "expression", "CLOSED_PARENTHESIS", "statement");
                               Object comparisonObject = children.get(2);
                                 Object boddyObject = children.get(4);
                                 if (comparisonObject instanceof Expression comp
@@ -494,7 +475,7 @@ public class ASTBuilder {
                                         second instanceof InDeCrement inDe) {
                                     return new SInDeCrement(new Identifier(id.getValue()), inDe);
                                 }
-                            } //  grammar.add("matched_stmt", "RETURN", "expression", "SEMICOLON");
+                            }
                             case "RETURN" -> {
                                 Object second = children.get(1);
                                 if (firstToken.getType() == TokenType.RETURN && second instanceof Expression) {
