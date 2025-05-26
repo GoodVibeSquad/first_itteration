@@ -7,7 +7,7 @@ method: the method name (like "train")
 
 args: list of argument expressions
  */
-public record EMethodCall(Identifier object, Identifier method, Elist args) implements Expression {
+public record EMethodCall(Identifier receiver, Identifier method, EList args) implements Expression {
     @Override
     public <R> R accept(AstVisitor<R> visitor) {
         return visitor.visitEMethodCall(this);

@@ -1,6 +1,6 @@
 package Ast;
 
-public record EMax(Elist e) implements Expression {
+public record EMax(EList args) implements Expression {
 
     @Override
     public <R> R accept(AstVisitor<R> visitor) {

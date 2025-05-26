@@ -2,7 +2,7 @@ package Ast;
 
 
 sealed public interface Statement
-        permits SBreak, SContinue, SDeclaration, SExpression, SFunction, SInDeCrement, SWhile, Sassign, Sblock, Sfor, Sif, Slist, Sprint, SReturn
+        permits SBreak, SContinue, SDeclaration, SExpression, SFunction, SInDeCrement, SWhile, SAssign, SBlock, SFor, SIf, SList, SPrint, SReturn
 {
     <R> R accept(AstVisitor<R> visitor);
 }

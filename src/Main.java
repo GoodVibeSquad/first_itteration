@@ -1,5 +1,4 @@
 import Ast.*;
-import CodeGeneration.CodeGenVisitor;
 import CodeGeneration.CodeGenerator;
 import Parser.*;
 import Parser.TableGenerator.TableGenerator;
@@ -9,12 +8,8 @@ import TypeChecking.SymbolTable;
 import TypeChecking.TypeCheck;
 import TypeChecking.TypeCheckerVisitor;
 
-import java.io.BufferedReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 
@@ -41,13 +36,13 @@ public class Main {
             System.out.println(token);
         }
 
-        Slist slist = Parser.parse(tokens);
+        SList slist = Parser.parse(tokens);
 
         SymbolTable symbols = new SymbolTable();
 
         TypeCheckerVisitor typeVisitor = new TypeCheckerVisitor(symbols);
         TypeCheck result = slist.accept(typeVisitor);
-        System.out.println("type check result: " + result);
+        System.out.println("targetType check result: " + result);
         if (result == TypeCheck.ERROR) {
             throw new RuntimeException("Type checking failed");
         }
@@ -69,5 +64,4 @@ public class Main {
             return path.substring(0, dotIndex + 1) + newExtension;
         }
     }
-
 }

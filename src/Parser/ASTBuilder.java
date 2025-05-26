@@ -22,8 +22,8 @@ public class ASTBuilder {
                     Object id = children.get(1);
                     Object exprList = children.get(3);
 
-                    if (type instanceof Token typeToken && id instanceof Token idToken && exprList instanceof Elist params) {
-                        Identifier typedName = new Identifier(idToken.getValue(), typeToken.getValue());
+                    if (type instanceof Token typeToken && id instanceof Token idToken && exprList instanceof EList params) {
+                        Identifier typedName = new Identifier(idToken.getValue(), typeToken.getValue()); // her er type sat korrekt
                         return new FunctionIdentifier(typedName, params);
                     }
                 } else if (children.size() == 4) { // Function of this form: TYPE ID ( )
@@ -32,7 +32,7 @@ public class ASTBuilder {
 
                     if (type instanceof Token typeToken && id instanceof Token idToken) {
                         Identifier typedName = new Identifier(idToken.getValue(), typeToken.getValue()); // type gemmes
-                        return new FunctionIdentifier(typedName, new Elist(List.of()));
+                        return new FunctionIdentifier(typedName, new EList(List.of()));
                     }
                 }
             }
@@ -77,7 +77,7 @@ public class ASTBuilder {
                 }
             }
 
-            case "identifier" -> {
+            case "index" -> {
                 Object identifier = children.getFirst();
                 if (identifier instanceof Token id) {
                     return new Identifier(id.getValue());
@@ -133,23 +133,23 @@ public class ASTBuilder {
                     Token type = (Token) expressionValue;
                     switch (type.getType().toString()) {
                         case "INT" -> {
-                            return new Econstant(new CInt(Integer.parseInt(type.getValue())));
+                            return new EConstant(new CInt(Integer.parseInt(type.getValue())));
                         }
                         case "STRING" -> {
 
-                            return new Econstant(new CString(type.getValue()));
+                            return new EConstant(new CString(type.getValue()));
                         }
                         case "BOOL" -> {
-                            return new Econstant(new CBool(Boolean.parseBoolean(type.getValue())));
+                            return new EConstant(new CBool(Boolean.parseBoolean(type.getValue())));
                         }
                         case "DOUBLE" -> {
-                            return new Econstant(new CDouble(Double.parseDouble(type.getValue())));
+                            return new EConstant(new CDouble(Double.parseDouble(type.getValue())));
                         }
                         case "PI" -> {
-                            return new Econstant(new CPi());
+                            return new EConstant(new CPi());
                         }
                         case "EULER" -> {
-                            return new Econstant(new CEuler());
+                            return new EConstant(new CEuler());
                         }
                         default -> {
                             System.err.println("Invalid Constant at: " + expressionValue);
@@ -186,7 +186,7 @@ public class ASTBuilder {
                     Object second = children.getLast();
 
                     if (first instanceof UnaryOperators op && second instanceof Expression expr) {
-                        return new Eunaryoperators(op, expr);
+                        return new EUnaryoperators(op, expr);
                     } else {
                         System.err.println("Invalid Expression at: " + second);
                         throw new RuntimeException();
@@ -196,7 +196,7 @@ public class ASTBuilder {
                     Object first = children.getFirst();
 
                     if (first instanceof Identifier id) {
-                        return new Eidentifier(id);
+                        return new EIdentifier(id);
                     } else {
                         System.err.println("Invalid Expression at: " + first);
                         throw new RuntimeException();
@@ -205,7 +205,7 @@ public class ASTBuilder {
                 }
                     else if (children.size() == 4 && expressionValue instanceof Token id && id.getType() == TokenType.ID
                             && children.get(1) instanceof Token openParen && openParen.getType() == TokenType.OPEN_PARENTHESIS
-                            && children.get(2) instanceof Elist
+                            && children.get(2) instanceof EList
                             && children.get(3) instanceof Token closeParen && closeParen.getType() == TokenType.CLOSED_PARENTHESIS) {
                         Object first = children.getFirst();
                         Object second = children.get(1);
@@ -214,7 +214,7 @@ public class ASTBuilder {
 
                         if (first instanceof Token &&
                                 second instanceof Token &&
-                                third instanceof Elist exprList &&
+                                third instanceof EList exprList &&
                                 fourth instanceof Token) {
 
                             return new EFuncCall(new Identifier(((Token) first).getValue()), exprList);
@@ -236,7 +236,7 @@ public class ASTBuilder {
                             third instanceof Token id &&
                             fourth instanceof Expression body) {
 
-                        return new ESum(top, bot, new Identifier(id.getValue()), body);
+                        return new ESum(new Identifier(id.getValue()), bot, top, body);
                     } else {
                         System.err.println("Invalid Expression at: " + first);
                         throw new RuntimeException();
@@ -254,7 +254,7 @@ public class ASTBuilder {
                 }
                 else if (expressionValue instanceof Token token && token.getType() == TokenType.MAX) {
                     Object first = children.get(2);
-                    if (first instanceof Elist args) {
+                    if (first instanceof EList args) {
                         return new EMax(args);
                     } else {
                         System.err.println("Invalid Expression at: " + first);
@@ -269,7 +269,7 @@ public class ASTBuilder {
                     if (first instanceof Expression condition &&
                         second instanceof Expression trueexpr &&
                         third instanceof Expression falseexpr) {
-                        return new Eternary(condition, trueexpr, falseexpr);
+                        return new ETernary(condition, trueexpr, falseexpr);
                     } else {
                         System.err.println("Invalid Expression at: " + first);
                         throw new RuntimeException();
@@ -289,18 +289,19 @@ public class ASTBuilder {
                             throw new RuntimeException();
                         }
                 }
+//
 
                 else if (children.size() == 5 &&
                         children.get(0) instanceof Token newToken &&
                         newToken.getType() == TokenType.NEW &&
                         children.get(1) instanceof Token typeToken &&
-                        children.get(3) instanceof Elist args) {
+                        children.get(3) instanceof EList args) {
 
                     String typeName = typeToken.getValue().toUpperCase();  // e.g., "LAYER"
 
-                    // Try to match based on the value of the token
+                    // Try to match based on the expr of the token
                     try {
-                        Type type = Type.valueOf(typeName);  // Match to enum value
+                        Type type = Type.valueOf(typeName);  // Match to enum expr
                         return new ENewFunc(type, args);
                     } catch (IllegalArgumentException e) {
                         System.err.println("Unknown type: " + typeName);
@@ -312,14 +313,14 @@ public class ASTBuilder {
 
                 else if(expressionValue instanceof Token token && token.getType() == TokenType.ID
                         && children.get(1) instanceof Token token1 && token1.getType() == TokenType.DOT
-                        &&children.get(4) instanceof Elist){
+                        &&children.get(4) instanceof EList){
                         Object first = children.getFirst();
                         Object second = children.get(2); // changed to 2, otherwise it just gets a dot as method name
                         Object third = children.get(4);
 
                         if(first instanceof Token object &&
                            second instanceof Token method &&
-                           third instanceof Elist args ){
+                           third instanceof EList args ){
 
                             return new EMethodCall(new Identifier(object.getValue()), new Identifier(method.getValue()), args);
                         }else {
@@ -334,7 +335,7 @@ public class ASTBuilder {
                     Object first = children.getFirst();
 
                     if(first instanceof Expression expr){
-                        return new Elist(List.of(expr));
+                        return new EList(List.of(expr));
                     } else {
                         System.err.println("Invalid Expression at: " + first);
                         throw new RuntimeException();
@@ -344,13 +345,13 @@ public class ASTBuilder {
                     Object first = children.getFirst();
                     Object second = children.getLast();
 
-                    if(first instanceof Elist list &&
+                    if(first instanceof EList list &&
                        second instanceof Expression expr){
 
                         List<Expression> newElements = new ArrayList<>(list.elements());
                         newElements.add(expr);
 
-                        return new Elist(newElements);
+                        return new EList(newElements);
                     }
                 }
             }
@@ -377,7 +378,7 @@ public class ASTBuilder {
                     if (semiObject instanceof Token semi && semi.getType() == TokenType.SEMICOLON) {
                         return new SDeclaration(id, AssignmentOperator.ASSIGN, null);
                     }
-                } else if (first instanceof Eidentifier eid && children.size() == 2) {
+                } else if (first instanceof EIdentifier eid && children.size() == 2) {
                     Object semiObject = children.getLast();
                     if (semiObject instanceof Token semi && semi.getType() == TokenType.SEMICOLON) {
                         Identifier id = eid.name();
@@ -397,7 +398,7 @@ public class ASTBuilder {
                             if (expresionObject instanceof Expression expression
                                     && statementObject1 instanceof Statement statement1
                                     && statementObject2 instanceof Statement statement2) {
-                                return new Sif(expression, statement1, statement2);
+                                return new SIf(expression, statement1, statement2);
                             } else {
                                 System.err.println("Invalid Statement if at: " + expresionObject + ", " + statementObject1 + ", " + statementObject2);
                                 throw new RuntimeException();
@@ -405,8 +406,8 @@ public class ASTBuilder {
                         }
                         case "OPEN_CURLY_BRACKET" -> {
                             Object statementListObject = children.get(1);
-                            if (statementListObject instanceof Slist slist) {
-                                return new Sblock(slist);  // Create a proper block instead of just returning Slist
+                            if (statementListObject instanceof SList slist) {
+                                return new SBlock(slist);  // Create a proper block instead of just returning Slist
 
                             }
                         }
@@ -415,16 +416,16 @@ public class ASTBuilder {
                             Object comparisonObject = children.get(3); // i > 20
                             Object incrementObject = children.get(5); //i++
                             Object boddyObject = children.get(7);
-                            if (assignObject instanceof Sassign assagin
+                            if (assignObject instanceof SAssign assagin
                                     && comparisonObject instanceof Expression comp
                                     && incrementObject instanceof Statement increase
                                     && boddyObject instanceof Statement body) {
-                                return new Sfor(null, assagin, comp, increase, body);
+                                return new SFor(assagin, comp, increase, body);
                             } else if (assignObject instanceof SDeclaration declaration
                                     && comparisonObject instanceof Expression comp
                                     && incrementObject instanceof Statement increase
                                     && boddyObject instanceof Statement body) {
-                                return new Sfor(null, declaration, comp, increase, body);
+                                return new SFor(declaration, comp, increase, body);
                             }
                         }
 //
@@ -458,7 +459,7 @@ public class ASTBuilder {
                                 Object exprObject = children.get(2);
 
                                 if (printObject instanceof Token) {
-                                    return new Sprint((Expression) exprObject);
+                                    return new SPrint((Expression) exprObject);
                                 }
                             }
                             case "ID" -> {
@@ -500,7 +501,7 @@ public class ASTBuilder {
                                 if (id.getType() != null) {
                                     return new SDeclaration(id, assop, e);
                                 } else {
-                                    return new Sassign(id, assop, e);
+                                    return new SAssign(id, assop, e);
                                 }
                             } else {
                                 System.err.println("Invalid Statement at: " + id.getId());
@@ -516,7 +517,7 @@ public class ASTBuilder {
                     Object statementObject = children.getLast();
                     if (expresionObject instanceof Expression expression
                             && statementObject instanceof Statement statement) {
-                        return new Sif(expression, statement, new SExpression(new Econstant(new CNone())));
+                        return new SIf(expression, statement, new SExpression(new EConstant(new CNone())));
                     }else {
                         System.err.println("Invalid Statement if at: " + expresionObject + ", " + statementObject);
                         throw new RuntimeException();
@@ -528,7 +529,7 @@ public class ASTBuilder {
                     if (expresionObject instanceof Expression expression
                             && statementObject1 instanceof Statement statement1
                             && statementObject2 instanceof Statement statement2) {
-                        return new Sif(expression, statement1, statement2);
+                        return new SIf(expression, statement1, statement2);
                     }else {
                         System.err.println("Invalid Statement if at: " + expresionObject + ", " + statementObject1 + ", " +  statementObject2);
                         throw new RuntimeException();
@@ -542,19 +543,19 @@ public class ASTBuilder {
             case "statementlist" -> {
 
                 if(children.getFirst() instanceof  Statement stmt && children.size() == 1 ){
-                   return new Slist(List.of(stmt));
+                   return new SList(List.of(stmt));
                 }
                 else if (children.size() == 2){
                     Object first = children.getFirst();
                     Object second = children.getLast();
 
                     if( first instanceof Statement stmt &&
-                        second instanceof Slist slist){
+                        second instanceof SList slist){
 
                         List<Statement> newStatements = new ArrayList<>(slist.elements());
                         newStatements.addFirst(stmt);
 
-                        return new Slist(newStatements);
+                        return new SList(newStatements);
 
 
                     } else {
@@ -576,10 +577,10 @@ public class ASTBuilder {
 
     private Expression Precedence(BinaryOperators op, Expression expr1, Expression expr2) {
         // Recursively apply precedence normalization to subtrees
-        if (expr1 instanceof Ebinaryoperators leftBin) {
+        if (expr1 instanceof EBinaryoperators leftBin) {
             expr1 = Precedence(leftBin.op(), leftBin.left(), leftBin.right());
         }
-        if (expr2 instanceof Ebinaryoperators rightBin) {
+        if (expr2 instanceof EBinaryoperators rightBin) {
             expr2 = Precedence(rightBin.op(), rightBin.left(), rightBin.right());
         }
 
@@ -587,7 +588,7 @@ public class ASTBuilder {
         BinaryOperators.Associativity assoc = op.getAssociativity();
 
         // Check left child — rotate if lower precedence or equal and right-associative
-        if (expr1 instanceof Ebinaryoperators leftBin) {
+        if (expr1 instanceof EBinaryoperators leftBin) {
             int leftPrec = leftBin.op().getPrecedence();
 
             if (leftPrec < currentPrec ||
@@ -595,22 +596,22 @@ public class ASTBuilder {
                 // Left rotate: ( (a leftOp b) op c ) → ( a leftOp (b op c) )
                 System.out.println();
                 Expression newRight = Precedence(op, leftBin.right(), expr2);
-                return new Ebinaryoperators(leftBin.op(), leftBin.left(), newRight);
+                return new EBinaryoperators(leftBin.op(), leftBin.left(), newRight);
 
             }
         }
 
         // Check right child — rotate if higher precedence or equal and left-associative
-        if (expr2 instanceof Ebinaryoperators rightBin) {
+        if (expr2 instanceof EBinaryoperators rightBin) {
             int rightPrec = rightBin.op().getPrecedence();
             if (rightPrec < currentPrec ||
                     (rightPrec == currentPrec && assoc == BinaryOperators.Associativity.LEFT)) {
                 // Right rotate: ( a op (b rightOp c) ) → ( (a op b) rightOp c )
                 Expression newLeft = Precedence(op, expr1, rightBin.left());
 
-                return new Ebinaryoperators(rightBin.op(), newLeft, rightBin.right());
+                return new EBinaryoperators(rightBin.op(), newLeft, rightBin.right());
             }
         }
-        return new Ebinaryoperators(op, expr1, expr2);
+        return new EBinaryoperators(op, expr1, expr2);
     }
 }
