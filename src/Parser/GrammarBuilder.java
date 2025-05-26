@@ -91,9 +91,9 @@ public class GrammarBuilder {
 
 
         // ====== FUNCTIONS ======
-        // En hel funktion: "function" nøgleordet, navnet, og kroppen
+
         grammar.add("function", "functionIdentifier", "statement");
-        // Navn og parametre på en funktion (VI har tilføjet TYPE og ændret identifier til ID)
+      
         grammar.add("functionIdentifier", "TYPE", "ID", "OPEN_PARENTHESIS", "expr_list", "CLOSED_PARENTHESIS");
         grammar.add("functionIdentifier", "TYPE", "ID", "OPEN_PARENTHESIS", "CLOSED_PARENTHESIS");
 
